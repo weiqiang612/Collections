@@ -1,24 +1,33 @@
 <script setup>
-const navItems = [
-  { label: "Home", href: "#hero" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Agent", href: "#resume-agent" },
-];
+import { useLocale } from "../../composables/useLocale";
+
+const { t, currentLabel, nextLabel, toggleLocale } = useLocale();
 </script>
 
 <template>
   <div class="app-shell">
     <header class="site-header">
-      <a class="brand-mark" href="#hero" aria-label="Back to hero">
+      <a class="brand-mark" href="#hero" :aria-label="t.shell.brandAria">
         <span class="brand-dot"></span>
         <span>weiqiang</span>
       </a>
-      <nav class="site-nav" aria-label="Primary navigation">
-        <a v-for="item in navItems" :key="item.href" :href="item.href">
-          {{ item.label }}
-        </a>
-      </nav>
+      <div class="header-actions">
+        <nav class="site-nav" :aria-label="t.shell.navAria">
+          <a v-for="item in t.nav" :key="item.href" :href="item.href">
+            {{ item.label }}
+          </a>
+        </nav>
+        <button
+          class="language-toggle"
+          type="button"
+          :aria-label="t.shell.languageAria"
+          @click="toggleLocale"
+        >
+          <span>{{ currentLabel }}</span>
+          <span>/</span>
+          <span>{{ nextLabel }}</span>
+        </button>
+      </div>
     </header>
 
     <main>

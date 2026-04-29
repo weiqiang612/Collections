@@ -1,10 +1,14 @@
 <script setup>
+import { useLocale } from "../../composables/useLocale";
+
 defineProps({
   project: {
     type: Object,
     required: true,
   },
 });
+
+const { t } = useLocale();
 </script>
 
 <template>
@@ -22,13 +26,10 @@ defineProps({
     </div>
 
     <div class="diagram-placeholder">
-      <div class="diagram-label">Mermaid reserved</div>
+      <div class="diagram-label">{{ t.projectCard.diagramLabel }}</div>
       <div class="diagram-node primary">{{ project.diagramSource }}</div>
       <div class="diagram-flow">
-        <span>Controller</span>
-        <span>Service</span>
-        <span>Redis</span>
-        <span>MySQL</span>
+        <span v-for="node in t.projectCard.flowNodes" :key="node">{{ node }}</span>
       </div>
     </div>
   </article>

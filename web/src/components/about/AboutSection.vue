@@ -1,20 +1,21 @@
 <script setup>
 import SectionTitle from "../common/SectionTitle.vue";
-import { profile } from "../../data/profile";
-import { techStack } from "../../data/tech-stack";
+import { useLocale } from "../../composables/useLocale";
+
+const { t } = useLocale();
 </script>
 
 <template>
   <section id="about" class="section-band">
     <SectionTitle
-      eyebrow="About"
-      title="Backend depth with explainable architecture"
-      description="The portfolio is organized around concrete engineering evidence: system pressure, design decisions, and implementation tradeoffs."
+      :eyebrow="t.about.eyebrow"
+      :title="t.about.title"
+      :description="t.about.description"
     />
 
     <div class="about-grid">
       <div class="methodology-panel">
-        <div v-for="item in profile.methodology" :key="item.step" class="methodology-item">
+        <div v-for="item in t.profile.methodology" :key="item.step" class="methodology-item">
           <span>{{ item.step }}</span>
           <div>
             <h3>{{ item.title }}</h3>
@@ -24,9 +25,9 @@ import { techStack } from "../../data/tech-stack";
       </div>
 
       <div class="tech-panel">
-        <h3>Technical Focus</h3>
+        <h3>{{ t.about.techTitle }}</h3>
         <div class="tech-list">
-          <div v-for="tech in techStack" :key="tech.name" class="tech-row">
+          <div v-for="tech in t.techStack" :key="tech.name" class="tech-row">
             <div class="tech-meta">
               <span>{{ tech.name }}</span>
               <small>{{ tech.group }}</small>

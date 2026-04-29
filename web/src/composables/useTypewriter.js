@@ -1,4 +1,4 @@
-import { computed, onBeforeUnmount, ref, watchEffect } from "vue";
+import { computed, onBeforeUnmount, ref, unref, watch, watchEffect } from "vue";
 
 export function useTypewriter(lines, options = {}) {
   const delay = options.delay ?? 34;
@@ -7,7 +7,8 @@ export function useTypewriter(lines, options = {}) {
   const charIndex = ref(0);
   const timer = ref(null);
 
-  const currentLine = computed(() => lines[lineIndex.value] ?? "");
+  const lineList = computed(() => unref(lines) ?? []);
+  const currentLine = computed(() => lineList.value[lineIndex.value] ?? "");
   const text = computed(() => currentLine.value.slice(0, charIndex.value));
 
   function clearTimer() {
@@ -20,7 +21,7 @@ export function useTypewriter(lines, options = {}) {
   watchEffect(() => {
     clearTimer();
 
-    if (!lines.length) {
+    if (!lineList.value.length) {
       return;
     }
 
@@ -32,9 +33,14 @@ export function useTypewriter(lines, options = {}) {
     }
 
     timer.value = window.setTimeout(() => {
-      lineIndex.value = (lineIndex.value + 1) % lines.length;
+      lineIndex.value = (lineIndex.value + 1) % lineList.value.length;
       charIndex.value = 0;
     }, hold);
+  });
+
+  watch(lineList, () => {
+    lineIndex.value = 0;
+    charIndex.value = 0;
   });
 
   onBeforeUnmount(clearTimer);

@@ -1,24 +1,33 @@
 <script setup>
-import { nextTick, ref } from "vue";
+import { nextTick, ref, watch } from "vue";
 import ChatMessage from "./ChatMessage.vue";
 import { useChatMock } from "../../composables/useChatMock";
+import { useLocale } from "../../composables/useLocale";
 
 const emit = defineEmits(["close"]);
 
+const { locale, t } = useLocale();
 const sessionId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
 const input = ref("");
 const messages = ref([
   {
     id: "welcome",
     role: "assistant",
-    content:
-      "Ask about Ethan's Java backend work, high-concurrency projects, or AI Agent/RAG practice.",
-    sources: [{ title: "Mock mode", type: "mock", score: 1 }],
+    content: t.value.agent.welcome,
+    sources: [{ title: t.value.agent.sources.mockMode, type: "mock", score: 1 }],
   },
 ]);
 const scrollArea = ref(null);
 const activeMessageId = ref("");
 const { isStreaming, sendMessage } = useChatMock();
+
+watch(locale, () => {
+  const welcome = messages.value.find((message) => message.id === "welcome");
+  if (welcome) {
+    welcome.content = t.value.agent.welcome;
+    welcome.sources = [{ title: t.value.agent.sources.mockMode, type: "mock", score: 1 }];
+  }
+});
 
 async function scrollToBottom() {
   await nextTick();
@@ -40,7 +49,7 @@ async function submitMessage() {
   activeMessageId.value = assistantMessage.id;
   await scrollToBottom();
 
-  const result = await sendMessage(content, sessionId, async (delta) => {
+  const result = await sendMessage(content, sessionId, locale.value, async (delta) => {
     assistantMessage.content += delta;
     await scrollToBottom();
   });
@@ -52,13 +61,13 @@ async function submitMessage() {
 </script>
 
 <template>
-  <aside id="resume-agent" class="agent-panel" aria-label="Resume Agent mock panel">
+  <aside id="resume-agent" class="agent-panel" :aria-label="t.agent.panelAria">
     <header class="agent-header">
       <div>
-        <p>Resume Agent</p>
-        <span>mock streaming mode</span>
+        <p>{{ t.agent.title }}</p>
+        <span>{{ t.agent.mode }}</span>
       </div>
-      <button type="button" aria-label="Close resume agent" @click="emit('close')">×</button>
+      <button type="button" :aria-label="t.agent.closeAria" @click="emit('close')">×</button>
     </header>
 
     <div ref="scrollArea" class="messages">
@@ -67,6 +76,7 @@ async function submitMessage() {
         :key="message.id"
         :message="message"
         :streaming="message.id === activeMessageId"
+        :roles="t.agent.roles"
       />
     </div>
 
@@ -74,10 +84,12 @@ async function submitMessage() {
       <input
         v-model="input"
         type="text"
-        placeholder="Ask about 苍穹外卖, 黑马点评, RAG..."
+        :placeholder="t.agent.placeholder"
         autocomplete="off"
       />
-      <button type="submit" :disabled="isStreaming">{{ isStreaming ? "..." : "Send" }}</button>
+      <button type="submit" :disabled="isStreaming">
+        {{ isStreaming ? t.agent.sending : t.agent.send }}
+      </button>
     </form>
   </aside>
 </template>

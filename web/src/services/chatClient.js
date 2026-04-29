@@ -1,42 +1,40 @@
 import { createApiUrl, isApiConfigured } from "./apiClient";
+import { messages } from "../data/i18n";
 
-const mockReplies = [
-  "I can explain Ethan's backend projects through architecture, concurrency paths, and tradeoffs. For 苍穹外卖, start with order state safety and the agent knowledge flow.",
-  "For 黑马点评, the strongest story is the high-concurrency path: Caffeine + Redis cache, Lua stock deduction, and failure handling around flash-sale traffic.",
-  "The live API is not connected yet. This panel keeps the same interaction shape planned for POST /api/chat/stream so the frontend can switch to SSE later.",
-];
-
-async function sendMockMessage(message, sessionId, onDelta) {
+async function sendMockMessage(message, sessionId, locale, onDelta) {
+  const agentCopy = messages[locale]?.agent ?? messages["zh-CN"].agent;
   const normalized = message.toLowerCase();
   const reply = normalized.includes("点评") || normalized.includes("redis")
-    ? mockReplies[1]
+    ? agentCopy.mockReplies[1]
     : normalized.includes("api") || normalized.includes("rag")
-      ? mockReplies[2]
-      : mockReplies[0];
+      ? agentCopy.mockReplies[2]
+      : agentCopy.mockReplies[0];
 
-  for (const token of reply.split(" ")) {
+  const tokens = locale === "zh-CN" ? Array.from(reply) : reply.split(" ");
+
+  for (const token of tokens) {
     await new Promise((resolve) => window.setTimeout(resolve, 36));
-    onDelta(`${token} `);
+    onDelta(locale === "zh-CN" ? token : `${token} `);
   }
 
   return {
     sessionId,
     sources: [
-      { title: "Frontend mock knowledge", type: "mock", score: 1 },
-      { title: "AGENTS.md product direction", type: "project-guide", score: 0.92 },
+      { title: agentCopy.sources.mockKnowledge, type: "mock", score: 1 },
+      { title: agentCopy.sources.productDirection, type: "project-guide", score: 0.92 },
     ],
   };
 }
 
-export async function sendMessage(message, sessionId, onDelta) {
+export async function sendMessage(message, sessionId, locale, onDelta) {
   if (!isApiConfigured()) {
-    return sendMockMessage(message, sessionId, onDelta);
+    return sendMockMessage(message, sessionId, locale, onDelta);
   }
 
   const response = await fetch(createApiUrl("/api/chat"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sessionId, message, locale: "zh-CN" }),
+    body: JSON.stringify({ sessionId, message, locale }),
   });
 
   if (!response.ok) {
