@@ -1,0 +1,18 @@
+spring:
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/portfolio?useSSL=false&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+  ai:
+    openai:
+      base-url: ${OPENROUTER_BASE_URL:https://openrouter.ai/api}
+      api-key: ${OPENROUTER_API_KEY:}
+      chat:
+        options:
+          model: ${OPENROUTER_MODEL:tencent/hy3-preview:free}
+          temperature: ${OPENROUTER_TEMPERATURE:0.7}
+logging:
+  level:
+    # 这里的包名要指向你存放 Mapper 接口的包
+    com.weiqiang.portfolio.mapper: debug
