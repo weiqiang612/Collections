@@ -13,6 +13,7 @@ export const messages = {
       { label: "关于", href: "#about" },
       { label: "项目", href: "#projects" },
       { label: "Agent", href: "#resume-agent" },
+      { label: "笔记", href: "https://note.weiqiang.me", external: true },
     ],
     shell: {
       brandAria: "返回首页",
@@ -58,6 +59,7 @@ export const messages = {
       eyebrow: "Ethan / weiqiang / 围墙",
       primaryAction: "查看项目",
       secondaryAction: "询问简历 Agent",
+      tertiaryAction: "浏览笔记",
       terminalTitle: "ethan@portfolio:~/system",
       whoami: "$ whoami",
       mission: "$ mission",
@@ -162,6 +164,7 @@ export const messages = {
       { label: "About", href: "#about" },
       { label: "Projects", href: "#projects" },
       { label: "Agent", href: "#resume-agent" },
+      { label: "Notes", href: "https://note.weiqiang.me", external: true },
     ],
     shell: {
       brandAria: "Back to hero",
@@ -207,6 +210,7 @@ export const messages = {
       eyebrow: "Ethan / weiqiang / 围墙",
       primaryAction: "Inspect Projects",
       secondaryAction: "Ask Resume Agent",
+      tertiaryAction: "Browse Notes",
       terminalTitle: "ethan@portfolio:~/system",
       whoami: "$ whoami",
       mission: "$ mission",

@@ -1,35 +1,42 @@
 export const profile = {
   name: "Ethan",
-  alias: "weiqiang / 围墙",
-  brand: "打破技术壁垒",
+  brand: "weiqiang / 围墙",
   headline: "Java Backend Engineer focused on high-concurrency systems and AI-enabled engineering.",
   summary:
-    "I build backend systems with clear boundaries, measurable reliability, and explanations that make complex architecture easier to inspect.",
-  location: "China",
-  contacts: [
-    { label: "GitHub", href: "https://github.com/", value: "github.com/weiqiang" },
-    { label: "Email", href: "mailto:ethan@example.com", value: "ethan@example.com" },
-  ],
+    "围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。",
   methodology: [
     {
       step: "Why",
-      title: "Clarify pressure",
-      text: "Start from the business pressure, traffic shape, consistency requirement, and failure cost.",
+      title: "Why",
+      description: "从业务压力、流量模型、一致性要求和失败成本出发，明确问题为什么值得解决。",
     },
     {
       step: "What",
-      title: "Define the model",
-      text: "Turn the problem into bounded states, data contracts, queues, caches, and observable interfaces.",
+      title: "What",
+      description: "把问题抽象成状态模型、数据契约、缓存结构、队列边界和可观测接口。",
     },
     {
       step: "How",
-      title: "Engineer the path",
-      text: "Choose Spring Boot, Redis, MySQL, message queues, and AI orchestration only where they reduce real risk.",
+      title: "How",
+      description: "使用 Spring Boot、MySQL、Redis、消息队列和 AI 编排，把方案落到可验证的工程路径。",
+    },
+  ],
+  techStack: [
+    { category: "Backend", items: ["Java", "Spring Boot 3", "MyBatis", "MySQL"] },
+    { category: "Concurrency", items: ["Redis", "Lua", "State Machine", "Cache Consistency"] },
+    { category: "AI Engineering", items: ["Spring AI", "RAG", "Prompt Orchestration", "SSE Streaming"] },
+    { category: "Frontend", items: ["Vue 3", "Vite", "Terminal UI", "Responsive Design"] },
+  ],
+  contacts: [
+    {
+      label: "GitHub",
+      value: "github.com/weiqiang",
+      href: "https://github.com/",
     },
     {
-      step: "Deep Dive",
-      title: "Prove the edge cases",
-      text: "Use diagrams, stress paths, and code-level tradeoffs to explain how the system behaves under load.",
+      label: "Email",
+      value: "ethan@example.com",
+      href: "mailto:ethan@example.com",
     },
   ],
 };

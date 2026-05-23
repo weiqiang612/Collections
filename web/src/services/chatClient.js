@@ -1,4 +1,3 @@
-import { createApiUrl, isApiConfigured } from "./apiClient";
 import { messages } from "../data/i18n";
 
 async function sendMockMessage(message, sessionId, locale, onDelta) {
@@ -26,12 +25,18 @@ async function sendMockMessage(message, sessionId, locale, onDelta) {
   };
 }
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? "";
+
+export function isApiConfigured() {
+  return Boolean(apiBaseUrl);
+}
+
 export async function sendMessage(message, sessionId, locale, onDelta) {
   if (!isApiConfigured()) {
     return sendMockMessage(message, sessionId, locale, onDelta);
   }
 
-  const response = await fetch(createApiUrl("/api/chat"), {
+  const response = await fetch(`${apiBaseUrl}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId, message, locale }),

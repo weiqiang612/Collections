@@ -1,8 +1,20 @@
 <script setup>
+import { computed } from "vue";
 import SectionTitle from "../common/SectionTitle.vue";
 import { useLocale } from "../../composables/useLocale";
+import { getProfile } from "../../services/profileClient";
 
 const { t } = useLocale();
+const profile = getProfile();
+
+const methodologySteps = computed(() => {
+  const steps = profile.methodology ?? [];
+  const order = ["Why", "What", "How", "Deep Dive"];
+  return order.map((stepName) => steps.find((item) => item.step === stepName || item.title === stepName)).filter(Boolean);
+});
+
+const techGroups = computed(() => profile.techStack ?? []);
+const description = computed(() => profile.summary || t.value.about.description);
 </script>
 
 <template>
@@ -10,30 +22,31 @@ const { t } = useLocale();
     <SectionTitle
       :eyebrow="t.about.eyebrow"
       :title="t.about.title"
-      :description="t.about.description"
+      :description="description"
     />
 
     <div class="about-grid">
       <div class="methodology-panel">
-        <div v-for="item in t.profile.methodology" :key="item.step" class="methodology-item">
-          <span>{{ item.step }}</span>
-          <div>
+        <div class="panel-caption">Why -> What -> How -> Deep Dive</div>
+        <div v-for="item in methodologySteps" :key="item.step" class="methodology-item">
+          <span class="methodology-step">{{ item.step }}</span>
+          <div class="methodology-copy">
             <h3>{{ item.title }}</h3>
-            <p>{{ item.text }}</p>
+            <p>{{ item.description }}</p>
           </div>
         </div>
       </div>
 
       <div class="tech-panel">
         <h3>{{ t.about.techTitle }}</h3>
-        <div class="tech-list">
-          <div v-for="tech in t.techStack" :key="tech.name" class="tech-row">
+        <div class="tech-groups">
+          <div v-for="group in techGroups" :key="group.category" class="tech-group">
             <div class="tech-meta">
-              <span>{{ tech.name }}</span>
-              <small>{{ tech.group }}</small>
+              <span>{{ group.category }}</span>
+              <small>{{ group.items.length }} items</small>
             </div>
-            <div class="tech-meter" :aria-label="`${tech.name} ${tech.level}%`">
-              <span :style="{ width: `${tech.level}%` }"></span>
+            <div class="tech-chip-list">
+              <span v-for="item in group.items" :key="item" class="tech-chip">{{ item }}</span>
             </div>
           </div>
         </div>

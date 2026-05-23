@@ -13,8 +13,17 @@ const { t, currentLabel, nextLabel, toggleLocale } = useLocale();
       </a>
       <div class="header-actions">
         <nav class="site-nav" :aria-label="t.shell.navAria">
-          <a v-for="item in t.nav" :key="item.href" :href="item.href">
+          <a
+            v-for="item in t.nav"
+            :key="item.href"
+            :href="item.href"
+            :target="item.external ? '_blank' : undefined"
+            :rel="item.external ? 'noopener noreferrer' : undefined"
+          >
             {{ item.label }}
+            <svg v-if="item.external" class="nav-external-icon" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2 10L10 2M10 2H5M10 2V7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </a>
         </nav>
         <button

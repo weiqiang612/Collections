@@ -145,6 +145,17 @@ button:disabled {
   color: var(--color-cyan);
 }
 
+.site-nav a[target="_blank"]:hover {
+  color: var(--color-orange);
+}
+
+.nav-external-icon {
+  display: inline-block;
+  margin-left: 3px;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+
 .language-toggle {
   gap: 6px;
   min-height: 40px;
@@ -172,6 +183,126 @@ button:disabled {
   align-items: center;
   min-height: calc(100vh - 72px);
   padding-top: 56px;
+}
+
+.hero-copy {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.hero-title,
+.hero-brandline,
+.hero-lede,
+.hero-chip-row,
+.hero-actions {
+  min-width: 0;
+}
+
+.hero-brandline {
+  margin: -6px 0 0;
+  color: var(--color-cyan);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.hero-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(80, 250, 123, 0.26);
+  background: rgba(80, 250, 123, 0.08);
+  color: var(--color-green);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.hero-terminal-lines {
+  display: grid;
+  gap: 8px;
+}
+
+.terminal-key {
+  display: inline-block;
+  min-width: 82px;
+  margin-right: 10px;
+  color: var(--color-muted);
+}
+
+.terminal-value {
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.typewriter-intro {
+  display: grid;
+  gap: 10px;
+  padding: 18px 0 4px;
+}
+
+.typewriter-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.typewriter-label {
+  color: var(--color-orange);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+}
+
+.typewriter-status {
+  color: var(--color-muted);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+  text-transform: lowercase;
+}
+
+.typewriter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid rgba(139, 233, 253, 0.16);
+  background: rgba(0, 0, 0, 0.24);
+  padding: 12px 14px;
+}
+
+.typewriter-prompt {
+  color: var(--color-green);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.84rem;
+}
+
+.typewriter-text {
+  min-width: 0;
+  color: var(--color-text);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.typewriter-caption {
+  margin-bottom: 0;
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 
 .section-eyebrow {
@@ -218,6 +349,7 @@ h3 {
   color: var(--color-muted);
   font-size: 1.08rem;
   line-height: 1.8;
+  overflow-wrap: anywhere;
 }
 
 .hero-actions {
@@ -360,6 +492,13 @@ h3 {
   padding: 26px;
 }
 
+.panel-caption {
+  margin-bottom: 14px;
+  color: var(--color-muted);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+}
+
 .methodology-item {
   display: grid;
   grid-template-columns: 108px minmax(0, 1fr);
@@ -382,15 +521,24 @@ h3 {
   color: var(--color-orange);
 }
 
+.methodology-step {
+  text-transform: uppercase;
+}
+
+.methodology-copy {
+  min-width: 0;
+}
+
 .methodology-item p,
 .project-card p,
 .project-card li,
 .chat-message p {
   color: var(--color-muted);
   line-height: 1.75;
+  overflow-wrap: anywhere;
 }
 
-.tech-list {
+.tech-groups {
   display: grid;
   gap: 18px;
 }
@@ -407,17 +555,35 @@ h3 {
   color: var(--color-muted);
 }
 
-.tech-meter {
-  height: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(139, 233, 253, 0.18);
-  background: #05070a;
+.tech-group {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(139, 233, 253, 0.12);
 }
 
-.tech-meter span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-green), var(--color-cyan));
+.tech-group:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.tech-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(139, 233, 253, 0.2);
+  background: rgba(139, 233, 253, 0.06);
+  color: var(--color-cyan);
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 .projects-list {
@@ -726,6 +892,19 @@ h3 {
   .methodology-item {
     grid-template-columns: 1fr;
     gap: 8px;
+  }
+
+  .typewriter-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .typewriter-row {
+    padding: 12px;
+  }
+
+  .hero-chip {
+    white-space: normal;
   }
 
   .diagram-flow {
