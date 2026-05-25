@@ -79,10 +79,13 @@ Minimalist Dark + Geek Terminal. No Tailwind — pure CSS in `web/src/style.css`
 - Production: `weiqiang.me` (CNAME → `741cce93e42bedd7.vercel-dns-017.com`, gray cloud in Cloudflare)
 - `note.weiqiang.me` is the Ethan's Notes project (separate VitePress site, different Vercel project)
 - Cloudflare API token in opencode config has DNS:Edit scope
+- Vercel project `rootDirectory` must be set to `web/` (GitHub integration needs this to find vite)
 - `vercel.json` rewrites: `/api/*` → Vercel functions, `/*` → `index.html` (SPA)
 
 ## Gotchas
 
+- Nav supports external links: add `external: true` to nav item in `i18n.js`; AppShell renders `target="_blank"` + SVG icon
+- Nav `笔记 / Notes` links to `note.weiqiang.me` (separate VitePress site, different Vercel project)
 - `data/projects.js` and `data/tech-stack.js` were deleted — all content lives in `i18n.js`
 - `services/apiClient.js` was deleted — no remote profile/projects calls exist
 - Components import profile sync, no `onMounted` async fetch

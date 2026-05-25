@@ -29,7 +29,7 @@ const { t } = useLocale();
       <div class="diagram-label">{{ t.projectCard.diagramLabel }}</div>
       <div class="diagram-node primary">{{ project.diagramSource }}</div>
       <div class="diagram-flow">
-        <span v-for="node in t.projectCard.flowNodes" :key="node">{{ node }}</span>
+        <span v-for="node in project.flowNodes || t.projectCard.flowNodes" :key="node">{{ node }}</span>
       </div>
     </div>
   </article>

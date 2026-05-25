@@ -95,17 +95,19 @@ export const messages = {
       {
         id: "sky-takeout",
         name: "苍穹外卖",
-        subtitle: "具备状态安全与 AI 意图识别的外卖后端",
+        subtitle: "基于 Spring AI 顾问链与三层记忆模型的外卖智能 Agent",
         summary:
-          "基于 Spring Boot 的外卖系统，用于解释订单生命周期建模、并发安全状态流转和 AI 辅助运营流程。",
+          "具有双服务架构的餐饮外卖系统。引入 Spring AI 重构为智能客服 Agent，支持多意图识别、复杂业务工具调用和三层记忆系统。",
         highlights: [
-          "以状态机思维约束订单状态流转，保证并发操作安全。",
-          "预留 GLM 意图识别 Agent，用于自然语言操作和知识查询。",
-          "RAG 增强知识库流程，承载项目笔记、API 解释和问题排查。",
+          "采用双服务架构：sky-server 承载核心业务与订单状态机，sky-ai 基于 Spring AI 1.1.5 实现智能客服 Agent 并进行微服务级解耦。",
+          "设计 6 层顾问链（Advisor Chain），模块化实现意图识别（13 类意图）、上下文注入、会话与长期记忆管理、FAQ RAG 检索以及动态工具过滤。",
+          "实现三层记忆系统：Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL JPA 长期记忆，利用异步服务（@Async）通过 LLM 自动提取并合并事实。",
+          "实现 17 个本地 `@Tool` 业务接口与 Model Context Protocol (MCP) 服务的 SSE 动态注册，支持 WebSocket 流式传输及人工确认安全机制。",
         ],
-        techStack: ["Spring Boot", "MyBatis", "MySQL", "Redis", "WebSocket", "GLM Agent", "RAG"],
+        techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagramType: "mermaid",
-        diagramSource: "订单状态 + Agent 知识流",
+        diagramSource: "双服务架构 + Spring AI 顾问链",
+        flowNodes: ["sky-server", "sky-ai (Spring AI)", "Redis 缓存", "Postgres 长期记忆"],
       },
       {
         id: "hm-dianping",
@@ -121,6 +123,7 @@ export const messages = {
         techStack: ["Spring Boot", "Redis", "Lua", "Caffeine", "MySQL", "Redisson"],
         diagramType: "mermaid",
         diagramSource: "缓存 + 防超卖请求流",
+        flowNodes: ["Controller", "Caffeine 本地缓存", "Redis 锁与缓存", "MySQL 数据库"],
       },
     ],
     projectCard: {
@@ -148,9 +151,9 @@ export const messages = {
         productDirection: "AGENTS.md 产品方向",
       },
       mockReplies: [
-        "我可以从架构、并发路径和技术取舍解释 Ethan 的后端项目。苍穹外卖可以从订单状态安全和 Agent 知识流开始看。",
-        "黑马点评最强的叙事是高并发路径：Caffeine + Redis 缓存、Lua 扣减库存，以及秒杀流量下的失败处理。",
-        "当前还没有接入真实 API。这个面板保留了 POST /api/chat/stream 的交互形态，后续可以平滑切换到 SSE。",
+        "我可以为你介绍我的后端项目架构。对于「苍穹外卖」，我通过 Spring AI 顾问链重构了智能客服，并集成了三层记忆系统、本地 `@Tool` 与 MCP 工具，欢迎针对 Advisor 链路和事实提取细节提问！",
+        "「黑马点评」项目核心在于高并发优化路径：使用 Caffeine + Redis 构建二级缓存以降低尾延迟，设计 Lua 脚本以实现并发安全的秒杀库存扣减，并处理了缓存穿透/击穿/雪崩等典型场景。",
+        "「苍穹外卖」的 AI 模块设计中，我采用了 Working Memory、Redis 会话记忆（TTL 2小时）和 PostgreSQL 长期事实表的三层架构，并在对话结束后通过 @Async 异步服务结合 LLM 提取并合并用户的偏好与操作事实。",
       ],
     },
     notFound: {
@@ -245,23 +248,25 @@ export const messages = {
     projects: [
       {
         id: "sky-takeout",
-        name: "苍穹外卖",
-        subtitle: "Food delivery backend with state safety and AI intent recognition",
+        name: "Sky Takeout",
+        subtitle: "Intelligent Delivery Agent via Spring AI Advisor Chain & 3-Layer Memory",
         summary:
-          "A Spring Boot delivery system used to explain order lifecycle modeling, concurrency-safe state transitions, and AI-assisted operation flows.",
+          "A dual-service food delivery system refactored with Spring AI to provide an intelligent customer agent supporting multi-intent routing, automated tool calling, and long-term memory extraction.",
         highlights: [
-          "State-machine thinking for order status transitions and concurrent operation safety.",
-          "GLM intent recognition Agent reserved for natural-language operations and knowledge lookup.",
-          "RAG-enhanced knowledge base flow for project notes, API explanations, and troubleshooting.",
+          "Decoupled architecture: sky-server handles core delivery workflows and order state machine, while sky-ai (Spring AI 1.1.5) operates as an independent agent service.",
+          "Engineered a modular 6-layer Advisor Chain for pre-intent classification (13 intent types), context injection, Redis session memory, FAQ RAG retrieval, and dynamic tool filtering.",
+          "Designed a 3-layer memory system (Working, Redis Session with 2h TTL, PostgreSQL long-term facts) with an async (@Async) LLM-powered background fact extraction service.",
+          "Registered 17 local `@Tool` business callbacks and SSE MCP servers (maps, payments, notifications) over WebSocket with human-in-the-loop confirmation.",
         ],
-        techStack: ["Spring Boot", "MyBatis", "MySQL", "Redis", "WebSocket", "GLM Agent", "RAG"],
+        techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagramType: "mermaid",
-        diagramSource: "Order State + Agent Knowledge Flow",
+        diagramSource: "Dual-Service + Spring AI Advisor Chain",
+        flowNodes: ["sky-server", "sky-ai (Spring AI)", "Redis Session", "Postgres Long-term"],
       },
       {
         id: "hm-dianping",
-        name: "黑马点评",
-        subtitle: "High-concurrency local service platform",
+        name: "HM Dianping",
+        subtitle: "High-Concurrency Local Life Service Platform",
         summary:
           "A high-concurrency practice project focused on cache architecture, flash-sale safety, and practical Redis patterns.",
         highlights: [
@@ -272,6 +277,7 @@ export const messages = {
         techStack: ["Spring Boot", "Redis", "Lua", "Caffeine", "MySQL", "Redisson"],
         diagramType: "mermaid",
         diagramSource: "Cache + Anti-oversell Request Flow",
+        flowNodes: ["Controller", "Caffeine L1 Cache", "Redis Lock & Cache", "MySQL DB"],
       },
     ],
     projectCard: {
@@ -286,7 +292,7 @@ export const messages = {
       closeAria: "Close resume agent",
       welcome:
         "Ask about Ethan's Java backend work, high-concurrency projects, or AI Agent/RAG practice.",
-      placeholder: "Ask about 苍穹外卖, 黑马点评, RAG...",
+      placeholder: "Ask about Sky Takeout, HM Dianping, RAG...",
       send: "Send",
       sending: "...",
       roles: {
@@ -299,9 +305,9 @@ export const messages = {
         productDirection: "AGENTS.md product direction",
       },
       mockReplies: [
-        "I can explain Ethan's backend projects through architecture, concurrency paths, and tradeoffs. For 苍穹外卖, start with order state safety and the agent knowledge flow.",
-        "For 黑马点评, the strongest story is the high-concurrency path: Caffeine + Redis cache, Lua stock deduction, and failure handling around flash-sale traffic.",
-        "The live API is not connected yet. This panel keeps the same interaction shape planned for POST /api/chat/stream so the frontend can switch to SSE later.",
+        "I can walk you through my backend architectures. For 'Sky Takeout', I refactored it into an intelligent customer service agent using Spring AI Advisor Chain, featuring a 3-layer memory system, local `@Tool` gateways, and MCP servers. Ask me anything about the advisor chain or memory extraction details!",
+        "For 'HM Dianping', the core highlight is the high-concurrency path: Caffeine + Redis two-level caching to reduce tail latency, Lua scripting for concurrent stock deduction, and systematic handling of cache penetration/breakdown/avalanche.",
+        "In the 'Sky Takeout' AI system, the memory module utilizes a 3-layer memory: Working context, Redis Session (2h TTL), and PostgreSQL JPA long-term memory, which runs an async (@Async) LLM service to extract and merge facts after each chat turn.",
       ],
     },
     notFound: {
