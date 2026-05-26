@@ -255,6 +255,13 @@ export const messages = {
     projectCard: {
       diagramLabel: "Mermaid 预留区域",
       flowNodes: ["Controller", "Service", "Redis", "MySQL"],
+      zoomIn: "放大",
+      zoomOut: "缩小",
+      reset: "重置",
+      fullscreen: "全屏模式",
+      exitFullscreen: "退出全屏",
+      tip: "拖拽以平移 • 滚动缩放（非全屏按住 Ctrl）",
+      fullscreenTip: "全屏模式 • 拖拽以平移 • 滚动鼠标滚轮缩放 • 按 Esc 键退出",
     },
     agent: {
       launcher: "简历 Agent",
@@ -406,6 +413,13 @@ export const messages = {
     projectCard: {
       diagramLabel: "Mermaid reserved",
       flowNodes: ["Controller", "Service", "Redis", "MySQL"],
+      zoomIn: "Zoom In",
+      zoomOut: "Zoom Out",
+      reset: "Reset Zoom",
+      fullscreen: "Fullscreen",
+      exitFullscreen: "Exit Fullscreen",
+      tip: "Drag to pan • Scroll to zoom (hold Ctrl in windowed mode)",
+      fullscreenTip: "Fullscreen focus mode • Drag to pan • Scroll to zoom • Press Esc to exit",
     },
     agent: {
       launcher: "Resume Agent",

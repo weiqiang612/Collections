@@ -4,6 +4,7 @@ mermaid.initialize({
   startOnLoad: false,
   theme: "dark",
   themeVariables: {
+    fontFamily: '"JetBrains Mono", "SFMono-Regular", Consolas, monospace',
     // Background & panels
     background: "#0b0f14",
     mainBkg: "#111821",
