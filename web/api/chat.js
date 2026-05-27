@@ -1,4 +1,6 @@
-import { Readable } from "stream";
+export const config = {
+  runtime: "edge",
+};
 
 // Static context data matching Ethan's profile and projects in i18n.js
 const CONTEXT_DATA = {
@@ -9,12 +11,12 @@ const CONTEXT_DATA = {
       github: "https://github.com/weiqiang",
       email: "ethan@example.com"
     },
-    summary: "专注高并发系统与 AI 工程实践的 Java 后端工程师。构建边界清晰、可靠性可衡量的后端系统，并用可检查的方式解释复杂架构。",
+    summary: "专注高并发系统与 AI 工程实践 of Java 后端工程师。构建边界清晰、可靠性可衡量的后端系统，并用可检查的方式解释复杂架构。",
     methodology: [
       "1. 澄清压力：先看业务压力、流量形态、一致性要求和失败成本。",
       "2. 定义模型：把问题拆成有限状态、数据契约、队列、缓存和可观测接口。",
       "3. 落地路径：只在能降低真实风险的地方引入 Spring Boot、Redis、MySQL、消息队列和 AI 编排。",
-      "4. 证明边界：用图、压测路径和代码级取舍说明系统在高负载下如何运转。"
+      "4. 证明边界：用图、压测路径 and 代码级取舍说明系统在高负载下如何运转。"
     ],
     projects: [
       {
@@ -53,7 +55,7 @@ const CONTEXT_DATA = {
     summary: "Java backend engineer focused on high-concurrency systems and AI-enabled engineering. Builds backend systems with clear boundaries, measurable reliability, and explanations that make complex architecture easier to inspect.",
     methodology: [
       "1. Clarify pressure: Start from the business pressure, traffic shape, consistency requirement, and failure cost.",
-      "2. Define the model: Turn the problem into bounded states, data contracts, queues, caches, and observable interfaces.",
+      "2. Define the model: Turn the problem into bounded states, data contracts, queues, caches, and obsolete interfaces.",
       "3. Engineer the path: Choose Spring Boot, Redis, MySQL, message queues, and AI orchestration only where they reduce real risk.",
       "4. Prove the edge cases: Use diagrams, stress paths, and code-level tradeoffs to explain how the system behaves under load."
     ],
@@ -86,17 +88,22 @@ const CONTEXT_DATA = {
   }
 };
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+      status: 405,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
-  const { message, sessionId, locale = "zh-CN", history = [] } = req.body;
+  const { message, sessionId, locale = "zh-CN", history = [] } = await req.json();
   const apiKey = process.env.OPENROUTER_API_KEY;
 
-  // Fallback to local mock if API key is not configured
   if (!apiKey) {
-    return res.status(400).json({ error: "OpenRouter API Key not configured" });
+    return new Response(JSON.stringify({ error: "OpenRouter API Key not configured" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const normalizedLocale = ["zh-CN", "en-US"].includes(locale) ? locale : "zh-CN";
@@ -164,7 +171,6 @@ Guidelines:
     { role: "system", content: systemPrompt }
   ];
 
-  // Map history to standard OpenRouter roles (user/assistant)
   history.forEach(item => {
     if (item.role === "user" || item.role === "assistant") {
       apiMessages.push({
@@ -174,7 +180,6 @@ Guidelines:
     }
   });
 
-  // Push latest user message
   apiMessages.push({ role: "user", content: message });
 
   try {
@@ -200,83 +205,88 @@ Guidelines:
       throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
     }
 
-    // 4. Set streaming response headers
-    res.writeHead(200, {
-      "Content-Type": "text/event-stream; charset=utf-8",
-      "Cache-Control": "no-cache, no-transform",
-      "Connection": "keep-alive",
+    const encoder = new TextEncoder();
+
+    // Create ReadableStream utilizing browser/edge-native streaming
+    const stream = new ReadableStream({
+      async start(controller) {
+        // Enqueue sources first
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ sources })}\n\n`));
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+
+            if (trimmed.startsWith("data: ")) {
+              const dataStr = trimmed.slice(6);
+              if (dataStr === "[DONE]") {
+                controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+                continue;
+              }
+
+              try {
+                const parsed = JSON.parse(dataStr);
+                const content = parsed.choices?.[0]?.delta?.content || "";
+                if (content) {
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta: content })}\n\n`));
+                }
+              } catch (e) {
+                // Ignore incomplete JSON chunks
+              }
+            }
+          }
+        }
+
+        // Process remaining buffer
+        if (buffer) {
+          const trimmed = buffer.trim();
+          if (trimmed.startsWith("data: ")) {
+            const dataStr = trimmed.slice(6);
+            if (dataStr !== "[DONE]") {
+              try {
+                const parsed = JSON.parse(dataStr);
+                const content = parsed.choices?.[0]?.delta?.content || "";
+                if (content) {
+                  controller.enqueue(encoder.encode(`data: ${JSON.stringify({ delta: content })}\n\n`));
+                }
+              } catch (e) {
+                // ignore
+              }
+            }
+          }
+        }
+
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+      }
     });
 
-    // 5. Send sources first so they appear immediately in the UI
-    res.write(`data: ${JSON.stringify({ sources })}\n\n`);
-
-    // 6. Pipe OpenRouter's stream directly to client, parsing SSE data
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop(); // Keep the remaining unfinished line
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-
-        if (trimmed.startsWith("data: ")) {
-          const dataStr = trimmed.slice(6);
-          if (dataStr === "[DONE]") {
-            res.write("data: [DONE]\n\n");
-            continue;
-          }
-
-          try {
-            const parsed = JSON.parse(dataStr);
-            const content = parsed.choices?.[0]?.delta?.content || "";
-            if (content) {
-              res.write(`data: ${JSON.stringify({ delta: content })}\n\n`);
-            }
-          } catch (e) {
-            // Ignore incomplete or non-JSON data lines
-          }
-        }
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        "Connection": "keep-alive",
+        "X-Accel-Buffering": "no",
       }
-    }
-
-    // Process any remaining buffer
-    if (buffer) {
-      const trimmed = buffer.trim();
-      if (trimmed.startsWith("data: ")) {
-        const dataStr = trimmed.slice(6);
-        if (dataStr !== "[DONE]") {
-          try {
-            const parsed = JSON.parse(dataStr);
-            const content = parsed.choices?.[0]?.delta?.content || "";
-            if (content) {
-              res.write(`data: ${JSON.stringify({ delta: content })}\n\n`);
-            }
-          } catch (e) {
-            // ignore
-          }
-        }
-      }
-    }
-
-    res.write("data: [DONE]\n\n");
-    res.end();
+    });
 
   } catch (error) {
-    console.error("AI Chat server error:", error);
-    // If headers already sent, write error event and close stream
-    if (res.headersSent) {
-      res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
-      res.end();
-    } else {
-      res.status(500).json({ error: error.message || "Internal server error" });
-    }
+    console.error("AI Chat edge error:", error);
+    return new Response(JSON.stringify({ error: error.message || "Internal server error" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 }
