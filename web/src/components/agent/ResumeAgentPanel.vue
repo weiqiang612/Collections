@@ -3,18 +3,29 @@ import { nextTick, ref, watch } from "vue";
 import ChatMessage from "./ChatMessage.vue";
 import { useChatMock } from "../../composables/useChatMock";
 import { useLocale } from "../../composables/useLocale";
+import { isApiConfigured } from "../../services/chatClient";
 
 const emit = defineEmits(["close"]);
 
 const { locale, t } = useLocale();
 const sessionId = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}`;
 const input = ref("");
+const isOnline = isApiConfigured();
+
 const messages = ref([
   {
     id: "welcome",
     role: "assistant",
     content: t.value.agent.welcome,
-    sources: [{ title: t.value.agent.sources.mockMode, type: "mock", score: 1 }],
+    sources: [
+      { 
+        title: isOnline 
+          ? (locale.value === "zh-CN" ? "在线 RAG 知识库" : "Online RAG Context")
+          : t.value.agent.sources.mockMode, 
+        type: isOnline ? "online" : "mock", 
+        score: 1 
+      }
+    ],
   },
 ]);
 const scrollArea = ref(null);
@@ -25,7 +36,15 @@ watch(locale, () => {
   const welcome = messages.value.find((message) => message.id === "welcome");
   if (welcome) {
     welcome.content = t.value.agent.welcome;
-    welcome.sources = [{ title: t.value.agent.sources.mockMode, type: "mock", score: 1 }];
+    welcome.sources = [
+      { 
+        title: isOnline 
+          ? (locale.value === "zh-CN" ? "在线 RAG 知识库" : "Online RAG Context")
+          : t.value.agent.sources.mockMode, 
+        type: isOnline ? "online" : "mock", 
+        score: 1 
+      }
+    ];
   }
 });
 
@@ -49,10 +68,51 @@ async function submitMessage() {
   activeMessageId.value = assistantMessage.id;
   await scrollToBottom();
 
-  const result = await sendMessage(content, sessionId, locale.value, async (delta) => {
-    assistantMessage.content += delta;
+  // Compile dialogue history (exclude welcome and empty/error states)
+  const history = messages.value
+    .slice(0, -2)
+    .filter(msg => msg.id !== "welcome" && msg.content && (msg.role === "user" || msg.role === "assistant"))
+    .map(msg => ({ role: msg.role, content: msg.content }));
+
+  let result;
+  try {
+    result = await sendMessage(content, sessionId, locale.value, async (delta) => {
+      assistantMessage.content += delta;
+      await scrollToBottom();
+    }, history);
+  } catch (err) {
+    console.error("API call failed, running graceful geek fallback:", err);
+    
+    // Inject geek-style failure log
+    assistantMessage.content = `[SYSTEM ERROR] Connection failed: ${err.message || 'API Timeout'}\n[SYSTEM] Automatically falling back to local simulation mode...\n\n`;
     await scrollToBottom();
-  });
+
+    // Generate local mock reply dynamically
+    const normalized = content.toLowerCase();
+    const mockReplies = t.value.agent.mockReplies;
+    const fallbackText = normalized.includes("点评") || normalized.includes("redis")
+      ? mockReplies[1]
+      : normalized.includes("api") || normalized.includes("rag")
+        ? mockReplies[2]
+        : mockReplies[0];
+
+    const tokens = locale.value === "zh-CN" ? Array.from(fallbackText) : fallbackText.split(" ");
+    for (const token of tokens) {
+      await new Promise((resolve) => window.setTimeout(resolve, 24));
+      assistantMessage.content += locale.value === "zh-CN" ? token : `${token} `;
+      await scrollToBottom();
+    }
+
+    result = {
+      sources: [
+        { 
+          title: locale.value === "zh-CN" ? "本地模拟数据 (故障切换)" : "Local Simulation Data (Failover)", 
+          type: "mock", 
+          score: 1 
+        }
+      ]
+    };
+  }
 
   assistantMessage.sources = result.sources;
   activeMessageId.value = "";
@@ -65,7 +125,10 @@ async function submitMessage() {
     <header class="agent-header">
       <div>
         <p>{{ t.agent.title }}</p>
-        <span>{{ t.agent.mode }}</span>
+        <span class="status-indicator" :class="{ 'is-online': isOnline }">
+          <span class="status-dot"></span>
+          {{ isOnline ? (locale === 'zh-CN' ? '在线模式 • DeepSeek 驱动' : 'Online • DeepSeek Flash') : t.agent.mode }}
+        </span>
       </div>
       <button type="button" :aria-label="t.agent.closeAria" @click="emit('close')">×</button>
     </header>
@@ -93,3 +156,40 @@ async function submitMessage() {
     </form>
   </aside>
 </template>
+
+<style scoped>
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-cyan);
+}
+
+.status-indicator.is-online .status-dot {
+  background: var(--color-green);
+  box-shadow: 0 0 6px var(--color-green);
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+}
+</style>

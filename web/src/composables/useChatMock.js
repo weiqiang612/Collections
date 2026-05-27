@@ -4,10 +4,10 @@ import { sendMessage as sendChatMessage } from "../services/chatClient";
 export function useChatMock() {
   const isStreaming = ref(false);
 
-  async function sendMessage(message, sessionId, locale, onDelta) {
+  async function sendMessage(message, sessionId, locale, onDelta, history = []) {
     isStreaming.value = true;
     try {
-      return await sendChatMessage(message, sessionId, locale, onDelta);
+      return await sendChatMessage(message, sessionId, locale, onDelta, history);
     } finally {
       isStreaming.value = false;
     }
