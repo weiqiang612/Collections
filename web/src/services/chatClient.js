@@ -28,7 +28,11 @@ async function sendMockMessage(message, sessionId, locale, onDelta) {
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? "";
 
 export function isApiConfigured() {
-  return Boolean(apiBaseUrl);
+  const isDeployed = typeof window !== "undefined" && 
+    window.location.hostname !== "localhost" && 
+    window.location.hostname !== "127.0.0.1" &&
+    !window.location.hostname.startsWith("192.168.");
+  return isDeployed || Boolean(apiBaseUrl);
 }
 
 export async function sendMessage(message, sessionId, locale, onDelta, history = []) {
