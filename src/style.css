@@ -681,6 +681,7 @@ h3 {
   background-size: 22px 22px;
   overflow: hidden;
   min-height: 300px;
+  max-height: 480px; /* 限制卡片态最大高度，防止垂直方向拉伸过长，支持拖拽和滚动缩放 */
 }
 
 .diagram-tabs {

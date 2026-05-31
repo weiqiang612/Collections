@@ -14,19 +14,17 @@ const diagrams = {
     {
       title: "Advisor Chain 架构 / Architecture",
       code: `flowchart TD
-    C([WebSocket Client]) -->|Text Frame| H[AgentChatWebSocketHandler]
-    H -->|Intent Pre-recognize| O[TaskOrchestratorService]
-    O -->|Assemble & Drive| S[AgentChatService]
-    S --> A1[IntentRecognitionAdvisor\\nPre-intent / Profile summary]
-    A1 --> A2[UserContextAdvisor\\nInjection levels / permittedTools]
-    A2 --> A3[MessageChatMemoryAdvisor\\nRedis Session History]
-    A3 --> A4[RagAdvisor\\nConditional RAG mount]
-    A4 --> A5[ToolFilterAdvisor\\nPermitted tool binding]
-    A5 --> A6[SafeToolCallAdvisor\\nSig trace / Loop protection]
-    A6 --> L[LLM\\nChatClient]
-    L -->|Trigger @Async Turn| M[MemoryWriterService]
-    M -->|Session Cache| R[(Redis\\n2h TTL)]
-    M -->|Long-term facts| P[(PostgreSQL\\nuser_memory_facts)]`,
+    C([WebSocket Client]) -->|WebSocket Frame| S["AgentChatService<br><small>(Pre-recognize & Orchestrate)</small>"]
+    S --> A1["IntentRecognition<br>Advisor<br><small>(Pre-intent / Profile summary)</small>"]
+    A1 --> A2["UserContext<br>Advisor<br><small>(Injection levels / permittedTools)</small>"]
+    A2 --> A3["MessageChatMemory<br>Advisor<br><small>(Redis Session History)</small>"]
+    A3 --> A4["RagAdvisor<br><small>(Conditional RAG mount)</small>"]
+    A4 --> A5["ToolFilter<br>Advisor<br><small>(Permitted tool binding)</small>"]
+    A5 --> A6["SafeToolCall<br>Advisor<br><small>(Sig trace / Loop protection)</small>"]
+    A6 --> L["LLM<br>ChatClient"]
+    L -->|Async Turn| M["MemoryWriterService<br><small>(@Async)</small>"]
+    M -->|Session Cache| R[(Redis · 2h TTL)]
+    M -->|Long-term facts| P[(PostgreSQL · user_memory_facts)]`,
     },
     {
       title: "三层记忆系统 / 3-Layer Memory",
