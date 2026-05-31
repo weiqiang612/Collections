@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useLocale } from "../../composables/useLocale";
 import MermaidDiagram from "./MermaidDiagram.vue";
+import { gsap } from "gsap";
 
 const props = defineProps({
   project: {
@@ -14,10 +15,144 @@ const { t } = useLocale();
 const activeTab = ref(0);
 
 const hasDiagrams = (p) => p.diagrams && p.diagrams.length > 0;
+
+const cardContainer = ref(null);
+let ctx;
+
+onMounted(() => {
+  if (!cardContainer.value) return;
+  ctx = gsap.context(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    // Card entrance animation on scroll
+    gsap.from(cardContainer.value, {
+      scrollTrigger: {
+        trigger: cardContainer.value,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      y: 40,
+      duration: 0.8,
+      ease: "power2.out"
+    });
+
+    // Content fade in stagger
+    gsap.from([
+      cardContainer.value.querySelector(".project-kicker"),
+      cardContainer.value.querySelector("h3"),
+      cardContainer.value.querySelector(".project-content p"),
+      cardContainer.value.querySelectorAll(".project-content li"),
+      cardContainer.value.querySelector(".stack-list")
+    ].filter(Boolean), {
+      scrollTrigger: {
+        trigger: cardContainer.value,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      y: 15,
+      stagger: 0.08,
+      duration: 0.6,
+      ease: "power2.out"
+    });
+
+    // Right-side diagram panel animation
+    const rightPanel = cardContainer.value.querySelector(".diagram-panel, .diagram-placeholder");
+    if (rightPanel) {
+      gsap.from(rightPanel, {
+        scrollTrigger: {
+          trigger: cardContainer.value,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+        autoAlpha: 0,
+        scale: 0.96,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.2
+      });
+    }
+  }, cardContainer.value);
+});
+
+onUnmounted(() => {
+  ctx?.revert();
+});
+
+const handleMouseMove = (e) => {
+  const card = cardContainer.value;
+  if (!card) return;
+
+  const rect = card.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+
+  const normalizedX = (x / rect.width) - 0.5;
+  const normalizedY = (y / rect.height) - 0.5;
+
+  const maxTilt = 5;
+
+  const rotateX = -normalizedY * maxTilt;
+  const rotateY = normalizedX * maxTilt;
+
+  gsap.to(card, {
+    rotationX: rotateX,
+    rotationY: rotateY,
+    scale: 1.015,
+    transformPerspective: 1000,
+    ease: "power3.out",
+    duration: 0.3,
+    overwrite: "auto"
+  });
+
+  const shadowGlow = card.querySelector(".diagram-panel, .diagram-placeholder");
+  if (shadowGlow) {
+    gsap.to(shadowGlow, {
+      x: normalizedX * 10,
+      y: normalizedY * 10,
+      duration: 0.3,
+      ease: "power3.out",
+      overwrite: "auto"
+    });
+  }
+};
+
+const handleMouseLeave = () => {
+  const card = cardContainer.value;
+  if (!card) return;
+
+  gsap.to(card, {
+    rotationX: 0,
+    rotationY: 0,
+    scale: 1,
+    transformPerspective: 1000,
+    ease: "power2.out",
+    duration: 0.5,
+    overwrite: "auto"
+  });
+
+  const shadowGlow = card.querySelector(".diagram-panel, .diagram-placeholder");
+  if (shadowGlow) {
+    gsap.to(shadowGlow, {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: "power2.out",
+      overwrite: "auto"
+    });
+  }
+};
 </script>
 
 <template>
-  <article class="project-card">
+  <article
+    class="project-card"
+    ref="cardContainer"
+    @mousemove="handleMouseMove"
+    @mouseleave="handleMouseLeave"
+  >
     <!-- Left: text content -->
     <div class="project-content">
       <p class="project-kicker">{{ project.subtitle }}</p>

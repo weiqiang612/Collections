@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import SectionTitle from "../common/SectionTitle.vue";
 import { useLocale } from "../../composables/useLocale";
 import { getProfile } from "../../services/profileClient";
+import { gsap } from "gsap";
 
 const { t } = useLocale();
 const profile = getProfile();
@@ -15,10 +16,108 @@ const methodologySteps = computed(() => {
 
 const techGroups = computed(() => profile.techStack ?? []);
 const description = computed(() => profile.summary || t.value.about.description);
+
+const aboutContainer = ref(null);
+let ctx;
+
+onMounted(() => {
+  if (!aboutContainer.value) return;
+  ctx = gsap.context(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    // About Section title reveal (scoped)
+    gsap.from(".section-title", {
+      scrollTrigger: {
+        trigger: ".section-title",
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      y: 20,
+      duration: 0.7,
+      ease: "power2.out"
+    });
+
+    // Methodology Panel reveal
+    gsap.from(".methodology-item", {
+      scrollTrigger: {
+        trigger: ".methodology-panel",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      y: 30,
+      stagger: 0.15,
+      duration: 0.8,
+      ease: "power2.out"
+    });
+
+    // Tech Panel reveal
+    gsap.from(".tech-group", {
+      scrollTrigger: {
+        trigger: ".tech-panel",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      x: 30,
+      stagger: 0.12,
+      duration: 0.7,
+      ease: "power2.out"
+    });
+
+    // Animate tech-chips inside tech groups
+    gsap.from(".tech-chip", {
+      scrollTrigger: {
+        trigger: ".tech-panel",
+        start: "top 80%",
+        toggleActions: "play none none none",
+      },
+      autoAlpha: 0,
+      scale: 0.8,
+      stagger: 0.03,
+      duration: 0.4,
+      ease: "back.out(1.2)"
+    });
+  }, aboutContainer.value);
+});
+
+onUnmounted(() => {
+  ctx?.revert();
+});
+
+const handleChipMouseMove = (e) => {
+  const chip = e.currentTarget;
+  const rect = chip.getBoundingClientRect();
+  const x = e.clientX - rect.left - rect.width / 2;
+  const y = e.clientY - rect.top - rect.height / 2;
+
+  gsap.to(chip, {
+    x: x * 0.35,
+    y: y * 0.35,
+    scale: 1.05,
+    duration: 0.2,
+    ease: "power2.out",
+    overwrite: "auto"
+  });
+};
+
+const handleChipMouseLeave = (e) => {
+  const chip = e.currentTarget;
+  gsap.to(chip, {
+    x: 0,
+    y: 0,
+    scale: 1,
+    duration: 0.3,
+    ease: "power3.out",
+    overwrite: "auto"
+  });
+};
 </script>
 
 <template>
-  <section id="about" class="section-band">
+  <section id="about" ref="aboutContainer" class="section-band">
     <SectionTitle
       :eyebrow="t.about.eyebrow"
       :title="t.about.title"
@@ -46,7 +145,13 @@ const description = computed(() => profile.summary || t.value.about.description)
               <small>{{ group.items.length }} items</small>
             </div>
             <div class="tech-chip-list">
-              <span v-for="item in group.items" :key="item" class="tech-chip">{{ item }}</span>
+              <span
+                v-for="item in group.items"
+                :key="item"
+                class="tech-chip"
+                @mousemove="handleChipMouseMove"
+                @mouseleave="handleChipMouseLeave"
+              >{{ item }}</span>
             </div>
           </div>
         </div>

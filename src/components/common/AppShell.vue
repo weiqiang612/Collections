@@ -1,11 +1,13 @@
 <script setup>
 import { useLocale } from "../../composables/useLocale";
+import GeekCursor from "./GeekCursor.vue";
 
 const { t, currentLabel, nextLabel, toggleLocale } = useLocale();
 </script>
 
 <template>
   <div class="app-shell">
+    <GeekCursor />
     <header class="site-header">
       <a class="brand-mark" href="#hero" :aria-label="t.shell.brandAria">
         <span class="brand-dot"></span>

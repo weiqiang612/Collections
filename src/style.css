@@ -416,9 +416,50 @@ h3 {
 }
 
 .control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 10px;
   height: 10px;
   border-radius: 999px;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.terminal-controls:hover .control {
+  transform: scale(1.18);
+}
+
+.control::after {
+  content: "";
+  font-size: 8px;
+  font-weight: bold;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.control-red::after {
+  content: "×";
+}
+
+.control-orange::after {
+  content: "–";
+  transform: translate(-50%, -60%);
+}
+
+.control-green::after {
+  content: "+";
+  font-size: 7px;
+}
+
+.terminal-controls:hover .control::after {
+  opacity: 1;
 }
 
 .control-red {
@@ -1160,4 +1201,35 @@ h3 {
   .launcher-label {
     display: none;
   }
+}
+
+/* Custom Cursor styling support */
+body.custom-cursor-active,
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Restore native cursors when in fullscreen diagram mode */
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen,
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen * {
+  cursor: default !important;
+}
+
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen .mermaid-container {
+  cursor: grab !important;
+}
+
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen .mermaid-container.is-dragging {
+  cursor: grabbing !important;
+}
+
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen button,
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen a,
+body.custom-cursor-active .mermaid-wrapper.is-fullscreen .diagram-tab {
+  cursor: pointer !important;
+}
+
+/* Hide custom cursor wrapper completely when a fullscreen diagram is open */
+body:has(.mermaid-wrapper.is-fullscreen) .geek-cursor-wrapper {
+  display: none !important;
 }

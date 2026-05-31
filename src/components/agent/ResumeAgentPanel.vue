@@ -1,9 +1,10 @@
 <script setup>
-import { nextTick, ref, watch } from "vue";
+import { nextTick, ref, watch, onMounted, onUnmounted } from "vue";
 import ChatMessage from "./ChatMessage.vue";
 import { useChatMock } from "../../composables/useChatMock";
 import { useLocale } from "../../composables/useLocale";
 import { isApiConfigured } from "../../services/chatClient";
+import { gsap } from "gsap";
 
 const emit = defineEmits(["close"]);
 
@@ -118,10 +119,47 @@ async function submitMessage() {
   activeMessageId.value = "";
   await scrollToBottom();
 }
+
+const panelRef = ref(null);
+let ctx;
+
+onMounted(() => {
+  if (!panelRef.value) return;
+  ctx = gsap.context(() => {
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    gsap.fromTo(panelRef.value, 
+      { xPercent: 100, autoAlpha: 0 }, 
+      { xPercent: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }
+    );
+  }, panelRef.value);
+});
+
+onUnmounted(() => {
+  ctx?.revert();
+});
+
+const handleClose = () => {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReducedMotion) {
+    emit("close");
+    return;
+  }
+  gsap.to(panelRef.value, {
+    xPercent: 100,
+    autoAlpha: 0,
+    duration: 0.4,
+    ease: "power3.in",
+    onComplete: () => {
+      emit("close");
+    }
+  });
+};
 </script>
 
 <template>
-  <aside id="resume-agent" class="agent-panel" :aria-label="t.agent.panelAria">
+  <aside id="resume-agent" ref="panelRef" class="agent-panel" :aria-label="t.agent.panelAria">
     <header class="agent-header">
       <div>
         <p>{{ t.agent.title }}</p>
@@ -130,7 +168,7 @@ async function submitMessage() {
           {{ isOnline ? (locale === 'zh-CN' ? '在线模式 • DeepSeek 驱动' : 'Online • DeepSeek Flash') : t.agent.mode }}
         </span>
       </div>
-      <button type="button" :aria-label="t.agent.closeAria" @click="emit('close')">×</button>
+      <button type="button" :aria-label="t.agent.closeAria" @click="handleClose">×</button>
     </header>
 
     <div ref="scrollArea" class="messages">

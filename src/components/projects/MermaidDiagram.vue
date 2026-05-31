@@ -172,61 +172,63 @@ watch(() => props.diagramId, render);
 </script>
 
 <template>
-  <div class="mermaid-wrapper" :class="{ 'is-fullscreen': isFullscreen }">
-    <!-- Floating Terminal-style Toolbar -->
-    <div v-if="!loading && !error" class="diagram-toolbar">
-      <button @click="zoomIn" class="toolbar-btn" :title="t.projectCard.zoomIn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-      <button @click="zoomOut" class="toolbar-btn" :title="t.projectCard.zoomOut">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-      </button>
-      <button @click="resetZoom" class="toolbar-btn" :title="t.projectCard.reset">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
-        </svg>
-      </button>
-      <button @click="toggleFullscreen" class="toolbar-btn" :title="isFullscreen ? t.projectCard.exitFullscreen : t.projectCard.fullscreen">
-        <svg v-if="isFullscreen" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/>
-        </svg>
-        <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-        </svg>
-      </button>
-    </div>
+  <Teleport to="body" :disabled="!isFullscreen">
+    <div class="mermaid-wrapper" :class="{ 'is-fullscreen': isFullscreen }">
+      <!-- Floating Terminal-style Toolbar -->
+      <div v-if="!loading && !error" class="diagram-toolbar">
+        <button @click="zoomIn" class="toolbar-btn" :title="t.projectCard.zoomIn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <button @click="zoomOut" class="toolbar-btn" :title="t.projectCard.zoomOut">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <button @click="resetZoom" class="toolbar-btn" :title="t.projectCard.reset">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+        </button>
+        <button @click="toggleFullscreen" class="toolbar-btn" :title="isFullscreen ? t.projectCard.exitFullscreen : t.projectCard.fullscreen">
+          <svg v-if="isFullscreen" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/>
+          </svg>
+          <svg v-else width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+          </svg>
+        </button>
+      </div>
 
-    <!-- Loading state -->
-    <div v-if="loading" class="mermaid-loading">
-      <span class="mermaid-dots">rendering</span>
-      <span class="streaming-cursor" aria-hidden="true"></span>
-    </div>
+      <!-- Loading state -->
+      <div v-if="loading" class="mermaid-loading">
+        <span class="mermaid-dots">rendering</span>
+        <span class="streaming-cursor" aria-hidden="true"></span>
+      </div>
 
-    <!-- Error state -->
-    <div v-else-if="error" class="mermaid-error">
-      <span>⚠ {{ error }}</span>
-    </div>
+      <!-- Error state -->
+      <div v-else-if="error" class="mermaid-error">
+        <span>⚠ {{ error }}</span>
+      </div>
 
-    <!-- Interactive diagram canvas -->
-    <div
-      ref="containerRef"
-      class="mermaid-container"
-      :class="{ hidden: loading, 'is-dragging': isDragging }"
-      @pointerdown="handlePointerDown"
-      @pointermove="handlePointerMove"
-      @pointerup="handlePointerUp"
-      @pointercancel="handlePointerUp"
-      @wheel="handleWheel"
-    ></div>
+      <!-- Interactive diagram canvas -->
+      <div
+        ref="containerRef"
+        class="mermaid-container"
+        :class="{ hidden: loading, 'is-dragging': isDragging }"
+        @pointerdown="handlePointerDown"
+        @pointermove="handlePointerMove"
+        @pointerup="handlePointerUp"
+        @pointercancel="handlePointerUp"
+        @wheel="handleWheel"
+      ></div>
 
-    <!-- Localized instruction/operation tip -->
-    <div v-if="!loading && !error" class="diagram-tip" :class="{ 'fullscreen-tip': isFullscreen }">
-      <span>{{ isFullscreen ? t.projectCard.fullscreenTip : t.projectCard.tip }}</span>
+      <!-- Localized instruction/operation tip -->
+      <div v-if="!loading && !error" class="diagram-tip" :class="{ 'fullscreen-tip': isFullscreen }">
+        <span>{{ isFullscreen ? t.projectCard.fullscreenTip : t.projectCard.tip }}</span>
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
