@@ -1,12 +1,9 @@
 # Dependencies
 node_modules/
-web/node_modules/
 
 # Build output
 dist/
 dist-ssr/
-web/dist/
-web/dist-ssr/
 
 # Logs
 logs/
@@ -23,6 +20,7 @@ lerna-debug.log*
 !.env.example
 *.local
 .claude/settings.local.json
+.vercel/
 
 # Private documents and generated exports
 *.pdf

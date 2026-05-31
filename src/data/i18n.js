@@ -14,19 +14,19 @@ const diagrams = {
     {
       title: "Advisor Chain 架构 / Architecture",
       code: `flowchart TD
-    C([WebSocket Client]) --> F[ChatController]
-    F --> A1[Advisor 1\\nIntent Classifier\\n13 intent types]
-    A1 --> A2[Advisor 2\\nContext Injector\\nUser profile injection]
-    A2 --> A3[Advisor 3\\nSession Memory\\nRedis · 2 h TTL]
-    A3 --> A4[Advisor 4\\nFAQ RAG Retriever\\nPostgreSQL VectorStore]
-    A4 --> A5[Advisor 5\\nTool Filter\\nDynamic whitelisting]
-    A5 --> A6[Advisor 6\\nLLM API Call]
-    A6 --> T1[Local @Tool ×17\\nOrder / Menu / Cart / Address]
-    A6 --> T2[MCP SSE Servers\\nMaps · Payment · Notification]
-    T1 --> SS[sky-server\\nOrder State Machine · MySQL]
-    A3 <-.->|read / write| R[(Redis\\nSession Cache)]
-    A4 <-.->|vector search| V[(PostgreSQL\\nVectorStore)]
-    SS <-.-> DB[(MySQL)]`,
+    C([WebSocket Client]) -->|Text Frame| H[AgentChatWebSocketHandler]
+    H -->|Intent Pre-recognize| O[TaskOrchestratorService]
+    O -->|Assemble & Drive| S[AgentChatService]
+    S --> A1[IntentRecognitionAdvisor\\nPre-intent / Profile summary]
+    A1 --> A2[UserContextAdvisor\\nInjection levels / permittedTools]
+    A2 --> A3[MessageChatMemoryAdvisor\\nRedis Session History]
+    A3 --> A4[RagAdvisor\\nConditional RAG mount]
+    A4 --> A5[ToolFilterAdvisor\\nPermitted tool binding]
+    A5 --> A6[SafeToolCallAdvisor\\nSig trace / Loop protection]
+    A6 --> L[LLM\\nChatClient]
+    L -->|Trigger @Async Turn| M[MemoryWriterService]
+    M -->|Session Cache| R[(Redis\\n2h TTL)]
+    M -->|Long-term facts| P[(PostgreSQL\\nuser_memory_facts)]`,
     },
     {
       title: "三层记忆系统 / 3-Layer Memory",
@@ -158,8 +158,8 @@ export const messages = {
         "我构建边界清晰、可靠性可衡量的后端系统，并用可检查的方式解释复杂架构。",
       location: "中国",
       contacts: [
-        { label: "GitHub", href: "https://github.com/", value: "github.com/weiqiang" },
-        { label: "Email", href: "mailto:ethan@example.com", value: "ethan@example.com" },
+        { label: "GitHub", href: "https://github.com/weiqiang612", value: "github.com/weiqiang612" },
+        { label: "Email", href: "mailto:weiqiang0322@gmail.com", value: "weiqiang0322@gmail.com" },
       ],
       methodology: [
         {
@@ -226,12 +226,14 @@ export const messages = {
         name: "苍穹外卖",
         subtitle: "基于 Spring AI 顾问链与三层记忆模型的外卖智能 Agent",
         summary:
-          "具有双服务架构的餐饮外卖系统。引入 Spring AI 重构为智能客服 Agent，支持多意图识别、复杂业务工具调用和三层记忆系统。",
+          "具有双服务架构的餐饮外卖系统。引入 Spring AI 重构为智能客服 Agent，支持多意图识别、多步任务编排、Hybrid RAG 检索和混合长期记忆系统。",
         highlights: [
-          "采用双服务架构：sky-server 承载核心业务与订单状态机，sky-ai 基于 Spring AI 1.1.5 实现智能客服 Agent 并进行微服务级解耦。",
-          "设计 6 层顾问链（Advisor Chain），模块化实现意图识别（13 类意图）、上下文注入、会话与长期记忆管理、FAQ RAG 检索以及动态工具过滤。",
-          "实现三层记忆系统：Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL JPA 长期记忆，利用异步服务（@Async）通过 LLM 自动提取并合并事实。",
-          "实现 17 个本地 @Tool 业务接口与 Model Context Protocol (MCP) 服务的 SSE 动态注册，支持 WebSocket 流式传输及人工确认安全机制。",
+          "**双服务微服务架构**：核心业务与订单状态机由 `sky-server` 承载，智能客服 Agent 独立于 `sky-ai` 服务（基于 Spring AI），实现微服务级解耦与 WebSocket 流式传输。",
+          "**工业级级联 Advisor 链**：设计 6 层级联 Advisor chain（意图识别、画像注入、历史消息加载、条件式 RAG 注入、可访问工具硬性过滤及尾部防死循环的 `SafeToolCallAdvisor`），实现请求的管道流式拦截与安全熔断（最多4轮或重复签名直接截断）。",
+          "**RuleBased 复合任务编排**：设计 `RuleBasedTaskPlanner` 自动划分 `TaskStep`；特别针对模糊提问实现了“检索驱动型多步取消计划”，借助动态插槽占位符 `target_order_slot` 优雅实现前置查询与后置取消的高效级联绑定。",
+          "**高风险操作人工卡点机制**：针对取消、退款等涉及资金的高风险意图，服务端主动挂起当前回合，向前端推送 `confirmation` 人工确认控制帧；用户在 UI 交互确认后回发确认帧，服务端提取 Session 暂存数据，以高置信度零冗余重入恢复执行。",
+          "**混合式长期记忆持久化**：异步服务（`@Async`）结合 LLM 自适应提取画像事实，支持纠错覆盖与物理删除；辅以强一致性本地工具响应解析器（精准捕获订单取消、退款等工具的成功状态以物理追加事实记录），确保关键事实 100% 准确。",
+          "**Hybrid RAG 混合检索与短路优化**：离线支持 QA 问答对与 Markdown 按标题层级切分，在线阶段基于 Pgvector 进行向量与关键词全文检索双通道并行，经 RRF 融合与 Reranker 精排输出；Advisor 链最前置引入 JVM 内存语义缓存 FAQ，余弦匹配命中时短路返回绕过推理，将时延降至毫秒级。",
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
@@ -241,12 +243,12 @@ export const messages = {
         name: "黑马点评",
         subtitle: "基于 Redis 的高并发本地生活服务平台",
         summary:
-          "深度实践 Redis 在高并发场景下的多种应用模式。涵盖逻辑过期 + 互斥锁防缓存击穿、Lua 脚本原子秒杀防超卖、Redis Stream 异步可靠下单、Feed 流 ZSet 滚动分页、GEO 附近商铺查询以及 BitMap 签到统计。",
+          "针对社交电商与本地生活场景进行高并发抗压实战，深度实践并封装 Redis 的多种应用模式，涵盖高并发秒杀优化、通用缓存策略与双通道身份校验机制。",
         highlights: [
-          "封装通用 CacheClient：「缓存空值防穿透」与「逻辑过期 + 互斥锁防击穿」两套策略，通过泛型 + Function<ID, T> 回调解耦 DB 访问；逻辑过期方案在异步重建期间返回旧数据，实测高并发吞吐量提升约 43%。",
-          "秒杀原子化：seckill.lua 在单次 EVALSHA 内完成库存 DECR 与一人一单 SISMEMBER 校验，成功后写入 Redis Stream；主线程立即返回 orderId，异步 VoucherOrderHandler 消费 Stream 落库，Pending List + XACK 保障消息不丢。",
-          "双拦截器认证链：RefreshTokenInterceptor（order=0）拦截所有请求并对持有有效 Token 的用户自动续期 30 min；LoginInterceptor（order=1）仅校验 UserHolder，两者职责清晰、互不侵入。",
-          "多场景 Redis 实战：点赞榜 ZSet 按时间戳排序 → 关注共同好友 Set 求交集 → Feed 流游标滚动分页 → 附近商铺 GEO GEOSEARCH → 用户签到 BitMap 连续天数位运算统计 → 全局唯一 ID 时间戳拼接高位 + Redis INCR 低位。",
+          "**防穿透与击穿 CacheClient 封装**：通用缓存工具类封装「缓存空值防穿透」与「逻辑过期 + 互斥锁双检防击穿」两套策略，通过泛型 + Function 回调函数解耦数据库访问；逻辑过期方案在异步重建期间返回旧数据，实测高并发吞吐量提升约 43%。",
+          "**原子化秒杀预扣减**：秒杀场景下利用 Redis 执行 Lua 脚本完成库存预扣减与用户一人一单原子化校验，通过 Redisson 分布式锁进行并发安全兜底，彻底杜绝集群环境下的超卖问题。",
+          "**Redis Stream 异步下单削峰**：主线程预扣减成功后直接返回 orderId，将订单消息写入 `stream.orders`；异步单线程 `VoucherOrderHandler` 消费队列数据进行落库，在抛出异常时自动进入 Pending List 重试以确保数据最终一致性并防止消息丢失。",
+          "**双拦截器 Token 认证链**：配置 `RefreshTokenInterceptor`（优先级0）拦截所有路径实现持有 Token 用户的自动 30 分钟保活续期；`LoginInterceptor`（优先级1）仅校验 UserHolder 登录上下文，职责清晰解耦，保障接口安全。",
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
@@ -284,9 +286,9 @@ export const messages = {
         productDirection: "AGENTS.md 产品方向",
       },
       mockReplies: [
-        "我可以为你介绍我的后端项目架构。对于「苍穹外卖」，我通过 Spring AI 顾问链重构了智能客服，并集成了三层记忆系统、本地 @Tool 与 MCP 工具，欢迎针对 Advisor 链路和事实提取细节提问！",
-        "「黑马点评」核心在于多场景 Redis 高并发实战：逻辑过期 + 互斥锁防缓存击穿，Lua 脚本原子秒杀防超卖，Redis Stream 异步可靠下单，以及 ZSet/Set/GEO/BitMap 等数据结构的业务场景实践。",
-        "「苍穹外卖」的 AI 模块采用三层记忆：Working 上下文、Redis 会话记忆（TTL 2小时）和 PostgreSQL 长期事实表，每轮对话结束后由 @Async 异步服务结合 LLM 提取并合并用户偏好与操作事实。",
+        "我可以为你介绍我的后端与 AI 架构。对于「苍穹外卖」，我基于 Spring AI 级联 Advisor 链（防循环拦截）重构了智能 Agent，集成了 RuleBased 多步任务编排、Pgvector 混合 RAG 与混合长期记忆系统，欢迎针对 Advisor 链路或 Reranker 精排提问！",
+        "「黑马点评」项目核心在于 Redis 高并发实战：封装通用 CacheClient 锁双检逻辑过期防击穿，设计 Lua 脚本原子预扣减结合分布式锁防超卖，并通过 Redis Stream 与 Pending List 队列处理实现可靠异步下单。",
+        "「苍穹外卖」的 AI 模块采用三层记忆：基于 Map 的 Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL 长期事实表。除 @Async 驱动 LLM 自适应提取事实外，还结合本地成功工具响应解析器实现强一致性关键事实持久化。",
       ],
     },
     notFound: {
@@ -316,8 +318,8 @@ export const messages = {
         "I build backend systems with clear boundaries, measurable reliability, and explanations that make complex architecture easier to inspect.",
       location: "China",
       contacts: [
-        { label: "GitHub", href: "https://github.com/", value: "github.com/weiqiang" },
-        { label: "Email", href: "mailto:ethan@example.com", value: "ethan@example.com" },
+        { label: "GitHub", href: "https://github.com/weiqiang612", value: "github.com/weiqiang612" },
+        { label: "Email", href: "mailto:weiqiang0322@gmail.com", value: "weiqiang0322@gmail.com" },
       ],
       methodology: [
         {
@@ -384,12 +386,14 @@ export const messages = {
         name: "Sky Takeout",
         subtitle: "Intelligent Delivery Agent via Spring AI Advisor Chain & 3-Layer Memory",
         summary:
-          "A dual-service food delivery system refactored with Spring AI to provide an intelligent customer agent supporting multi-intent routing, automated tool calling, and long-term memory extraction.",
+          "A dual-service food delivery system refactored with Spring AI to provide an intelligent customer agent supporting multi-intent routing, multi-step task orchestration, Hybrid RAG search, and mixed long-term memory.",
         highlights: [
-          "Decoupled architecture: sky-server handles core delivery workflows and order state machine, while sky-ai (Spring AI 1.1.5) operates as an independent agent service.",
-          "Engineered a modular 6-layer Advisor Chain for pre-intent classification (13 intent types), context injection, Redis session memory, FAQ RAG retrieval, and dynamic tool filtering.",
-          "Designed a 3-layer memory system (Working, Redis Session with 2h TTL, PostgreSQL long-term facts) with an async (@Async) LLM-powered background fact extraction service.",
-          "Registered 17 local @Tool business callbacks and SSE MCP servers (maps, payments, notifications) over WebSocket with human-in-the-loop confirmation.",
+          "**Dual-service Decoupled Architecture**: Core business workflows and order state machines are managed by `sky-server`, while the customer service agent operates independently within the Spring AI-powered `sky-ai` microservice, enabling streaming communications over WebSocket.",
+          "**Industrial-grade Cascading Advisor Chain**: Engineered a 6-layer Advisor Chain (pre-intent recognition, profile summary injection, chat history, conditional RAG, tool filtering, and the safety-guarding `SafeToolCallAdvisor`) to intercept requests and prevent infinite loops with 4-round signature checks.",
+          "**Rule-based Multi-step Task Orchestration**: Implemented `RuleBasedTaskPlanner` to split complex queries into ordered `TaskStep`s; specifically designed lookup-driven cancellation plans using dynamic `target_order_slot` placeholding to elegantly bind query results with operations.",
+          "**Human-in-the-Loop High-risk Guardrails**: For sensitive actions like refund or cancellation, the server suspends LLM execution and pushes a `confirmation` frame to the client; upon user approval, execution resumes seamlessly using cached session context with zero redundant prompts.",
+          "**Hybrid Long-term Memory Persistence**: Combines `@Async` background LLM factual analysis (supporting correction updates and active forgetting) with a robust local tool outcome parser (automatically capturing address updates and cancellations from tool responses) to guarantee 100% data consistency.",
+          "**Hybrid RAG & Semantic Cache Optimization**: Supports offline QA-pair and hierarchy-based Markdown splitting, online parallel search (Pgvector + BM25) blended via RRF and Reranker; deploys a JVM semantic FAQ cache at the Advisor entry to short-circuit RAG and LLM calls, reducing latency to milliseconds."
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
@@ -399,12 +403,12 @@ export const messages = {
         name: "HM Dianping",
         subtitle: "High-Concurrency Local Life Service Platform powered by Redis",
         summary:
-          "A deep-dive into Redis patterns for high-concurrency systems: logical expiry + mutex lock to prevent cache breakdown, Lua-script atomic seckill to prevent oversell, Redis Stream for reliable async order processing, ZSet-based feed scroll pagination, GEO for nearby shops, and BitMap for sign-in streaks.",
+          "High-concurrency performance tuning in social commerce and local life scenarios. Deeply engineered various Redis patterns, covering seckill optimizations, generic cache management, and dual-channel authentication.",
         highlights: [
-          "Generic CacheClient utility encapsulates two strategies — null-value caching for penetration, and logical expiry + setnx mutex lock for breakdown — via generics and Function<ID,T> callbacks decoupling the DB layer. The logical-expiry path returns stale data immediately and rebuilds asynchronously.",
-          "Seckill atomicity: a single EVALSHA call executes stock DECR and one-order-per-user SISMEMBER within one Lua script, then writes to Redis Stream. Main thread returns orderId instantly; VoucherOrderHandler single-thread consumer processes the DB write with Pending List + XACK for message reliability.",
-          "Dual-interceptor auth: RefreshTokenInterceptor (order=0) intercepts every request and auto-renews TTL on valid tokens; LoginInterceptor (order=1) only checks UserHolder — clean separation of concerns, no coupling.",
-          "Five Redis data structures in production patterns: ZSet for like-leaderboard & feed scroll cursor; Set for mutual-follows intersection; GEO + GEOSEARCH for nearby shop ranking; BitMap + bit-shift for consecutive sign-in counting; Redis INCR high-bits + timestamp low-bits for globally unique IDs.",
+          "**Generic CacheClient Utility**: Encapsulated 'null-value caching for penetration' and 'logical expiry + mutex lock for breakdown' with generics and `Function` callbacks decoupling database access. Stale data is returned instantly during async rebuilding, increasing concurrent throughput by 43%.",
+          "**Atomic Seckill Stock Deduction**: Accomplished atomic stock subtraction and one-order-per-user constraints in a single Lua script, backed up by `Redisson` distributed locks to prevent overselling and guarantee data safety in clustered environments.",
+          "**Async Ordering via Redis Stream**: Returned `orderId` immediately to the main thread upon successful Lua check and appended order tasks to `stream.orders`. Single-threaded `VoucherOrderHandler` asynchronously processes MySQL writes, utilizing the Pending List for retry upon exceptions to ensure eventual consistency.",
+          "**Dual-Interceptor Authentication Chain**: Configured `RefreshTokenInterceptor` (order=0) to intercept all paths and auto-renew the 30-minute Redis session token TTL, and `LoginInterceptor` (order=1) to secure protected endpoints, achieving clear separation of concerns."
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
@@ -442,9 +446,9 @@ export const messages = {
         productDirection: "AGENTS.md product direction",
       },
       mockReplies: [
-        "I can walk you through my backend architectures. For 'Sky Takeout', I refactored it into an intelligent customer service agent using Spring AI Advisor Chain, featuring a 3-layer memory system, local @Tool gateways, and MCP servers. Ask me anything about the advisor chain or memory extraction details!",
-        "For 'HM Dianping', the core highlights are multi-pattern Redis usage: logical expiry + mutex lock to prevent cache breakdown, Lua script for atomic seckill stock deduction, Redis Stream + XACK for reliable async ordering, and five different Redis data structures applied to real business scenarios.",
-        "In the 'Sky Takeout' AI system, memory uses 3 layers: Working context, Redis Session (2h TTL), and PostgreSQL JPA long-term memory. After each turn, an @Async service calls the LLM to extract and merge user preferences and operation facts into the long-term store.",
+        "I can walk you through my backend and AI architectures. For 'Sky Takeout', I refactored the intelligent Agent using a cascading Spring AI Advisor Chain with safety guards, integrating RuleBased multi-step task planning, Pgvector hybrid RAG, and a mixed long-term memory system. Feel free to ask about the Advisor pipeline or Reranker sorting!",
+        "For 'HM Dianping', the core highlights lie in high-concurrency Redis patterns: encapsulating a generic CacheClient with logical-expiry double-check locks, atomic seckill Lua scripts with Redisson lock fallback, and async ordering via Redis Stream with Pending List error handling.",
+        "In 'Sky Takeout', memory consists of 3 layers: Java map Working context, Redis Session (2h TTL), and PostgreSQL long-term facts. Factual updates combine @Async background LLM extraction with a physical local tool outcome parser (e.g., address updates and cancellations) to guarantee consistency.",
       ],
     },
     notFound: {

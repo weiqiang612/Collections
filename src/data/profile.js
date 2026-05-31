@@ -24,19 +24,19 @@ export const profile = {
   techStack: [
     { category: "Backend", items: ["Java", "Spring Boot 3", "MyBatis", "MySQL"] },
     { category: "Concurrency", items: ["Redis", "Lua", "State Machine", "Cache Consistency"] },
-    { category: "AI Engineering", items: ["Spring AI", "RAG", "Prompt Orchestration", "SSE Streaming"] },
-    { category: "Frontend", items: ["Vue 3", "Vite", "Terminal UI", "Responsive Design"] },
+    { category: "AI Engineering", items: ["Spring AI", "Hybrid RAG", "Pgvector", "Prompt Orchestration"] },
+    { category: "Frontend", items: ["Vue 3", "Vite", "Terminal UI", "Vibe Coding"] },
   ],
   contacts: [
     {
       label: "GitHub",
-      value: "github.com/weiqiang",
-      href: "https://github.com/",
+      value: "github.com/weiqiang612",
+      href: "https://github.com/weiqiang612",
     },
     {
       label: "Email",
-      value: "ethan@example.com",
-      href: "mailto:ethan@example.com",
+      value: "weiqiang0322@gmail.com",
+      href: "mailto:weiqiang0322@gmail.com",
     },
   ],
 };

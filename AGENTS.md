@@ -4,12 +4,12 @@ Brand: `weiqiang / 围墙` · Domain: `weiqiang.me` (Vercel, Cloudflare DNS gray
 
 ## Stack
 
-- **Frontend only** — Vue 3 + Vite 8 + Vue Router 5 SPA (`web/`)
-- **No backend** — Spring Boot (`api/`) was removed. All data is static JS files.
+- **Frontend only** — Vue 3 + Vite 8 + Vue Router 5 SPA (Root directory)
+- **No backend** — Spring Boot (`api/` Spring Boot backend) was removed. All data is static JS files.
 
 ## Commands
 
-All in `web/`:
+All in root:
 
 | Command | Action |
 |---------|--------|
@@ -22,27 +22,26 @@ No lint, typecheck, or test commands configured.
 ## Architecture
 
 ```
-web/
-  api/chat.js          — Vercel Serverless Function stub for Agent chat proxy
-  vercel.json          — SPA fallback + /api/* routing
-  src/
-    data/
-      i18n.js           — Bilingual content (zh-CN + en-US): profile, projects, agent mock replies
-      profile.js        — Sync profile data (used by profileClient)
-    services/
-      profileClient.js  — Sync export from profile.js
-      chatClient.js     — Mock fallback by default; reads VITE_API_BASE_URL for real POST /api/chat
-    composables/
-      useChatMock.js    — Wraps chatClient, exposes isStreaming + sendMessage
-      useLocale.js      — Locale from URL / localStorage
-      useTypewriter.js  — Character-by-character reveal
-    components/
-      hero/             — HeroSection (terminal typewriter intro)
-      about/            — AboutSection (methodology + tech stack)
-      projects/         — ProjectsSection reads from i18n t.projects
-      agent/            — ResumeAgentLauncher, ResumeAgentPanel, ChatMessage, StreamingCursor
-      common/           — AppShell, SectionTitle, TerminalWindow
-    router/index.js     — / → HomeView, catch-all → NotFoundView
+api/chat.js          — Vercel Serverless Function stub for Agent chat proxy
+vercel.json          — SPA fallback + /api/* routing
+src/
+  data/
+    i18n.js           — Bilingual content (zh-CN + en-US): profile, projects, agent mock replies
+    profile.js        — Sync profile data (used by profileClient)
+  services/
+    profileClient.js  — Sync export from profile.js
+    chatClient.js     — Mock fallback by default; reads VITE_API_BASE_URL for real POST /api/chat
+  composables/
+    useChatMock.js    — Wraps chatClient, exposes isStreaming + sendMessage
+    useLocale.js      — Locale from URL / localStorage
+    useTypewriter.js  — Character-by-character reveal
+  components/
+    hero/             — HeroSection (terminal typewriter intro)
+    about/            — AboutSection (methodology + tech stack)
+    projects/         — ProjectsSection reads from i18n t.projects
+    agent/            — ResumeAgentLauncher, ResumeAgentPanel, ChatMessage, StreamingCursor
+    common/           — AppShell, SectionTitle, TerminalWindow
+  router/index.js     — / → HomeView, catch-all → NotFoundView
 ```
 
 ## Data flow
@@ -57,11 +56,11 @@ web/
 - `VITE_API_BASE_URL` env var controls mock vs real API
 - No env var → mock (character-by-character streaming from i18n.js)
 - With env var → `POST ${apiBaseUrl}/api/chat` (JSON, non-streaming)
-- Vercel function `web/api/chat.js` is a stub awaiting a real Agent service URL
+- Vercel function `api/chat.js` is a stub awaiting a real Agent service URL
 
 ## Design system
 
-Minimalist Dark + Geek Terminal. No Tailwind — pure CSS in `web/src/style.css`.
+Minimalist Dark + Geek Terminal. No Tailwind — pure CSS in `src/style.css`.
 
 | Role | Color | Usage |
 |------|-------|-------|
@@ -79,7 +78,7 @@ Minimalist Dark + Geek Terminal. No Tailwind — pure CSS in `web/src/style.css`
 - Production: `weiqiang.me` (CNAME → `741cce93e42bedd7.vercel-dns-017.com`, gray cloud in Cloudflare)
 - `note.weiqiang.me` is the Ethan's Notes project (separate VitePress site, different Vercel project)
 - Cloudflare API token in opencode config has DNS:Edit scope
-- Vercel project `rootDirectory` must be set to `web/` (GitHub integration needs this to find vite)
+- Vercel project `rootDirectory` must be set to root or empty
 - `vercel.json` rewrites: `/api/*` → Vercel functions, `/*` → `index.html` (SPA)
 
 ## Gotchas
