@@ -680,8 +680,9 @@ h3 {
     rgba(0, 0, 0, 0.32);
   background-size: 22px 22px;
   overflow: hidden;
-  min-height: 300px;
-  max-height: 480px; /* 限制卡片态最大高度，防止垂直方向拉伸过长，支持拖拽和滚动缩放 */
+  min-height: 350px;
+  max-height: 600px; /* Limit height to 600px to maintain visual balance with text columns */
+  height: 100%;      /* Auto stretch to match left-side text column height */
 }
 
 .diagram-tabs {
@@ -824,6 +825,12 @@ h3 {
   word-break: normal !important;
   overflow-wrap: normal !important;
   white-space: nowrap !important;
+}
+
+/* Prevent text clipping in foreignObject due to font measurement discrepancies */
+.mermaid-container foreignObject,
+.mermaid-container foreignObject div {
+  overflow: visible !important;
 }
 
 /* Floating diagram toolbar */

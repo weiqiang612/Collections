@@ -15,28 +15,28 @@ const diagrams = {
       title: "Advisor Chain 架构 / Architecture",
       code: `flowchart TD
     C([WebSocket Client]) -->|WebSocket Frame| S["AgentChatService<br><small>(Pre-recognize & Orchestrate)</small>"]
-    S --> A1["IntentRecognition<br>Advisor<br><small>(Pre-intent / Profile summary)</small>"]
-    A1 --> A2["UserContext<br>Advisor<br><small>(Injection levels / permittedTools)</small>"]
-    A2 --> A3["MessageChatMemory<br>Advisor<br><small>(Redis Session History)</small>"]
-    A3 --> A4["RagAdvisor<br><small>(Conditional RAG mount)</small>"]
-    A4 --> A5["ToolFilter<br>Advisor<br><small>(Permitted tool binding)</small>"]
-    A5 --> A6["SafeToolCall<br>Advisor<br><small>(Sig trace / Loop protection)</small>"]
+    S --> A1["IntentRecognition<br>Advisor<br><small>(Intent & Profile)</small>"]
+    A1 --> A2["UserContext<br>Advisor<br><small>(Access & Perms)</small>"]
+    A2 --> A3["MessageChatMemory<br>Advisor<br><small>(Redis History)</small>"]
+    A3 --> A4["RagAdvisor<br><small>(Conditional RAG)</small>"]
+    A4 --> A5["ToolFilter<br>Advisor<br><small>(Tool Binding)</small>"]
+    A5 --> A6["SafeToolCall<br>Advisor<br><small>(Loop Protection)</small>"]
     A6 --> L["LLM<br>ChatClient"]
-    L -->|Async Turn| M["MemoryWriterService<br><small>(@Async)</small>"]
-    M -->|Session Cache| R[(Redis · 2h TTL)]
-    M -->|Long-term facts| P[(PostgreSQL · user_memory_facts)]`,
+    L -->|Async Turn| M["MemoryWriterService<br><small>(Async Turn)</small>"]
+    M -->|Session Cache| R[("Redis<br><small>(2h TTL)</small>")]
+    M -->|Long-term facts| P[("PostgreSQL<br><small>(User Facts)</small>")]`,
     },
     {
       title: "三层记忆系统 / 3-Layer Memory",
       code: `flowchart TD
-    MSG([User Message]) --> WM[Working Memory\\nCurrent-turn context only]
-    WM --> RS[Redis Session Memory\\nRecent N turns · 2h TTL]
-    RS --> LLM[LLM Processing]
-    LLM --> RES([Response to User])
-    LLM --> TURNQ{Turn ends?}
-    TURNQ -->|Yes| AS[Async Service @Async]
-    AS --> EX[LLM fact extraction\\nfrom conversation]
-    EX --> PG[(PostgreSQL JPA\\nLong-term Memory\\nUser prefs and facts)]
+    MSG([User Message]) --> WM["Working Memory<br><small>(Current-turn only)</small>"]
+    WM --> RS["Redis Session Memory<br><small>(2h TTL · N Turns)</small>"]
+    RS --> LLM["LLM Processing"]
+    LLM --> RES(["Response to User"])
+    LLM --> TURNQ{"Turn ends?"}
+    TURNQ -->|Yes| AS["Async Service<br><small>(Async Turn)</small>"]
+    AS --> EX["LLM Fact Extraction<br><small>(from Chat)</small>"]
+    EX --> PG[("PostgreSQL JPA<br><small>(Long-term Memory)</small>")]
     PG -.->|inject into next session| RS`,
     },
   ],
@@ -113,22 +113,22 @@ const diagrams = {
     {
       title: "双拦截器 Token 认证链",
       code: `flowchart TD
-    A([HTTP 请求]) --> B[RefreshTokenInterceptor\\norder=0 · 拦截所有路径]
-    B --> C{Authorization\\n请求头存在?}
-    C -->|无| D[游客身份，放行]
-    C -->|有 token| E["Redis HGETALL\\nlogin:token:{token}"]
-    E --> F{用户数据\\n存在?}
+    A([HTTP 请求]) --> B["RefreshTokenInterceptor<br><small>(order=0 · All Paths)</small>"]
+    B --> C{"Authorization<br>请求头存在?"}
+    C -->|无| D["游客身份，放行"]
+    C -->|有 token| E["Redis HGETALL<br><small>login:token:{token}</small>"]
+    E --> F{"用户数据存在?"}
     F -->|不存在 / 已过期| D
-    F -->|存在| G[BeanUtil.mapToBean\\n写入 UserHolder ThreadLocal]
-    G --> H[EXPIRE 续期 30 min]
-    H --> I[放行]
-    D --> J[LoginInterceptor\\norder=1 · 仅保护路径]
+    F -->|存在| G["BeanUtil.mapToBean<br><small>(Write UserHolder)</small>"]
+    G --> H["EXPIRE<br><small>(Extend 30 min)</small>"]
+    H --> I["放行"]
+    D --> J["LoginInterceptor<br><small>(order=1 · Protected Paths)</small>"]
     I --> J
-    J --> K{UserHolder\\n有用户?}
-    K -->|无，受保护路径| L([401 Unauthorized])
-    K -->|有用户 或 公开路径| M[Controller]
-    M --> N[afterCompletion]
-    N --> O[UserHolder.removeUser\\n清理 ThreadLocal 防内存泄漏]`,
+    J --> K{"UserHolder<br>有用户?"}
+    K -->|无，受保护路径| L(["401 Unauthorized"])
+    K -->|有用户 或 公开路径| M["Controller"]
+    M --> N["afterCompletion"]
+    N --> O["UserHolder.removeUser<br><small>(Clean ThreadLocal)</small>"]`,
     },
   ],
 };

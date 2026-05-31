@@ -26,9 +26,15 @@ const updateTransform = () => {
   if (!containerRef.value) return;
   const svgEl = containerRef.value.querySelector("svg");
   if (svgEl) {
-    svgEl.style.transform = `translate3d(${translateX.value}px, ${translateY.value}px, 0px) scale(${scale.value})`;
-    svgEl.style.transformOrigin = "center center";
-    svgEl.style.transition = isDragging.value ? "none" : "transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)";
+    if (scale.value === 1.0 && translateX.value === 0 && translateY.value === 0) {
+      svgEl.style.transform = "";
+      svgEl.style.transformOrigin = "";
+      svgEl.style.transition = "";
+    } else {
+      svgEl.style.transform = `translate3d(${translateX.value}px, ${translateY.value}px, 0px) scale(${scale.value})`;
+      svgEl.style.transformOrigin = "center center";
+      svgEl.style.transition = isDragging.value ? "none" : "transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)";
+    }
   }
 };
 

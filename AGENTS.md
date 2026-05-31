@@ -1,6 +1,10 @@
 # Ethan's Portfolio
 
-Brand: `weiqiang / 围墙` · Domain: `weiqiang.me` (Vercel, Cloudflare DNS gray-cloud)
+> [!IMPORTANT]
+> **Git 提交与推送安全限制规则（必须无条件遵守）**：
+> - **未经用户明确允许或当面授权，Agent 严禁在后台或以前台方式擅自执行 \`git commit\`、\`git push\` 等任何不可逆的代码版本控制操作。**
+
+Brand: \`weiqiang / 围墙\` · Domain: \`weiqiang.me\` (Vercel, Cloudflare DNS gray-cloud)
 
 ## Stack
 
