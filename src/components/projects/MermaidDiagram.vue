@@ -31,7 +31,7 @@ const updateTransform = () => {
       svgEl.style.transformOrigin = "";
       svgEl.style.transition = "";
     } else {
-      svgEl.style.transform = `translate3d(${translateX.value}px, ${translateY.value}px, 0px) scale(${scale.value})`;
+      svgEl.style.transform = `translate(${translateX.value}px, ${translateY.value}px) scale(${scale.value})`;
       svgEl.style.transformOrigin = "center center";
       svgEl.style.transition = isDragging.value ? "none" : "transform 0.15s cubic-bezier(0.16, 1, 0.3, 1)";
     }

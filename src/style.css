@@ -38,12 +38,14 @@ body {
     #000000;
   background-size: 44px 44px, 44px 44px, auto, auto;
   color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body::before {
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   pointer-events: none;
   content: "";
   background: repeating-linear-gradient(
@@ -389,6 +391,8 @@ h3 {
   border: 1px solid var(--color-border);
   background: rgba(11, 15, 20, 0.86);
   box-shadow: var(--shadow-terminal);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .terminal-window {
@@ -848,6 +852,10 @@ h3 {
 .mermaid-container svg,
 .mermaid-container svg * {
   font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace !important;
+}
+
+.mermaid-container svg text {
+  text-rendering: geometricPrecision;
 }
 
 .mermaid-container svg {

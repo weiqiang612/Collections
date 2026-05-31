@@ -38,10 +38,12 @@ onMounted(async () => {
     // QuickTo operators for fast cursor tracking
     const dotX = gsap.quickTo(dot, "x", { duration: 0.05, ease: "power3" });
     const dotY = gsap.quickTo(dot, "y", { duration: 0.05, ease: "power3" });
-    const ringX = gsap.quickTo(ring, "x", { duration: 0.22, ease: "power3" });
-    const ringY = gsap.quickTo(ring, "y", { duration: 0.22, ease: "power3" });
+    const ringX = gsap.quickTo(ring, "x", { duration: 0.15, ease: "power3" });
+    const ringY = gsap.quickTo(ring, "y", { duration: 0.15, ease: "power3" });
 
     let activeEl = null;
+    let activeCenterX = null;
+    let activeCenterY = null;
 
     const onMouseMove = (e) => {
       pos.x = e.clientX;
@@ -54,25 +56,27 @@ onMounted(async () => {
       if (!activeEl) {
         ringX(pos.x);
         ringY(pos.y);
-      } else {
-        // If hovering, make the ring slightly stick/magnetic towards the target element's center
-        const rect = activeEl.getBoundingClientRect();
-        const elCenterX = rect.left + rect.width / 2;
-        const elCenterY = rect.top + rect.height / 2;
+      } else if (activeCenterX !== null && activeCenterY !== null) {
+        // Calculate viewport-relative center coordinates from cached page-relative coordinates
+        const elCenterX = activeCenterX - window.scrollX;
+        const elCenterY = activeCenterY - window.scrollY;
         // Subtle magnetic pull on the ring: 85% element center, 15% cursor position
-        ringX(elCenterX + (pos.x - elCenterX) * 0.12);
-        ringY(elCenterY + (pos.y - elCenterY) * 0.12);
+        ringX(elCenterX + (pos.x - elCenterX) * 0.15);
+        ringY(elCenterY + (pos.y - elCenterY) * 0.15);
       }
     };
 
     const onMouseOver = (e) => {
       // Find closest interactive element
-      const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab");
+      const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab, .stack-list span");
       if (target) {
         activeEl = target;
         isHovering.value = true;
         
         const rect = target.getBoundingClientRect();
+        // Cache document-relative center coordinates to avoid layout thrashing during mousemove
+        activeCenterX = rect.left + window.scrollX + rect.width / 2;
+        activeCenterY = rect.top + window.scrollY + rect.height / 2;
         
         // Stop standard tracking coordinates, animate size to wrap element
         gsap.to(ring, {
@@ -96,9 +100,11 @@ onMounted(async () => {
     };
 
     const onMouseOut = (e) => {
-      const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab");
+      const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab, .stack-list span");
       if (target && activeEl === target) {
         activeEl = null;
+        activeCenterX = null;
+        activeCenterY = null;
         isHovering.value = false;
 
         // Animate back to standard cursor

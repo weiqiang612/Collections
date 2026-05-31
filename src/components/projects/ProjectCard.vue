@@ -81,77 +81,13 @@ onUnmounted(() => {
   ctx?.revert();
 });
 
-const handleMouseMove = (e) => {
-  const card = cardContainer.value;
-  if (!card) return;
 
-  const rect = card.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-
-  const normalizedX = (x / rect.width) - 0.5;
-  const normalizedY = (y / rect.height) - 0.5;
-
-  const maxTilt = 5;
-
-  const rotateX = -normalizedY * maxTilt;
-  const rotateY = normalizedX * maxTilt;
-
-  gsap.to(card, {
-    rotationX: rotateX,
-    rotationY: rotateY,
-    scale: 1.015,
-    transformPerspective: 1000,
-    ease: "power3.out",
-    duration: 0.3,
-    overwrite: "auto"
-  });
-
-  const shadowGlow = card.querySelector(".diagram-panel, .diagram-placeholder");
-  if (shadowGlow) {
-    gsap.to(shadowGlow, {
-      x: normalizedX * 10,
-      y: normalizedY * 10,
-      duration: 0.3,
-      ease: "power3.out",
-      overwrite: "auto"
-    });
-  }
-};
-
-const handleMouseLeave = () => {
-  const card = cardContainer.value;
-  if (!card) return;
-
-  gsap.to(card, {
-    rotationX: 0,
-    rotationY: 0,
-    scale: 1,
-    transformPerspective: 1000,
-    ease: "power2.out",
-    duration: 0.5,
-    overwrite: "auto"
-  });
-
-  const shadowGlow = card.querySelector(".diagram-panel, .diagram-placeholder");
-  if (shadowGlow) {
-    gsap.to(shadowGlow, {
-      x: 0,
-      y: 0,
-      duration: 0.5,
-      ease: "power2.out",
-      overwrite: "auto"
-    });
-  }
-};
 </script>
 
 <template>
   <article
     class="project-card"
     ref="cardContainer"
-    @mousemove="handleMouseMove"
-    @mouseleave="handleMouseLeave"
   >
     <!-- Left: text content -->
     <div class="project-content">
