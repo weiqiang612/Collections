@@ -131,6 +131,37 @@ const diagrams = {
     N --> O["UserHolder.removeUser<br><small>(Clean ThreadLocal)</small>"]`,
     },
   ],
+  equipmentManagement: [
+    {
+      title: "物理表 E-R 关系设计 / Physical E-R Diagram",
+      code: `erDiagram
+    sys_user ||--o{ t_equipment_claim : "申请人"
+    sys_user ||--o{ maintenance_record : "指定维保工"
+    equipment }|--|| category : "分类归属"
+    equipment }|--|| department : "所属单位"
+    equipment ||--o{ t_equipment_claim : "设备领用"
+    equipment ||--o{ maintenance_record : "设备检修"
+    equipment ||--o{ transfer_record : "设备调拨"
+    equipment ||--o| scrap_record : "设备报废"`,
+    },
+    {
+      title: "维保闭环状态流转时序 / Maintenance Workflow Sequence",
+      code: `sequenceDiagram
+    participant O as 操作员 (Role 0)
+    participant A as 资产管理员 (Role 2)
+    participant E as 维保工程师 (Role 1)
+    participant DB as 数据库 (MySQL)
+
+    O->>DB: 发起报修 (设备状态: 在用->维修, 创建工单)
+    A->>DB: 指派工单 (指派维保工, 工单状态: 待指派->维修中)
+    E->>DB: 登记完工 (登记费用与说明, 工单状态: 维修中->待复核)
+    alt 复核结果：判定可用
+        A->>DB: 审批通过 (设备状态: 维修->在用, 保管人恢复)
+    else 复核结果：损坏严重
+        A->>DB: 审批报废 (设备状态: 维修->报废, 保管人清空, 自动生成报废卡)
+    end`,
+    },
+  ],
 };
 
 export const messages = {
@@ -250,6 +281,23 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
+      },
+      {
+        id: "equipment-management",
+        name: "企业设备资产管理系统",
+        subtitle: "基于 Spring Boot 与 Vue 的设备全生命周期管理与数据治理系统",
+        summary:
+          "严格遵循国家固定资产管理规范的系统。设计细粒度 4 级 RBAC 权责隔离与水平隔离，实现设备“入库-领用-维保-报废”闭环流转事务，并引入规则引擎驱动的多维数据治理看板与 AI 辅助分析报告生成。",
+        highlights: [
+          "**细粒度多级 RBAC 与数据隔离**：实现操作员、工程师、管理员、超管四级角色。在拦截器与 Service 层强校验单位代码（`unit_code`），实现跨单位数据物理隔离，防止恶意水平越权。",
+          "**高可靠领用审批事务控制**：利用数据库排他锁对设备状态实施强约束校验，使用 `@Transactional` 声明式事务控制，确保设备状态锁定、领用单生成及保管人交接满足原子性与并发一致性。",
+          "**报修-派单-维修-复核闭环工单流**：支持设备故障状态自动转移（锁定领用）；实现维保工单在线流转，管理员在复核环节判定“恢复可用”（自动退回原保管人）或“判定报废”（清空保管人并自动生成报废鉴定记录）。",
+          "**规则引擎驱动的多维数据治理**：设计定时及事件触发的数据治理模块，智能筛查“高频故障”、“成本超原值 80%”及“无保管人呆滞卡片”等风险设备，通过消息通知中心实现“事找人”处理闭环。",
+          "**AI 辅助运营报告与生命周期智能摘要**：基于 Java 11 异步 HttpClient 整合大语言模型，将设备台账及治理汇总指标组装为 Prompt 动态生成月度分析报告 Markdown 草稿；对单台设备提取全生命周期记录（领用/调拨/维保/报废）进行智能生平提炼。",
+          "**追加式安全审计与数据物理备份**：所有的用户数据修改动作由 AOP 切面统一拦截并追加记录至审计日志 `operation_log`，该表在 DAO 层只增不改，确保不可篡改性；支持超级管理员一键调用 `mysqldump` 备份并归档。"
+        ],
+        techStack: ["Spring Boot", "Java 11", "JdbcTemplate", "MySQL", "JWT", "AOP", "Vue 2", "ECharts", "LLM API"],
+        diagrams: diagrams.equipmentManagement,
       },
     ],
     projectCard: {
@@ -410,6 +458,23 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
+      },
+      {
+        id: "equipment-management",
+        name: "Equipment Management System",
+        subtitle: "Equipment Lifecycle & Data Governance System via Spring Boot and Vue",
+        summary:
+          "An enterprise fixed asset system strictly adhering to national standards. Features a fine-grained 4-level RBAC and unit-based physical isolation. Implements transaction-controlled 'procurement-claiming-maintenance-scrap' workflows, coupled with a rule-driven multi-dimensional data governance engine and AI-assisted reporting.",
+        highlights: [
+          "**Fine-grained RBAC & Data Isolation**: Configures Operator, Engineer, Manager, and Admin roles. Enforces unit code (`unit_code`) checks in intercepts and Service layers to achieve cross-tenant physical isolation, blocking horizontal privilege escalation.",
+          "**Transaction-Controlled Claiming Workflows**: Leverages database exclusive locks to validate equipment status. Utilizes `@Transactional` declarations to guarantee atomic, concurrent transitions for status locks, claiming slips, and custodian hangovers.",
+          "**Closed-Loop Maintenance Workflows**: Auto-locks equipment for claiming upon breakdown. Manages ticket lifecycle ('reporting - assignment - repair - review'). Managers decide between 'restoring status' (returning to original custodian) or 'appraising scrap' (clearing custodian and logging scrap record).",
+          "**Rule-Driven Multi-Dimensional Governance**: Scans for risk vectors such as 'high-frequency failures' (failures >= 3), 'costs exceeding 80% of value', and 'dormant unassigned assets'. Dispatches notifications via event center to transition from 'user searching' to 'event seeking'.",
+          "**AI-Powered Reports & Lifecycle Summaries**: Deploys Java 11 async HttpClient to integrate LLM APIs. Automatically compiles ledger indexes and risk summaries into monthly Markdown draft reports. Generates readable 'life biographies' of individual assets from their timeline logs.",
+          "**Append-Only Security Audits & Physical Backups**: Automatically intercepts all mutation events via AOP and appends read-only logs to `operation_log` (no UPDATE/DELETE endpoints in DAO). Supports one-click DB archiving using `mysqldump`."
+        ],
+        techStack: ["Spring Boot", "Java 11", "JdbcTemplate", "MySQL", "JWT", "AOP", "Vue 2", "ECharts", "LLM API"],
+        diagrams: diagrams.equipmentManagement,
       },
     ],
     projectCard: {

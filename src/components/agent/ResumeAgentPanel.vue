@@ -49,11 +49,16 @@ watch(locale, () => {
   }
 });
 
-async function scrollToBottom() {
-  await nextTick();
-  if (scrollArea.value) {
-    scrollArea.value.scrollTop = scrollArea.value.scrollHeight;
-  }
+let scrollPending = false;
+function scrollToBottom() {
+  if (scrollPending) return;
+  scrollPending = true;
+  requestAnimationFrame(() => {
+    if (scrollArea.value) {
+      scrollArea.value.scrollTop = scrollArea.value.scrollHeight;
+    }
+    scrollPending = false;
+  });
 }
 
 async function submitMessage() {
@@ -67,7 +72,10 @@ async function submitMessage() {
   messages.value.push(userMessage, assistantMessage);
   input.value = "";
   activeMessageId.value = assistantMessage.id;
-  await scrollToBottom();
+  scrollToBottom();
+
+  // 获取被 Vue 深度响应式代理后的 Proxy 消息对象，以使流式内容修改能够触发实时 UI 渲染
+  const targetMessage = messages.value[messages.value.length - 1];
 
   // Compile dialogue history (exclude welcome and empty/error states)
   const history = messages.value
@@ -77,16 +85,16 @@ async function submitMessage() {
 
   let result;
   try {
-    result = await sendMessage(content, sessionId, locale.value, async (delta) => {
-      assistantMessage.content += delta;
-      await scrollToBottom();
+    result = await sendMessage(content, sessionId, locale.value, (delta) => {
+      targetMessage.content += delta;
+      scrollToBottom();
     }, history);
   } catch (err) {
     console.error("API call failed, running graceful geek fallback:", err);
     
     // Inject geek-style failure log
-    assistantMessage.content = `[SYSTEM ERROR] Connection failed: ${err.message || 'API Timeout'}\n[SYSTEM] Automatically falling back to local simulation mode...\n\n`;
-    await scrollToBottom();
+    targetMessage.content = `[SYSTEM ERROR] Connection failed: ${err.message || 'API Timeout'}\n[SYSTEM] Automatically falling back to local simulation mode...\n\n`;
+    scrollToBottom();
 
     // Generate local mock reply dynamically
     const normalized = content.toLowerCase();
@@ -100,8 +108,8 @@ async function submitMessage() {
     const tokens = locale.value === "zh-CN" ? Array.from(fallbackText) : fallbackText.split(" ");
     for (const token of tokens) {
       await new Promise((resolve) => window.setTimeout(resolve, 24));
-      assistantMessage.content += locale.value === "zh-CN" ? token : `${token} `;
-      await scrollToBottom();
+      targetMessage.content += locale.value === "zh-CN" ? token : `${token} `;
+      scrollToBottom();
     }
 
     result = {
@@ -115,9 +123,9 @@ async function submitMessage() {
     };
   }
 
-  assistantMessage.sources = result.sources;
+  targetMessage.sources = result.sources;
   activeMessageId.value = "";
-  await scrollToBottom();
+  scrollToBottom();
 }
 
 const panelRef = ref(null);

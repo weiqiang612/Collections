@@ -1,96 +1,44 @@
-# Ethan's Portfolio
+# AGENTS.md
 
-> [!IMPORTANT]
-> **Git 提交与推送安全限制规则（必须无条件遵守）**：
-> - **未经用户明确允许或当面授权，Agent 严禁在后台或以前台方式擅自执行 \`git commit\`、\`git push\` 等任何不可逆的代码版本控制操作。**
+## Project
+- **Name**: Collection
+- **Stack**: Vue 3, Vite 8, Vue Router 5, GSAP, Mermaid
+- **Rule**: This file is an index only. All details live in `docs/`.
 
-Brand: \`weiqiang / 围墙\` · Domain: \`weiqiang.me\` (Vercel, Cloudflare DNS gray-cloud)
-
-## Stack
-
-- **Frontend only** — Vue 3 + Vite 8 + Vue Router 5 SPA (Root directory)
-- **No backend** — Spring Boot (`api/` Spring Boot backend) was removed. All data is static JS files.
+## Session start (Mandatory Checklist)
+This project uses the Antigravity Session Start Protocol. The agent MUST run the following diagnostics automatically at the beginning of every session:
+1. Verify if the dev server is running on port 5173:
+   - Windows: `powershell -Command "Get-NetTCPConnection -LocalPort 5173 -ErrorAction SilentlyContinue"`
+   - UNIX/macOS: `lsof -t -i:5173`
+2. Get Git branch & status: `git branch --show-current` and `git status -s`
+3. Get recent commits: `git log -n 3 --oneline`
+4. Read `docs/4-tasks/CURRENT_PLAN.md` to identify the active feature.
+5. If the dev server is NOT running, run `.\init.ps1` (Windows PowerShell) or `bash init.sh` (UNIX) to start the environment.
 
 ## Commands
+- **Build**: `pnpm build`
+- **Test**: `# none configured`
+- **Lint**: `# none configured`
 
-All in root:
+## Boundaries (read before acting)
+| Before you...                         | Read this first                         |
+|---------------------------------------|-----------------------------------------|
+| Write or modify any code              | `docs/3-constraints/never-do.md`        |
+| Take any action you are unsure about  | `docs/3-constraints/ask-first.md`       |
+| Start a session                       | `docs/3-constraints/always-do.md`       |
+| Understand business context           | `docs/1-requirements/project_overview.md` |
+| Touch any database or API             | `docs/2-designs/`                       |
+| Work on a specific task               | `docs/4-tasks/features/<active-task>/spec.md` |
+| Start a new session                   | `docs/4-tasks/CURRENT_PLAN.md`          |
+| Make an architectural decision        | `docs/3-constraints/adr/`               |
 
-| Command | Action |
-|---------|--------|
-| `pnpm dev` | Vite dev server (proxies `/api/chat` → `localhost:8080`) |
-| `pnpm build` | Production build |
-| `pnpm preview` | Preview production build |
-
-No lint, typecheck, or test commands configured.
-
-## Architecture
-
-```
-api/chat.js          — Vercel Serverless Function stub for Agent chat proxy
-vercel.json          — SPA fallback + /api/* routing
-src/
-  data/
-    i18n.js           — Bilingual content (zh-CN + en-US): profile, projects, agent mock replies
-    profile.js        — Sync profile data (used by profileClient)
-  services/
-    profileClient.js  — Sync export from profile.js
-    chatClient.js     — Mock fallback by default; reads VITE_API_BASE_URL for real POST /api/chat
-  composables/
-    useChatMock.js    — Wraps chatClient, exposes isStreaming + sendMessage
-    useLocale.js      — Locale from URL / localStorage
-    useTypewriter.js  — Character-by-character reveal
-  components/
-    hero/             — HeroSection (terminal typewriter intro)
-    about/            — AboutSection (methodology + tech stack)
-    projects/         — ProjectsSection reads from i18n t.projects
-    agent/            — ResumeAgentLauncher, ResumeAgentPanel, ChatMessage, StreamingCursor
-    common/           — AppShell, SectionTitle, TerminalWindow
-  router/index.js     — / → HomeView, catch-all → NotFoundView
-```
-
-## Data flow
-
-- **Profile**: `data/profile.js` → `services/profileClient.js` → components (sync, no async)
-- **Projects**: embedded in `data/i18n.js` as `t.projects` (bilingual)
-- **Chat**: `ResumeAgentPanel` → `useChatMock` → `chatClient.sendMessage()` → mock or real `POST /api/chat`
-- **No remote profile/projects API** — if a backend appears later, the API contract is in `requirements.md`
-
-## Chat architecture
-
-- `VITE_API_BASE_URL` env var controls mock vs real API
-- No env var → mock (character-by-character streaming from i18n.js)
-- With env var → `POST ${apiBaseUrl}/api/chat` (JSON, non-streaming)
-- Vercel function `api/chat.js` is a stub awaiting a real Agent service URL
-
-## Design system
-
-Minimalist Dark + Geek Terminal. No Tailwind — pure CSS in `src/style.css`.
-
-| Role | Color | Usage |
-|------|-------|-------|
-| Background | `#000000` | Page |
-| Panel | `#0B0F14` | Cards, sections |
-| Text | `#F8F8F2` | Primary |
-| Cyan | `#8BE9FD` | Accent |
-| Green | `#50FA7B` | Terminal accent |
-| Orange | `#FFB86C` | Warning |
-| Red | `#FF5555` | Critical |
-
-## Vercel deployment
-
-- Connected to `weiqiang612s-projects` team
-- Production: `weiqiang.me` (CNAME → `741cce93e42bedd7.vercel-dns-017.com`, gray cloud in Cloudflare)
-- `note.weiqiang.me` is the Ethan's Notes project (separate VitePress site, different Vercel project)
-- Cloudflare API token in opencode config has DNS:Edit scope
-- Vercel project `rootDirectory` must be set to root or empty
-- `vercel.json` rewrites: `/api/*` → Vercel functions, `/*` → `index.html` (SPA)
-
-## Gotchas
-
-- Nav supports external links: add `external: true` to nav item in `i18n.js`; AppShell renders `target="_blank"` + SVG icon
-- Nav `笔记 / Notes` links to `note.weiqiang.me` (separate VitePress site, different Vercel project)
-- `data/projects.js` and `data/tech-stack.js` were deleted — all content lives in `i18n.js`
-- `services/apiClient.js` was deleted — no remote profile/projects calls exist
-- Components import profile sync, no `onMounted` async fetch
-- The `api/` Spring Boot directory was fully removed from the repo
-- Locale is persisted in localStorage keyed by `locale`
+## Workflow
+1. Verify that the dev server is running on port 5173 by executing the Session Start diagnostics. If not running, run `.\init.ps1` (Windows) or `bash init.sh` (Unix).
+2. Read `docs/4-tasks/CURRENT_PLAN.md` — orient to current stage and active feature.
+3. Read `docs/1-requirements/` and `docs/2-designs/` to align with business and design spec.
+4. Read `docs/4-tasks/features/<active-task>/spec.md` — do not start without a confirmed spec.
+5. Check `docs/3-constraints/never-do.md` before every non-trivial change.
+6. Build the project early and often (`pnpm build`) to ensure compilation passes.
+7. Commit working increments — do not accumulate large uncommitted diffs.
+8. Update task progress in `docs/4-tasks/features/<active-task>/tasks.md` as you go.
+9. Update `docs/4-tasks/CURRENT_PLAN.md` when the feature is complete.
