@@ -9,7 +9,7 @@ const CONTEXT_DATA = {
     role: "Java 后端开发工程师 / AI 工程实践者",
     contacts: {
       github: "https://github.com/weiqiang",
-      email: "ethan@example.com"
+      email: "weiqiang0322@gmail.com"
     },
     summary: "专注高并发系统与 AI 工程实践 of Java 后端工程师。构建边界清晰、可靠性可衡量的后端系统，并用可检查的方式解释复杂架构。",
     methodology: [
@@ -50,7 +50,7 @@ const CONTEXT_DATA = {
     role: "Java Backend Engineer / AI Engineering Practitioner",
     contacts: {
       github: "https://github.com/weiqiang",
-      email: "ethan@example.com"
+      email: "weiqiang0322@gmail.com"
     },
     summary: "Java backend engineer focused on high-concurrency systems and AI-enabled engineering. Builds backend systems with clear boundaries, measurable reliability, and explanations that make complex architecture easier to inspect.",
     methodology: [
