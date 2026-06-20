@@ -18,12 +18,25 @@ const handleGlobalClick = (e) => {
   }
 };
 
+let scrollTimeout;
+const handleScroll = () => {
+  document.body.classList.add("is-scrolling");
+  
+  clearTimeout(scrollTimeout);
+  scrollTimeout = window.setTimeout(() => {
+    document.body.classList.remove("is-scrolling");
+  }, 150);
+};
+
 onMounted(() => {
   window.addEventListener("click", handleGlobalClick);
+  window.addEventListener("scroll", handleScroll, { passive: true });
 });
 
 onUnmounted(() => {
   window.removeEventListener("click", handleGlobalClick);
+  window.removeEventListener("scroll", handleScroll);
+  clearTimeout(scrollTimeout);
 });
 </script>
 

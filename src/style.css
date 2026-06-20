@@ -1329,3 +1329,9 @@ body.custom-cursor-active .mermaid-wrapper.is-fullscreen .diagram-tab {
 body:has(.mermaid-wrapper.is-fullscreen) .geek-cursor-wrapper {
   display: none !important;
 }
+
+/* Disable pointer events during scroll to eliminate forced reflow in custom cursor */
+body.is-scrolling,
+body.is-scrolling * {
+  pointer-events: none !important;
+}
