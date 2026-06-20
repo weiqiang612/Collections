@@ -45,12 +45,41 @@ onMounted(async () => {
     let activeCenterX = null;
     let activeCenterY = null;
 
+    const resetCursor = () => {
+      activeEl = null;
+      activeCenterX = null;
+      activeCenterY = null;
+      isHovering.value = false;
+
+      gsap.to(ring, {
+        width: 24,
+        height: 24,
+        borderRadius: "50%",
+        borderColor: "rgba(139, 233, 253, 0.4)", // cyan
+        backgroundColor: "transparent",
+        duration: 0.25,
+        ease: "power2.out",
+        overwrite: "auto"
+      });
+
+      gsap.to(dot, {
+        scale: 1.0,
+        backgroundColor: "#50fa7b", // green
+        duration: 0.2
+      });
+    };
+
     const onMouseMove = (e) => {
       pos.x = e.clientX;
       pos.y = e.clientY;
 
       dotX(pos.x);
       dotY(pos.y);
+
+      // Safety check: if the active element has been removed from DOM, reset cursor immediately
+      if (activeEl && !document.body.contains(activeEl)) {
+        resetCursor();
+      }
 
       // If we are not hovering over an interactive item, track mouse
       if (!activeEl) {
@@ -102,39 +131,29 @@ onMounted(async () => {
     const onMouseOut = (e) => {
       const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab, .stack-list span");
       if (target && activeEl === target) {
-        activeEl = null;
-        activeCenterX = null;
-        activeCenterY = null;
-        isHovering.value = false;
+        resetCursor();
+      }
+    };
 
-        // Animate back to standard cursor
-        gsap.to(ring, {
-          width: 24,
-          height: 24,
-          borderRadius: "50%",
-          borderColor: "rgba(139, 233, 253, 0.4)", // cyan
-          backgroundColor: "transparent",
-          duration: 0.25,
-          ease: "power2.out",
-          overwrite: "auto"
-        });
-
-        gsap.to(dot, {
-          scale: 1.0,
-          backgroundColor: "#50fa7b", // green
-          duration: 0.2
-        });
+    const onGlobalClick = (e) => {
+      if (activeEl) {
+        const target = e.target.closest("a, button, .tech-chip, .hero-chip, .diagram-tab, .stack-list span");
+        if (target && target === activeEl) {
+          resetCursor();
+        }
       }
     };
 
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseover", onMouseOver);
     window.addEventListener("mouseout", onMouseOut);
+    window.addEventListener("click", onGlobalClick);
 
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseover", onMouseOver);
       window.removeEventListener("mouseout", onMouseOut);
+      window.removeEventListener("click", onGlobalClick);
     };
   });
 });
