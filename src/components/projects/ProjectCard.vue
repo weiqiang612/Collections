@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, watch, nextTick, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useLocale } from "../../composables/useLocale";
 import MermaidDiagram from "./MermaidDiagram.vue";
 import { gsap } from "gsap";
@@ -11,10 +12,21 @@ const props = defineProps({
   },
 });
 
+const router = useRouter();
 const { t } = useLocale();
 const activeTab = ref(0);
 const displayProject = ref(props.project);
 const isAnimating = ref(false);
+
+const hasDetailPage = computed(() => {
+  return props.project.id === "sky-takeout";
+});
+
+const navigateToDetail = () => {
+  if (hasDetailPage.value) {
+    router.push(`/projects/${props.project.id}`);
+  }
+};
 
 const handleTabsWheel = (e) => {
   if (e.deltaY === 0) return;
@@ -150,9 +162,31 @@ watch(
     ref="cardContainer"
   >
     <!-- Left: text content -->
-    <div class="project-content">
+    <div
+      class="project-content"
+      :class="{ 'clickable': hasDetailPage }"
+      :role="hasDetailPage ? 'button' : undefined"
+      :tabindex="hasDetailPage ? '0' : undefined"
+      @click="hasDetailPage ? navigateToDetail() : null"
+      @keydown.enter="hasDetailPage ? navigateToDetail() : null"
+    >
       <p class="project-kicker">{{ displayProject.subtitle }}</p>
-      <h3>{{ displayProject.name }}</h3>
+      <div class="project-title-row">
+        <h3>{{ displayProject.name }}</h3>
+
+        <button
+          v-if="hasDetailPage"
+          class="project-detail-cta-btn project-detail-cta-btn-inline"
+          @click.stop="navigateToDetail"
+          :title="t.projectDetail.viewCaseStudy"
+        >
+          <span>{{ t.projectDetail.viewCaseStudy }}</span>
+          <svg class="cta-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
       <p>{{ displayProject.summary }}</p>
       <ul>
         <li
@@ -167,6 +201,7 @@ watch(
           :key="tech"
         >{{ tech }}</span>
       </div>
+
     </div>
 
     <!-- Right: real Mermaid diagrams -->

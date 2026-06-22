@@ -162,6 +162,107 @@ const diagrams = {
     end`,
     },
   ],
+  skyTakeoutDetail: [
+    {
+      title: "整体业务流程图 / Overall Flowchart",
+      code: `graph TD
+    classDef startEnd fill:#ebf5fb,stroke:#2e86c1,stroke-width:2px;
+    classDef process fill:#f4f6f7,stroke:#7f8c8d,stroke-width:1px;
+    classDef decision fill:#fef9e7,stroke:#f1c40f,stroke-width:1px;
+    classDef storage fill:#eafaf1,stroke:#2ecc71,stroke-width:1px;
+    classDef alert fill:#fdedec,stroke:#e74c3c,stroke-width:1px;
+
+    Start([用户通过 WebSocket 发送请求消息]) --> Orchestrator{是否为复杂多步任务?}
+    class Start startEnd;
+    class Orchestrator decision;
+
+    Orchestrator -- 是 (如: 检索取消/复合提问) --> Planner[RuleBasedTaskPlanner 任务分解与规划]
+    Planner --> StepLoop[生成 TaskPlan，开始遍历 TaskStep]
+    StepLoop --> AdvisorChainInit
+    class Planner,StepLoop process;
+    
+    Orchestrator -- 否 --> AdvisorChainInit[进入 Advisor Chain 顾问链装配驱动]
+    class AdvisorChainInit process;
+    
+    subgraph "顾问链流转 (Advisor Chain)"
+        AdvisorChainInit --> IntentAdvisor[1. IntentRecognitionAdvisor<br/>意图识别与画像摘要拼接]
+        IntentAdvisor --> FaqAdvisor[2. FaqSemanticCacheAdvisor<br/>FAQ 语义缓存匹配]
+        
+        FaqAdvisor --> FaqHit{是否命中缓存 FAQ?}
+        
+        FaqHit -- 是 --> FaqShortCircuit[短路拦截: 直接封装答复并截断]
+        
+        FaqHit -- 否 --> UserContextAdvisor[3. UserContextAdvisor<br/>两级工具计算与画像注入等级]
+        UserContextAdvisor --> HistoryAdvisor[4. MessageChatMemoryAdvisor<br/>加载 Redis 最近历史消息]
+        HistoryAdvisor --> RagAdvisor[5. RagAdvisor<br/>条件挂载 RAG 向量检索]
+        RagAdvisor --> ToolFilterAdvisor[6. ToolFilterAdvisor<br/>硬性筛选当前 LLM 可用工具]
+        ToolFilterAdvisor --> SafeAdvisor[7. SafeToolCallAdvisor<br/>防死循环安全顾问]
+    end
+    class IntentAdvisor,FaqAdvisor,UserContextAdvisor,HistoryAdvisor,RagAdvisor,ToolFilterAdvisor,SafeAdvisor process;
+    class FaqHit decision;
+    class FaqShortCircuit alert;
+    
+    SafeAdvisor --> LoopCheck{检测到死循环/超过4轮工具调用?}
+    LoopCheck -- 是 --> FallbackOutput[触发 Fallback 安全兜底话术截断]
+    class LoopCheck decision;
+    class FallbackOutput alert;
+
+    LoopCheck -- 否 --> HighRiskCheck{是否为高风险意图<br/>且需要人工确认?}
+    class HighRiskCheck decision;
+    
+    HighRiskCheck -- 是 --> SuspendTurn[挂起当前回合，暂存会话状态]
+    SuspendTurn --> SendConfirmFrame[向客户端推送 confirmation 确认帧]
+    SendConfirmFrame --> WaitConfirm[等待用户在客户端 UI 点击“确认操作”]
+    WaitConfirm --> RecvConfirmFrame[收到确认帧，重置意图置信度为高]
+    RecvConfirmFrame --> UserContextAdvisor
+    class SuspendTurn,SendConfirmFrame,WaitConfirm,RecvConfirmFrame process;
+    
+    HighRiskCheck -- 否 --> RunLLM[调用 ChatClient 执行大模型推理 / 工具调用]
+    RunLLM --> ToolCallNeeded{是否触发工具调用?}
+    class RunLLM process;
+    class ToolCallNeeded decision;
+
+    ToolCallNeeded -- 是 --> ExecuteTool[执行本地业务服务工具<br/>例如：取消订单、退款、修改地址]
+    ExecuteTool --> SafeAdvisor
+    class ExecuteTool process;
+    
+    ToolCallNeeded -- 否 --> GenerateResponse[生成最终文本/流式 Token]
+    class GenerateResponse process;
+    
+    FaqShortCircuit --> SendResponse[WebSocket 发送响应数据帧]
+    FallbackOutput --> SendResponse
+    GenerateResponse --> SendResponse
+    class SendResponse process;
+    
+    SendResponse --> CheckStepDone{是否为多步任务且有后续步骤?}
+    class CheckStepDone decision;
+
+    CheckStepDone -- 是 --> StepDoneFrame[推送 step_done 帧并更新级联插槽参数]
+    StepDoneFrame --> StepLoop
+    class StepDoneFrame process;
+
+    CheckStepDone -- 否 --> SendDoneFrame[推送 done 或 plan_complete 帧]
+    class SendDoneFrame process;
+    
+    SendDoneFrame --> AsyncMemory[触发 @Async 异步记忆写入服务]
+    class AsyncMemory process;
+    
+    subgraph "异步记忆持久化 (MemoryWriterService)"
+        AsyncMemory --> ToolPersist[A. 本地工具响应强一致解析<br/>自动提取成功退款/取消订单事实]
+        AsyncMemory --> LLMPersist[B. LLM 语义事实提取<br/>分析 User 语句进行事实修正/遗忘]
+        AsyncMemory --> SaveHistory[C. 保存历史消息]
+        
+        ToolPersist --> PG[(PostgreSQL<br/>user_memory_facts 长期记忆)]
+        LLMPersist --> PG
+        SaveHistory --> Redis[(Redis<br/>会话历史，TTL 2h)]
+    end
+    class ToolPersist,LLMPersist,SaveHistory process;
+    class PG,Redis storage;
+    
+    AsyncMemory --> End([流程结束])
+    class End startEnd;`
+    }
+  ],
 };
 
 export const messages = {
@@ -253,19 +354,63 @@ export const messages = {
       {
         id: "sky-takeout",
         name: "苍穹外卖",
-        subtitle: "基于 Spring AI 顾问链与三层记忆模型的外卖智能 Agent",
+        subtitle: "支持自然语言下单、多步任务编排与确认式执行的外卖智能客服 Agent",
         summary:
-          "具有双服务架构的餐饮外卖系统。引入 Spring AI 重构为智能客服 Agent，支持多意图识别、多步任务编排、Hybrid RAG 检索和混合长期记忆系统。",
+          "将传统菜单操作升级为自然语言交互的 AI 外卖助手，能够处理订单查询、取消等复杂客户服务场景。",
         highlights: [
-          "**双服务微服务架构**：核心业务与订单状态机由 `sky-server` 承载，智能客服 Agent 独立于 `sky-ai` 服务（基于 Spring AI），实现微服务级解耦与 WebSocket 流式传输。",
-          "**工业级级联 Advisor 链**：设计 6 层级联 Advisor chain（意图识别、画像注入、历史消息加载、条件式 RAG 注入、可访问工具硬性过滤及尾部防死循环的 `SafeToolCallAdvisor`），实现请求的管道流式拦截与安全熔断（最多4轮或重复签名直接截断）。",
-          "**RuleBased 复合任务编排**：设计 `RuleBasedTaskPlanner` 自动划分 `TaskStep`；特别针对模糊提问实现了“检索驱动型多步取消计划”，借助动态插槽占位符 `target_order_slot` 优雅实现前置查询与后置取消的高效级联绑定。",
-          "**高风险操作人工卡点机制**：针对取消、退款等涉及资金的高风险意图，服务端主动挂起当前回合，向前端推送 `confirmation` 人工确认控制帧；用户在 UI 交互确认后回发确认帧，服务端提取 Session 暂存数据，以高置信度零冗余重入恢复执行。",
-          "**混合式长期记忆持久化**：异步服务（`@Async`）结合 LLM 自适应提取画像事实，支持纠错覆盖与物理删除；辅以强一致性本地工具响应解析器（精准捕获订单取消、退款等工具的成功状态以物理追加事实记录），确保关键事实 100% 准确。",
-          "**Hybrid RAG 混合检索与短路优化**：离线支持 QA 问答对与 Markdown 按标题层级切分，在线阶段基于 Pgvector 进行向量与关键词全文检索双通道并行，经 RRF 融合与 Reranker 精排输出；Advisor 链最前置引入 JVM 内存语义缓存 FAQ，余弦匹配命中时短路返回绕过推理，将时延降至毫秒级。",
+          "**Advisor Chain 执行链路**：围绕多意图识别、工具筛选与安全兜底组织完整的 Agent 执行流程。",
+          "**多步任务编排**：支持“查询 → 插槽注入 → 确认 → 执行”的级联工作流，能处理取消订单等复杂场景。",
+          "**Hybrid Memory**：结合会话记忆、长期用户事实与异步写入，兼顾上下文连续性与关键事实一致性。",
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
+        detail: {
+          tagline: "基于 Spring AI 驱动的餐饮外卖智能客服 Agent，将客户订单及咨询交付全链路自动化",
+          tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
+          metrics: [
+            { label: "FAQ 拦截率", value: "90%+" },
+            { label: "平均响应时延", value: "<500ms" },
+            { label: "关键事实一致性", value: "100%" }
+          ],
+          sections: {
+            demo: {
+              title: "演示背景与业务场景",
+              content: "在餐饮外卖服务中，退款、取消订单、修改地址等敏感交易操作占用了大量人工客服精力，且容易因为人工响应不及时导致客诉。本项目将智能客服 Agent 独立为 `sky-ai` 微服务（基于 Spring AI 驱动），引入多意图识别与级联任务编排，使用户能够通过自然语言交互轻松完成复杂查询及高风险操作。本页展示了其底层核心架构流程及在多步高风险事务中的具体执行路径。"
+            },
+            architecture: {
+              title: "系统架构与核心工作流",
+              description: "系统围绕 Advisor Chain 管道拦截模式构建，并在编排中心（TaskOrchestratorService）的驱动下实现多步骤插槽绑定；针对资金安全设计了 Human-in-the-Loop 人工卡点机制，保障高风险交易的安全可控。下方为系统全景工作流图及检索驱动型订单取消时序图：",
+              diagrams: diagrams.skyTakeoutDetail
+            },
+            ownership: {
+              title: "我的职责",
+              items: [
+                "**独立完成系统重构与 AI 接入**：基于 Spring AI 设计并开发了独立的 `sky-ai` 智能客服服务，与 `sky-server`（核心业务与状态机）实现微服务解耦与流式交互。",
+                "**级联 Advisor 链设计**：设计了包含意图识别、历史消息、RAG 及 `SafeToolCallAdvisor` 在内的 6 层级联拦截器链，完成了安全熔断，杜绝大模型死循环工具调用。",
+                "**多步复合任务编排**：设计 `RuleBasedTaskPlanner` 自动分解步骤，使用动态插槽占位符实现了「检索驱动型多步取消计划」等前后级联依赖任务的自动绑定。",
+                "**高风险操作人工确认卡点**：针对退款、取消订单等敏感行为设计了 `confirmation` 控制帧及会话挂起重入机制，保障交易安全。",
+                "**混合长期记忆持久化**：结合 `@Async` 后台语义 facts 提取与本地业务工具响应强一致状态解析器，实现高可靠、零幻觉的长期记忆写入。"
+              ]
+            },
+            retrospective: {
+              title: "项目反思与复盘",
+              challenges: [
+                {
+                  problem: "**工具调用死循环与 Token 损耗**：大模型在缺少参数或意图模糊时，容易反复调用 searchOrders 导致响应卡死与资源浪费。",
+                  solution: "设计了 Trace 级别的防死循环安全顾问（`SafeToolCallAdvisor`），拦截超出 4 轮的工具调用或完全重复的函数签名，并自动降级为友好提示。"
+                },
+                {
+                  problem: "**AI 自动执行高风险操作的误操作**：完全依赖 AI 识别意图并执行退款、取消订单，极易因为幻觉或用户恶意引导引发资金损失。",
+                  solution: "引入人工参与校验（Human-in-the-Loop）。在服务端识别到高风险意图时自动挂起会话并向前端推送 confirmation 帧；只有在收到用户在客户端 UI 点击确认回发的 confirmed 帧后，才利用暂存的 Session 数据恢复执行，保证了资金安全。"
+                },
+                {
+                  problem: "**记忆提取偏差与幻觉**：若仅依赖 AI 异步总结对话作为长期事实，可能会将「用户咨询退款但因未付而退款失败」错误地总结为「已成功退款」，产生事实幻觉。",
+                  solution: "实施双通道持久化。核心交易和状态变更事实通过本地业务工具的 SUCCESS 响应解析器强一致落库，100% 避免幻觉；而画像和偏好等非敏感、模糊事实则由 AI 异步提取并处理纠错与遗忘，保障了记忆库的高可信度。"
+                }
+              ]
+            }
+          }
+        }
       },
       {
         id: "hm-dianping",
@@ -336,6 +481,15 @@ export const messages = {
         "「黑马点评」项目核心在于 Redis 高并发实战：封装通用 CacheClient 锁双检逻辑过期防击穿，设计 Lua 脚本原子预扣减结合分布式锁防超卖，并通过 Redis Stream 与 Pending List 队列处理实现可靠异步下单。",
         "「苍穹外卖」的 AI 模块采用三层记忆：基于 Map 的 Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL 长期事实表。除 @Async 驱动 LLM 自适应提取事实外，还结合本地成功工具响应解析器实现强一致性关键事实持久化。",
       ],
+    },
+    projectDetail: {
+      backBtn: "返回首页",
+      metricsTitle: "核心指标 / KPIs",
+      techHighlights: "技术亮点",
+      demoVideo: "媒体演示",
+      demoPlaceholder: "[ 演示多媒体播放占位 ]",
+      videoPlayTip: "交互式系统演示录像",
+      viewCaseStudy: "查看项目详情"
     },
     notFound: {
       title: "页面不存在",
@@ -430,19 +584,63 @@ export const messages = {
       {
         id: "sky-takeout",
         name: "Sky Takeout",
-        subtitle: "Intelligent Delivery Agent via Spring AI Advisor Chain & 3-Layer Memory",
+        subtitle: "Food delivery customer-service Agent with natural-language ordering, multi-step planning, and confirmation-based execution",
         summary:
-          "A dual-service food delivery system refactored with Spring AI to provide an intelligent customer agent supporting multi-intent routing, multi-step task orchestration, Hybrid RAG search, and mixed long-term memory.",
+          "An AI delivery assistant that turns menu-style operations into natural-language interactions for order lookup, cancellation, and other customer-service workflows.",
         highlights: [
-          "**Dual-service Decoupled Architecture**: Core business workflows and order state machines are managed by `sky-server`, while the customer service agent operates independently within the Spring AI-powered `sky-ai` microservice, enabling streaming communications over WebSocket.",
-          "**Industrial-grade Cascading Advisor Chain**: Engineered a 6-layer Advisor Chain (pre-intent recognition, profile summary injection, chat history, conditional RAG, tool filtering, and the safety-guarding `SafeToolCallAdvisor`) to intercept requests and prevent infinite loops with 4-round signature checks.",
-          "**Rule-based Multi-step Task Orchestration**: Implemented `RuleBasedTaskPlanner` to split complex queries into ordered `TaskStep`s; specifically designed lookup-driven cancellation plans using dynamic `target_order_slot` placeholding to elegantly bind query results with operations.",
-          "**Human-in-the-Loop High-risk Guardrails**: For sensitive actions like refund or cancellation, the server suspends LLM execution and pushes a `confirmation` frame to the client; upon user approval, execution resumes seamlessly using cached session context with zero redundant prompts.",
-          "**Hybrid Long-term Memory Persistence**: Combines `@Async` background LLM factual analysis (supporting correction updates and active forgetting) with a robust local tool outcome parser (automatically capturing address updates and cancellations from tool responses) to guarantee 100% data consistency.",
-          "**Hybrid RAG & Semantic Cache Optimization**: Supports offline QA-pair and hierarchy-based Markdown splitting, online parallel search (Pgvector + BM25) blended via RRF and Reranker; deploys a JVM semantic FAQ cache at the Advisor entry to short-circuit RAG and LLM calls, reducing latency to milliseconds."
+          "**Advisor Chain runtime**: Organizes multi-intent recognition, tool filtering, and safety guardrails into one coherent Agent pipeline.",
+          "**Multi-step orchestration**: Supports chained flows such as `lookup -> slot injection -> confirmation -> execution` for high-risk order actions.",
+          "**Hybrid memory**: Combines session memory, long-term user facts, and async persistence to balance continuity with reliability."
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
+        detail: {
+          tagline: "Intelligent customer service Agent driven by Spring AI, automating the entire food delivery order and inquiry lifecycle.",
+          tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
+          metrics: [
+            { label: "FAQ Block Rate", value: "90%+" },
+            { label: "Avg Latency", value: "<500ms" },
+            { label: "Fact Consistency", value: "100%" }
+          ],
+          sections: {
+            demo: {
+              title: "Demo Context & Business Scenario",
+              content: "In food delivery services, transaction operations such as refunds, order cancellations, and address modifications consume massive customer service resources, often leading to customer complaints due to delayed manual responses. This project decouples customer service into an independent `sky-ai` microservice (driven by Spring AI), introducing multi-intent recognition and cascading task orchestration. It allows users to easily execute complex inquiries and high-risk operations via natural language. This page presents its core architectural workflows and execution paths."
+            },
+            architecture: {
+              title: "Architecture & Workflows",
+              description: "The system is built on a cascading Advisor Chain pipeline pattern and driven by a central coordinator (TaskOrchestratorService) to bind multi-step parameters. A Human-in-the-Loop mechanism is introduced for transaction safety. Below are the comprehensive workflow flowchart and the lookup-driven sequence diagram:",
+              diagrams: diagrams.skyTakeoutDetail
+            },
+            ownership: {
+              title: "My Ownership",
+              items: [
+                "**Independent Service Refactoring & AI Integration**: Architected and implemented the `sky-ai` service using Spring AI, decoupling customer service logic from the core `sky-server` engine.",
+                "**Cascading Advisor Chain**: Built a 6-layer pipeline including intent matching, context loading, RAG, and a custom `SafeToolCallAdvisor` to prevent infinite tool loops and enforce safety boundaries.",
+                "**Multi-step Task Orchestration**: Developed `RuleBasedTaskPlanner` to split queries into steps and implemented slot placeholder bindings to seamlessly link queries with sequential operations.",
+                "**Human-in-the-Loop Safe Guardrails**: Designed the `confirmation` WebSocket frame protocol and server-side state suspension to pause high-risk actions until explicit user confirmation is received.",
+                "**Dual-Channel Memory Persistence**: Combines `@Async` background LLM factual synthesis with a deterministic local tool response parser to guarantee robust, hallucination-free long-term memory updates."
+              ]
+            },
+            retrospective: {
+              title: "Project Retrospective",
+              challenges: [
+                {
+                  problem: "**Infinite Tool Loops and Token Waste**: Under ambiguous intents or missing arguments, LLMs can repeatedly invoke lookup tools, stalling responses and wasting tokens.",
+                  solution: "Authored `SafeToolCallAdvisor` which monitors trace execution signatures; it intercepts calls exceeding 4 rounds or containing identical signatures, returning safe fallbacks."
+                },
+                {
+                  problem: "**Financial Vulnerability of Auto-Executing Transactions**: Relying purely on AI to perform refunds or cancellations poses severe risks due to potential hallucinations or malicious user prompts.",
+                  solution: "Implemented Human-in-the-Loop guardrails. When high-risk intents are detected, the server halts execution, caches session context, and pushes a confirmation frame to the client. The operation only resumes once the user approves the action on the UI."
+                },
+                {
+                  problem: "**Memory Inconsistencies and Hallucinations**: Relying solely on LLMs to extract conversation facts can write false statements (e.g., summarizing an unpaid order query as a successful refund).",
+                  solution: "Deployed a dual-channel memory writer. Critical operations (e.g., cancellations, refunds) are parsed from direct tool SUCCESS return values for deterministic writes, while fuzzy user traits are extracted asynchronously by LLMs with correction and forget semantics."
+                }
+              ]
+            }
+          }
+        }
       },
       {
         id: "hm-dianping",
@@ -513,6 +711,15 @@ export const messages = {
         "For 'HM Dianping', the core highlights lie in high-concurrency Redis patterns: encapsulating a generic CacheClient with logical-expiry double-check locks, atomic seckill Lua scripts with Redisson lock fallback, and async ordering via Redis Stream with Pending List error handling.",
         "In 'Sky Takeout', memory consists of 3 layers: Java map Working context, Redis Session (2h TTL), and PostgreSQL long-term facts. Factual updates combine @Async background LLM extraction with a physical local tool outcome parser (e.g., address updates and cancellations) to guarantee consistency.",
       ],
+    },
+    projectDetail: {
+      backBtn: "Back to Home",
+      metricsTitle: "Key Indicators / KPIs",
+      techHighlights: "Technical Highlights",
+      demoVideo: "Media Demo",
+      demoPlaceholder: "[ Interactive Demo Media Placeholder ]",
+      videoPlayTip: "Interactive System Demo Video",
+      viewCaseStudy: "View Project Details"
     },
     notFound: {
       title: "Route not found",

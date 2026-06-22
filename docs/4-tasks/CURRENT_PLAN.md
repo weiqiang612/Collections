@@ -8,8 +8,10 @@
 None
 
 ## Stages
+<!-- No active stages -->
 
 ## Completed
+- **TASK-002: Add Sky Takeout Project Detail Page** (Completed: 2026-06-22)
 - **TASK-001: Add Project Tabs Carousel** (Completed: 2026-06-17)
 
 ## Notes for next session

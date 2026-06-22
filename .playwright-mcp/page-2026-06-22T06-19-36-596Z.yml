@@ -1,0 +1,9 @@
+- generic [ref=e2]:
+  - heading "Sky Takeout 详情页首屏线框" [level=1] [ref=e3]
+  - paragraph [ref=e4]:
+    - text: 对比两个首屏组织方式。A 更强调“先文字再视频”，B 更强调“标题和视频紧密组成一个案例开场”。你只需要最后回复我
+    - strong [ref=e5]: A
+    - text: 或
+    - strong [ref=e6]: B
+    - text: 。
+  - generic [ref=e8]: ...
