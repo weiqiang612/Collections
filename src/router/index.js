@@ -9,13 +9,13 @@ const routes = [
     path: "/projects/:projectId",
     name: "ProjectDetail",
     component: ProjectDetailView,
-    beforeEnter: (to, from, next) => {
-      const allowedProjects = ["sky-takeout"];
+    beforeEnter: (to) => {
+      const allowedProjects = ["sky-takeout", "hm-dianping", "equipment-management"];
       if (allowedProjects.includes(to.params.projectId)) {
-        next();
-      } else {
-        next({ name: "NotFound", replace: true });
+        return true;
       }
+
+      return { name: "NotFound", replace: true };
     },
   },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundView },

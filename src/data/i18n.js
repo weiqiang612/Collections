@@ -366,16 +366,40 @@ export const messages = {
         diagrams: diagrams.skyTakeout,
         detail: {
           tagline: "基于 Spring AI 驱动的餐饮外卖智能客服 Agent，将客户订单及咨询交付全链路自动化",
+          outcomes: ["已部署可演示", "支持多轮对话", "支持多步任务执行", "具备人工确认闭环"],
           tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
           metrics: [
             { label: "FAQ 拦截率", value: "90%+" },
             { label: "平均响应时延", value: "<500ms" },
             { label: "关键事实一致性", value: "100%" }
           ],
+          media: {
+            type: "video",
+            label: "Agent Demo / Interactive Flow",
+            eyebrow: "右侧建议放实际演示视频",
+            headline: "从自然语言请求到确认执行的完整客服闭环",
+            description: "统一媒体模块保留视频位，但即使暂时未嵌入真实视频，也能通过脚本帧和要点卡片完整表达演示路径。",
+            badges: ["Video Ready", "Confirmation Loop", "Multi-step Agent"],
+            frames: [
+              { title: "用户输入", description: "用户以自然语言提出查询、取消或退款请求。" },
+              { title: "Agent 规划", description: "意图识别、工具筛选、上下文装配与步骤规划依次展开。" },
+              { title: "确认执行", description: "高风险操作进入人工确认卡点，确认后恢复执行。" },
+            ],
+            footer: {
+              label: "建议素材",
+              value: "订单取消 / 退款确认 / 多轮追问演示视频",
+            },
+          },
           sections: {
-            demo: {
-              title: "演示背景与业务场景",
+            overview: {
+              title: "项目定位与业务背景",
               content: "在餐饮外卖服务中，退款、取消订单、修改地址等敏感交易操作占用了大量人工客服精力，且容易因为人工响应不及时导致客诉。本项目将智能客服 Agent 独立为 `sky-ai` 微服务（基于 Spring AI 驱动），引入多意图识别与级联任务编排，使用户能够通过自然语言交互轻松完成复杂查询及高风险操作。本页展示了其底层核心架构流程及在多步高风险事务中的具体执行路径。"
+              ,
+              proofPoints: [
+                { title: "价值定位", description: "把原有菜单式、流程式客服操作，升级为可解释的自然语言客服 Agent。" },
+                { title: "能力边界", description: "重点覆盖查询、取消、退款、FAQ 等多步骤客户服务场景，而非开放式聊天。" },
+                { title: "展示重点", description: "强调执行链路、人工确认、混合记忆与工程级安全兜底，而不是单纯展示模型接入。" },
+              ]
             },
             architecture: {
               title: "系统架构与核心工作流",
@@ -426,6 +450,75 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
+        detail: {
+          tagline: "围绕缓存、防超卖、异步下单与身份链路设计的高并发本地生活服务系统",
+          outcomes: ["缓存策略可解释", "秒杀链路可复盘", "异步削峰闭环", "认证链分层清晰"],
+          tags: ["Redis", "Lua", "Redisson", "Stream", "CacheClient"],
+          metrics: [
+            { label: "缓存吞吐提升", value: "+43%" },
+            { label: "下单主线程响应", value: "毫秒级" },
+            { label: "超卖控制", value: "0 容忍" },
+          ],
+          media: {
+            type: "screens",
+            label: "Concurrency Highlights / Snapshot",
+            eyebrow: "更适合放截图而不是强行录视频",
+            headline: "用链路拆解和关键场景截图证明高并发设计",
+            description: "这个项目的价值在于缓存策略、秒杀原子性和异步可靠性。相比视频，放压测结果、Redis 关键流程图或接口链路截图更聚焦。",
+            badges: ["Screenshot Ready", "Redis Intensive", "Concurrency Focus"],
+            frames: [
+              { title: "缓存击穿", description: "逻辑过期 + 互斥锁双检，命中过期时立即返回旧值并异步重建。" },
+              { title: "秒杀链路", description: "Lua 原子校验 + Stream 异步下单，把库存校验和削峰拆分清楚。" },
+              { title: "认证续期", description: "双拦截器将 token 保活与登录保护分层，接口职责更稳定。" },
+            ],
+            footer: {
+              label: "建议素材",
+              value: "压测截图 / Redis 数据结构截图 / 秒杀链路图",
+            },
+          },
+          sections: {
+            overview: {
+              title: "项目定位与业务背景",
+              content: "本项目面向高并发本地生活服务场景，核心不是页面效果，而是如何在高流量下稳定处理热点缓存、秒杀库存和用户会话。作品集详情页重点展示 Redis 模式封装、异步订单削峰与接口鉴权链路，帮助面试官快速判断你对高并发系统的真实理解深度。",
+              proofPoints: [
+                { title: "核心问题", description: "缓存穿透、缓存击穿、超卖、一人一单、会话续期这几类问题都直连高并发稳定性。" },
+                { title: "展示方式", description: "这里更适合用关键场景截图和时序图，而不是录制较长的交互视频。" },
+                { title: "面试价值", description: "可直接展开到缓存一致性、消息可靠性、锁粒度选择和接口幂等性等高频问题。" },
+              ],
+            },
+            architecture: {
+              title: "核心链路与并发处理机制",
+              description: "详情页集中展示三类最能说明工程能力的链路：热点缓存击穿保护、秒杀异步下单削峰，以及双拦截器身份认证链。这三部分共同构成系统在高流量场景下的稳定性基础。",
+              diagrams: diagrams.hmDianping,
+            },
+            ownership: {
+              title: "我的职责",
+              items: [
+                "**独立实现通用缓存组件**：封装 `CacheClient`，统一处理缓存空值、防击穿与逻辑过期重建，减少业务层重复实现。",
+                "**设计秒杀核心链路**：基于 Lua 脚本实现库存预扣减与一人一单原子校验，并配合 Redisson / Stream 构建削峰下单流程。",
+                "**实现异步订单消费闭环**：编写 `VoucherOrderHandler` 处理 Redis Stream 消费、异常补偿与 Pending List 重试。",
+                "**拆分身份认证职责**：通过 `RefreshTokenInterceptor` 与 `LoginInterceptor` 分离会话续期和登录校验，让接口拦截职责更清晰。"
+              ],
+            },
+            retrospective: {
+              title: "项目反思与复盘",
+              challenges: [
+                {
+                  problem: "**缓存命中但数据已过期时如何兼顾可用性与一致性**：直接阻塞重建会拖慢高并发请求，直接返回旧值又会带来短暂陈旧数据。",
+                  solution: "采用逻辑过期 + 互斥锁双检策略，请求线程优先返回旧值，后台线程异步重建，在高并发场景下优先保证吞吐和可用性。"
+                },
+                {
+                  problem: "**秒杀场景下主线程做太多事会导致 RT 抬高**：如果库存判断、下单落库和一致性逻辑都在入口线程完成，峰值阶段很容易抖动。",
+                  solution: "把校验前移到 Lua，主线程只负责快速判定并返回 `orderId`，再通过 Redis Stream 将持久化压力移到异步消费线程。"
+                },
+                {
+                  problem: "**会话续期和登录校验混在一个拦截器里会让职责变重**：公开接口也会被不必要地耦合进登录判断逻辑。",
+                  solution: "拆成双拦截器链，一个负责 token 刷新和 UserHolder 注入，一个负责受保护接口鉴权，链路更清晰也更易维护。"
+                }
+              ],
+            },
+          },
+        },
       },
       {
         id: "equipment-management",
@@ -443,6 +536,75 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Java 11", "JdbcTemplate", "MySQL", "JWT", "AOP", "Vue 2", "ECharts", "LLM API"],
         diagrams: diagrams.equipmentManagement,
+        detail: {
+          tagline: "覆盖领用、维保、报废与治理分析的设备全生命周期管理系统",
+          outcomes: ["生命周期闭环", "RBAC 权责清晰", "治理规则可追踪", "AI 只做辅助层"],
+          tags: ["RBAC", "Workflow", "Governance", "Audit", "LLM Summary"],
+          metrics: [
+            { label: "角色层级", value: "4 级" },
+            { label: "核心流程", value: "全生命周期" },
+            { label: "审计策略", value: "追加写入" },
+          ],
+          media: {
+            type: "static",
+            label: "System Proof / Product Screens",
+            eyebrow: "更适合放产品截图与流程面板",
+            headline: "用产品界面和流程节点证明系统治理能力",
+            description: "这个项目不需要强行做演示视频。设备台账、工单流转、治理看板、报表摘要这些截图，比视频更能快速说明系统成熟度。",
+            badges: ["Static Proof", "Workflow System", "Governance Ready"],
+            frames: [
+              { title: "设备台账", description: "体现多角色、多单位下的资产信息、状态和保管责任。" },
+              { title: "维保闭环", description: "展示报修、派单、维修、复核到恢复或报废的流程状态推进。" },
+              { title: "治理看板", description: "用风险规则、成本占比和闲置设备识别证明系统不只是 CRUD。" },
+            ],
+            footer: {
+              label: "建议素材",
+              value: "台账页 / 工单流转页 / 数据治理看板截图",
+            },
+          },
+          sections: {
+            overview: {
+              title: "项目定位与业务背景",
+              content: "该系统面向企业固定资产管理场景，重点不是单点功能，而是如何把设备从入库、领用、维保到报废的全过程组织成有权限边界、有状态约束、有审计记录的闭环系统。详情页会把展示重心放在生命周期流程、治理规则和角色边界上，突出你对“业务系统”而非“单纯后台接口”的理解。",
+              proofPoints: [
+                { title: "系统属性", description: "它是一个具备角色边界、状态流转和审计要求的业务系统，而不是单表 CRUD 项目。" },
+                { title: "设计重点", description: "强调 RBAC、流程事务性、数据治理和产品可用性，AI 只作为辅助摘要与报告生成能力出现。" },
+                { title: "展示形式", description: "优先放关键页面截图和流程图，让招聘方先看到业务闭环，再下钻实现细节。" },
+              ],
+            },
+            architecture: {
+              title: "生命周期流程与治理结构",
+              description: "本页展示两条最能体现系统价值的核心图：物理 E-R 关系设计与维保闭环时序。前者解释数据实体和归属关系，后者解释真实业务流如何在角色之间推进。",
+              diagrams: diagrams.equipmentManagement,
+            },
+            ownership: {
+              title: "我的职责",
+              items: [
+                "**独立设计并实现业务闭环**：围绕固定资产管理要求，完成设备、领用、维保、调拨、报废等核心模块设计与落地。",
+                "**实现多级 RBAC 与单位隔离**：在拦截器与业务层建立角色和 `unit_code` 双重约束，控制跨单位访问边界。",
+                "**推动治理能力从规则到通知闭环**：设计高频故障、成本异常、无保管人等规则筛查，并把结果推送到消息中心。",
+                "**接入 AI 作为辅助分析层**：使用 LLM 生成月度报告草稿和单设备生命周期摘要，但不让 AI 侵入核心事务流程。"
+              ],
+            },
+            retrospective: {
+              title: "项目反思与复盘",
+              challenges: [
+                {
+                  problem: "**设备状态流转与保管责任切换容易出现不一致**：例如领用审批通过后设备状态变化了，但保管人或记录未同步。",
+                  solution: "把状态校验、记录写入和责任人变更统一纳入事务边界，通过声明式事务和状态前置判断保证原子性。"
+                },
+                {
+                  problem: "**只做台账和工单会让系统停留在记录层**：缺少治理视角时，管理系统难以体现真正的业务价值。",
+                  solution: "增加规则驱动的数据治理模块，把高频故障、维修成本偏高和闲置卡片等风险主动识别出来，让系统从“记事”升级为“发现问题”。"
+                },
+                {
+                  problem: "**AI 能力如果直接介入业务判定会破坏系统确定性**：尤其在资产处置或权限边界场景中，不能让模型决定事务结果。",
+                  solution: "把 AI 限定在报告生成和摘要提炼层，核心流程仍然由确定性规则、事务和权限模型驱动。"
+                }
+              ],
+            },
+          },
+        },
       },
     ],
     projectCard: {
@@ -489,7 +651,9 @@ export const messages = {
       demoVideo: "媒体演示",
       demoPlaceholder: "[ 演示多媒体播放占位 ]",
       videoPlayTip: "交互式系统演示录像",
-      viewCaseStudy: "查看项目详情"
+      viewCaseStudy: "查看项目详情",
+      challengeLabel: "挑战",
+      solutionLabel: "解决方案"
     },
     notFound: {
       title: "页面不存在",
@@ -596,16 +760,40 @@ export const messages = {
         diagrams: diagrams.skyTakeout,
         detail: {
           tagline: "Intelligent customer service Agent driven by Spring AI, automating the entire food delivery order and inquiry lifecycle.",
+          outcomes: ["Deployed and demo-ready", "Multi-turn dialogue", "Multi-step execution", "Human confirmation loop"],
           tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
           metrics: [
             { label: "FAQ Block Rate", value: "90%+" },
             { label: "Avg Latency", value: "<500ms" },
             { label: "Fact Consistency", value: "100%" }
           ],
+          media: {
+            type: "video",
+            label: "Agent Demo / Interactive Flow",
+            eyebrow: "Best paired with a real demo video on the right",
+            headline: "A complete customer-service loop from natural language to confirmed execution",
+            description: "The shared media shell keeps the page complete even before a real video is embedded, while still reserving the right hierarchy for a future agent demo.",
+            badges: ["Video Ready", "Confirmation Loop", "Multi-step Agent"],
+            frames: [
+              { title: "User Request", description: "The user asks for lookup, cancellation, refund, or another service action in natural language." },
+              { title: "Agent Planning", description: "Intent recognition, tool filtering, context loading, and task planning are chained together." },
+              { title: "Confirmed Execution", description: "High-risk actions pause for human confirmation before resuming execution." },
+            ],
+            footer: {
+              label: "Suggested asset",
+              value: "Order cancellation / refund confirmation / multi-turn demo video",
+            },
+          },
           sections: {
-            demo: {
-              title: "Demo Context & Business Scenario",
+            overview: {
+              title: "Project Positioning & Business Context",
               content: "In food delivery services, transaction operations such as refunds, order cancellations, and address modifications consume massive customer service resources, often leading to customer complaints due to delayed manual responses. This project decouples customer service into an independent `sky-ai` microservice (driven by Spring AI), introducing multi-intent recognition and cascading task orchestration. It allows users to easily execute complex inquiries and high-risk operations via natural language. This page presents its core architectural workflows and execution paths."
+              ,
+              proofPoints: [
+                { title: "Value Proposition", description: "It turns rigid menu-style service operations into an explainable natural-language customer-service Agent." },
+                { title: "System Boundary", description: "The focus is bounded service workflows such as lookup, cancellation, refunds, and FAQ handling rather than open-ended chat." },
+                { title: "What This Page Proves", description: "The page emphasizes execution flow, human confirmation, hybrid memory, and safety engineering rather than just model integration." },
+              ]
             },
             architecture: {
               title: "Architecture & Workflows",
@@ -656,6 +844,75 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
+        detail: {
+          tagline: "A high-concurrency local-life service system centered on caching, flash-sale safety, and async ordering reliability.",
+          outcomes: ["Explainable cache strategy", "Replayable seckill flow", "Async peak shaving loop", "Layered auth chain"],
+          tags: ["Redis", "Lua", "Redisson", "Stream", "CacheClient"],
+          metrics: [
+            { label: "Cache Throughput", value: "+43%" },
+            { label: "Main-Thread Response", value: "ms-level" },
+            { label: "Oversell Tolerance", value: "Zero" },
+          ],
+          media: {
+            type: "screens",
+            label: "Concurrency Highlights / Snapshot",
+            eyebrow: "This project fits screenshots better than forcing a video",
+            headline: "Use key snapshots and flow breakdowns to prove concurrency design",
+            description: "The strongest evidence here is caching behavior, seckill atomics, and async reliability. Screenshots of pressure results, Redis flows, or request paths communicate that better than a long demo video.",
+            badges: ["Screenshot Ready", "Redis Intensive", "Concurrency Focus"],
+            frames: [
+              { title: "Cache Breakdown", description: "Logical expiry plus mutex-based double-check returns stale data first and rebuilds asynchronously." },
+              { title: "Seckill Path", description: "Lua atomics and Redis Stream split stock validation from order persistence." },
+              { title: "Auth Renewal", description: "The dual-interceptor chain cleanly separates token refresh from protected-route enforcement." },
+            ],
+            footer: {
+              label: "Suggested asset",
+              value: "Pressure-test screenshots / Redis structures / seckill flow diagrams",
+            },
+          },
+          sections: {
+            overview: {
+              title: "Project Positioning & Business Context",
+              content: "This project targets high-concurrency local-life service scenarios. The real value is not the UI surface but how the system survives cache pressure, flash-sale contention, and session traffic. The detail page focuses on Redis pattern design, async order peak shaving, and authentication flow clarity so interviewers can quickly judge backend depth.",
+              proofPoints: [
+                { title: "Core Pressure", description: "Cache penetration, cache breakdown, overselling, one-user-one-order, and session renewal all map directly to stability under load." },
+                { title: "Presentation Style", description: "This case is better served by key snapshots and diagrams than by a long interaction video." },
+                { title: "Interview Value", description: "It naturally expands into consistency, reliability, lock granularity, idempotency, and queue tradeoff discussions." },
+              ],
+            },
+            architecture: {
+              title: "Core Flows & Concurrency Handling",
+              description: "The page focuses on three flows that best demonstrate backend judgment: hotspot cache protection, flash-sale async ordering, and the dual-interceptor authentication chain. Together they show the system's stability foundation under load.",
+              diagrams: diagrams.hmDianping,
+            },
+            ownership: {
+              title: "My Ownership",
+              items: [
+                "**Built a reusable cache component**: Implemented `CacheClient` to unify null-value caching, logical expiry, and cache-rebuild behavior across business calls.",
+                "**Designed the seckill critical path**: Used Lua for atomic stock pre-check and one-user-one-order constraints, then paired it with Redisson and Redis Stream for safe ordering under burst traffic.",
+                "**Implemented the async order-consumption loop**: Wrote `VoucherOrderHandler` for Redis Stream consumption, failure recovery, and Pending List retries.",
+                "**Separated auth responsibilities**: Split token renewal and login enforcement into `RefreshTokenInterceptor` and `LoginInterceptor` to keep the request chain easier to reason about."
+              ],
+            },
+            retrospective: {
+              title: "Project Retrospective",
+              challenges: [
+                {
+                  problem: "**How do you balance availability and freshness when cache data is expired but still present?** Blocking callers for rebuild hurts latency, while serving stale data risks temporary inconsistency.",
+                  solution: "I adopted logical expiry with a mutex-based double-check flow. Request threads return stale values first while a background worker rebuilds the cache, prioritizing throughput and availability under high concurrency."
+                },
+                {
+                  problem: "**Doing too much in the seckill request thread raises response times.** If stock validation, order writes, and consistency work all happen inline, the peak path becomes fragile.",
+                  solution: "I moved validation into Lua, kept the request thread focused on fast success/failure decisions, and pushed persistence pressure into Redis Stream async consumers."
+                },
+                {
+                  problem: "**Mixing session renewal with login checks makes interceptors heavy and leaky.** Public routes become unnecessarily tangled with auth enforcement.",
+                  solution: "I split the chain into two interceptors: one for token refresh and UserHolder injection, and one for protected-route authorization."
+                }
+              ],
+            },
+          },
+        },
       },
       {
         id: "equipment-management",
@@ -673,6 +930,75 @@ export const messages = {
         ],
         techStack: ["Spring Boot", "Java 11", "JdbcTemplate", "MySQL", "JWT", "AOP", "Vue 2", "ECharts", "LLM API"],
         diagrams: diagrams.equipmentManagement,
+        detail: {
+          tagline: "A lifecycle-based equipment management system spanning claim, maintenance, governance, and reporting.",
+          outcomes: ["Lifecycle closed loop", "Clear RBAC boundaries", "Traceable governance rules", "AI kept as an assist layer"],
+          tags: ["RBAC", "Workflow", "Governance", "Audit", "LLM Summary"],
+          metrics: [
+            { label: "Role Levels", value: "4" },
+            { label: "Core Flow", value: "Full lifecycle" },
+            { label: "Audit Policy", value: "Append-only" },
+          ],
+          media: {
+            type: "static",
+            label: "System Proof / Product Screens",
+            eyebrow: "Better presented with product screenshots and workflow panels",
+            headline: "Use product screens and stateful workflows to prove system maturity",
+            description: "This project does not need a forced video. Ledger pages, maintenance workflows, governance dashboards, and report summaries are stronger proof for product-facing backend work.",
+            badges: ["Static Proof", "Workflow System", "Governance Ready"],
+            frames: [
+              { title: "Asset Ledger", description: "Shows role-aware asset records, status, ownership, and unit-level boundaries." },
+              { title: "Maintenance Loop", description: "Captures report, assignment, repair, and review states leading to restore or scrap." },
+              { title: "Governance Panel", description: "Highlights rules, cost-risk checks, and idle-asset signals beyond plain CRUD." },
+            ],
+            footer: {
+              label: "Suggested asset",
+              value: "Ledger screen / workflow screen / governance dashboard captures",
+            },
+          },
+          sections: {
+            overview: {
+              title: "Project Positioning & Business Context",
+              content: "This system targets enterprise fixed-asset management. The value lies not in isolated features but in organizing the full lifecycle of assets into a permission-aware, state-aware, and auditable business system. The detail page therefore emphasizes lifecycle flow, governance rules, and role boundaries rather than superficial interface depth.",
+              proofPoints: [
+                { title: "System Nature", description: "This is a business system with role boundaries, state transitions, and audit requirements rather than a simple CRUD project." },
+                { title: "Design Emphasis", description: "RBAC, transaction-backed workflows, governance rules, and product usability matter more than flashy AI usage." },
+                { title: "Presentation Style", description: "Key screens and flow diagrams help interviewers understand the business loop before diving into implementation details." },
+              ],
+            },
+            architecture: {
+              title: "Lifecycle Flow & Governance Structure",
+              description: "This page focuses on two diagrams that best explain the system: the physical E-R model and the maintenance workflow sequence. Together they clarify both entity ownership and how the real process advances across roles.",
+              diagrams: diagrams.equipmentManagement,
+            },
+            ownership: {
+              title: "My Ownership",
+              items: [
+                "**Designed and implemented the business loop independently**: Built the core modules around asset registration, claiming, maintenance, transfer, and scrapping.",
+                "**Implemented multi-level RBAC and unit isolation**: Enforced both role boundaries and `unit_code` scope checks across interceptors and service logic.",
+                "**Turned governance from rules into action**: Added automated checks for frequent failures, cost anomalies, and ownerless assets, then pushed signals into a notification loop.",
+                "**Integrated AI as an assistive analysis layer**: Used LLMs for monthly report drafting and lifecycle summaries without letting AI invade deterministic transaction paths."
+              ],
+            },
+            retrospective: {
+              title: "Project Retrospective",
+              challenges: [
+                {
+                  problem: "**Asset state transitions and ownership handoffs can easily drift apart.** A claim may succeed while the responsible owner or workflow record is left inconsistent.",
+                  solution: "I placed state validation, record writes, and ownership changes into the same transaction boundary so that lifecycle transitions stay atomic."
+                },
+                {
+                  problem: "**A system limited to ledgers and tickets stays at the record-keeping layer.** Without a governance view, it is hard to show business value.",
+                  solution: "I introduced rule-driven governance checks to proactively surface frequent-failure assets, maintenance-cost risks, and idle cards so the system can identify problems rather than just store them."
+                },
+                {
+                  problem: "**Letting AI decide core business outcomes would weaken determinism.** Asset disposal and permission boundaries should never be model-led.",
+                  solution: "I constrained AI to reporting and summarization while keeping the core workflow driven by deterministic rules, transactions, and permission models."
+                }
+              ],
+            },
+          },
+        },
       },
     ],
     projectCard: {
@@ -719,7 +1045,9 @@ export const messages = {
       demoVideo: "Media Demo",
       demoPlaceholder: "[ Interactive Demo Media Placeholder ]",
       videoPlayTip: "Interactive System Demo Video",
-      viewCaseStudy: "View Project Details"
+      viewCaseStudy: "View Project Details",
+      challengeLabel: "Challenge",
+      solutionLabel: "Solution"
     },
     notFound: {
       title: "Route not found",

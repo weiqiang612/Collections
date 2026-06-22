@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "../composables/useLocale";
 import AppShell from "../components/common/AppShell.vue";
 import MermaidDiagram from "../components/projects/MermaidDiagram.vue";
+import ProjectHeroMedia from "../components/projects/ProjectHeroMedia.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -33,12 +34,17 @@ const goBack = () => {
 
       <!-- Hero Section -->
       <header class="detail-hero-grid">
-        <!-- Left: Text and KPIs -->
         <div class="detail-hero-info">
           <p class="detail-kicker">{{ project.subtitle }}</p>
           <h1 class="detail-title">{{ project.name }}</h1>
           <p class="detail-tagline">{{ project.detail.tagline }}</p>
-          
+
+          <div class="detail-outcomes" v-if="project.detail.outcomes?.length">
+            <span v-for="outcome in project.detail.outcomes" :key="outcome" class="detail-outcome">
+              {{ outcome }}
+            </span>
+          </div>
+
           <div class="detail-tags">
             <span v-for="tag in project.detail.tags" :key="tag" class="detail-tag">
               {{ tag }}
@@ -53,48 +59,39 @@ const goBack = () => {
           </div>
         </div>
 
-        <!-- Right: Video/Image demo placeholder -->
         <div class="detail-hero-media">
-          <div class="media-frame">
-            <div class="media-header">
-              <div class="media-dots">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-              </div>
-              <span class="media-title">{{ t.projectDetail.demoVideo }}</span>
-            </div>
-            <div class="media-content-placeholder">
-              <div class="play-icon-box">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-              </div>
-              <p class="placeholder-text">{{ t.projectDetail.demoPlaceholder }}</p>
-              <p class="media-tip">{{ t.projectDetail.videoPlayTip }}</p>
-            </div>
-          </div>
+          <ProjectHeroMedia :media="project.detail.media" />
         </div>
       </header>
 
-      <!-- Main Content Area -->
       <main class="detail-body">
-        <!-- Section 1: Demo context -->
-        <section class="detail-section demo-context-section">
-          <h2 class="section-title-highlight">{{ project.detail.sections.demo.title }}</h2>
+        <section class="detail-section detail-overview-section">
+          <h2 class="section-title-highlight">{{ project.detail.sections.overview.title }}</h2>
           <div class="section-content text-block">
-            <p>{{ project.detail.sections.demo.content }}</p>
+            <p>{{ project.detail.sections.overview.content }}</p>
+
+            <div
+              v-if="project.detail.sections.overview.proofPoints?.length"
+              class="detail-proof-grid"
+            >
+              <article
+                v-for="point in project.detail.sections.overview.proofPoints"
+                :key="point.title"
+                class="detail-proof-card"
+              >
+                <p class="detail-proof-title">{{ point.title }}</p>
+                <p class="detail-proof-text">{{ point.description }}</p>
+              </article>
+            </div>
           </div>
         </section>
 
-        <!-- Section 2: Architecture with Mermaid Diagrams -->
         <section class="detail-section architecture-section">
           <h2 class="section-title-highlight">{{ project.detail.sections.architecture.title }}</h2>
           <div class="section-content">
             <p class="arch-desc">{{ project.detail.sections.architecture.description }}</p>
 
             <div class="detail-diagrams-container">
-              <!-- Loop through detail diagrams -->
               <div 
                 v-for="(diag, idx) in project.detail.sections.architecture.diagrams" 
                 :key="idx" 
@@ -116,7 +113,6 @@ const goBack = () => {
           </div>
         </section>
 
-        <!-- Section 3: Tech Highlights -->
         <section class="detail-section highlights-section">
           <h2 class="section-title-highlight">{{ t.projectDetail.techHighlights }}</h2>
           <div class="section-content">
@@ -131,9 +127,7 @@ const goBack = () => {
           </div>
         </section>
 
-        <!-- Section 4: My Ownership & Project Retrospective -->
         <div class="detail-bottom-grid">
-          <!-- Left: My Ownership -->
           <section class="detail-section ownership-section">
             <h2 class="section-title-highlight">{{ project.detail.sections.ownership.title }}</h2>
             <div class="section-content">
@@ -146,7 +140,6 @@ const goBack = () => {
             </div>
           </section>
 
-          <!-- Right: Project Retrospective -->
           <section class="detail-section retrospective-section">
             <h2 class="section-title-highlight">{{ project.detail.sections.retrospective.title }}</h2>
             <div class="section-content">
@@ -157,11 +150,11 @@ const goBack = () => {
                   class="retro-card"
                 >
                   <div class="retro-problem">
-                    <span class="retro-lbl problem-lbl">Challenge:</span>
+                    <span class="retro-lbl problem-lbl">{{ t.projectDetail.challengeLabel }}</span>
                     <span v-html="ch.problem"></span>
                   </div>
                   <div class="retro-solution">
-                    <span class="retro-lbl solution-lbl">Solution:</span>
+                    <span class="retro-lbl solution-lbl">{{ t.projectDetail.solutionLabel }}</span>
                     <span v-html="ch.solution"></span>
                   </div>
                 </div>

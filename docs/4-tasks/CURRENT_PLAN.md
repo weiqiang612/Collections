@@ -5,12 +5,16 @@
 > and by the agent as tasks are completed.
 
 ## Active feature
-None
+`docs/4-tasks/features/TASK-003-expand-detail-pages/`
+- spec.md ✅ Ready
+- tasks.md ✅ Complete
 
 ## Stages
-<!-- No active stages -->
+### TASK-003: Expand Detail Pages To All Projects
+- [x] Implementation (13 tasks)
 
 ## Completed
+- **TASK-003: Expand Detail Pages To All Projects** (Completed: 2026-06-22)
 - **TASK-002: Add Sky Takeout Project Detail Page** (Completed: 2026-06-22)
 - **TASK-001: Add Project Tabs Carousel** (Completed: 2026-06-17)
 
