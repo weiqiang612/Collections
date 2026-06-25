@@ -1,9 +1,9 @@
-import skyTakeoutAiRecommendationScreen from "../assets/projects/sky-takeout/ai-recommendation.jpg";
-import skyTakeoutMenuSelectionScreen from "../assets/projects/sky-takeout/menu-selection.jpg";
-import skyTakeoutCartConfirmationScreen from "../assets/projects/sky-takeout/cart-confirmation.jpg";
-import skyTakeoutCancelConfirmationScreen from "../assets/projects/sky-takeout/cancel-confirmation.jpg";
-import skyTakeoutCancelSuccessScreen from "../assets/projects/sky-takeout/cancel-success.jpg";
-import skyTakeoutUserMemoryScreen from "../assets/projects/sky-takeout/user-memory.jpg";
+import skyTakeoutAiRecommendationScreen from "../assets/projects/sky-takeout/ai-recommendation.webp";
+import skyTakeoutMenuSelectionScreen from "../assets/projects/sky-takeout/menu-selection.webp";
+import skyTakeoutCartConfirmationScreen from "../assets/projects/sky-takeout/cart-confirmation.webp";
+import skyTakeoutCancelConfirmationScreen from "../assets/projects/sky-takeout/cancel-confirmation.webp";
+import skyTakeoutCancelSuccessScreen from "../assets/projects/sky-takeout/cancel-success.webp";
+import skyTakeoutUserMemoryScreen from "../assets/projects/sky-takeout/user-memory.webp";
 
 
 export const supportedLocales = ["zh-CN", "en-US"];

@@ -14,6 +14,7 @@ const hasDemoScreens = computed(() => {
 });
 const activeDemoIndex = ref(0);
 const prefersReducedMotion = ref(false);
+const isPaused = ref(false);
 let rotationTimer = null;
 
 const activeDemoScreen = computed(() => {
@@ -22,6 +23,7 @@ const activeDemoScreen = computed(() => {
 });
 
 const stopRotation = () => {
+  isPaused.value = true;
   if (rotationTimer) {
     window.clearInterval(rotationTimer);
     rotationTimer = null;
@@ -29,7 +31,9 @@ const stopRotation = () => {
 };
 
 const startRotation = () => {
+  isPaused.value = false;
   stopRotation();
+  isPaused.value = false;
 
   if (!hasDemoScreens.value || prefersReducedMotion.value || props.media.demoScreens.length < 2) {
     return;
@@ -118,7 +122,7 @@ onUnmounted(() => {
             @mouseenter="stopRotation"
             @mouseleave="startRotation"
           >
-            <div class="project-media-demo">
+            <div class="project-media-demo" :class="{ 'is-paused': isPaused }">
               <div class="project-media-demo-stage">
                 <div class="project-media-stage-viewport">
                   <button
@@ -136,13 +140,17 @@ onUnmounted(() => {
                       <span></span>
                       <span></span>
                     </div>
-                    <img
-                      v-if="activeDemoScreen"
-                      class="project-media-phone-image"
-                      :src="activeDemoScreen.src"
-                      :alt="activeDemoScreen.title"
-                      loading="lazy"
-                    />
+                    <div class="project-media-phone-images-container">
+                      <img
+                        v-for="(screen, index) in media.demoScreens"
+                        :key="screen.title"
+                        class="project-media-phone-image-layered"
+                        :class="{ 'is-active': index === activeDemoIndex }"
+                        :src="screen.src"
+                        :alt="screen.title"
+                        :loading="index === 0 ? 'eager' : 'lazy'"
+                      />
+                    </div>
                   </div>
 
                   <button
@@ -175,6 +183,17 @@ onUnmounted(() => {
                 >
                   <span class="project-media-step-index">{{ String(index + 1).padStart(2, "0") }}</span>
                   <span class="project-media-step-label">{{ screen.stepLabel }}</span>
+                  
+                  <div class="project-media-step-progress-bar">
+                    <div 
+                      class="project-media-step-progress-fill"
+                      :class="{
+                        'is-completed': index < activeDemoIndex,
+                        'is-active': index === activeDemoIndex,
+                        'is-pending': index > activeDemoIndex
+                      }"
+                    ></div>
+                  </div>
                 </button>
               </div>
             </div>
