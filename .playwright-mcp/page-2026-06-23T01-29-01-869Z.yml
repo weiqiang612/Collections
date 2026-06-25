@@ -1,0 +1,57 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "返回首页" [ref=e5]:
+      - /url: "#hero"
+      - generic [ref=e7]: weiqiang
+    - generic [ref=e8]:
+      - navigation "主导航" [ref=e9]:
+        - link "首页" [ref=e10]:
+          - /url: "#hero"
+        - link "关于" [ref=e11]:
+          - /url: "#about"
+        - link "项目" [ref=e12]:
+          - /url: "#projects"
+        - link "Agent" [ref=e13]:
+          - /url: "#resume-agent"
+        - link "笔记" [ref=e14]:
+          - /url: https://note.weiqiang.me
+          - text: 笔记
+          - img [ref=e15]
+      - button "切换语言" [ref=e17]:
+        - generic [ref=e18]: 中文
+        - generic [ref=e19]: /
+        - generic [ref=e20]: EN
+  - main [ref=e21]:
+    - generic [ref=e23]:
+      - paragraph [ref=e24]: Ethan / weiqiang / 围墙
+      - generic "core focus areas" [ref=e25]
+    - generic [ref=e28]:
+      - generic [ref=e30]: Why -> What -> How -> Deep Dive
+      - heading "技术重点" [level=3] [ref=e32]
+    - generic [ref=e34]:
+      - generic [ref=e35]:
+        - paragraph [ref=e36]: Projects
+        - heading "值得在面试中展开讨论的系统" [level=2] [ref=e37]
+        - paragraph [ref=e38]: 每个项目都按系统视角呈现：负载路径、状态模型、缓存策略，以及 AI 如何改善工程工作流。
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - generic [ref=e41]: CASE STRIP
+          - generic [ref=e42]: 01 / 03
+        - generic [ref=e43]:
+          - button "查看上一个项目" [ref=e44]:
+            - img [ref=e45]
+          - button "查看下一个项目" [ref=e47]:
+            - img [ref=e48]
+      - generic [ref=e51]:
+        - button "查看项目详情" [ref=e52]:
+          - generic [ref=e53]: 查看项目详情
+          - img [ref=e54]
+        - button "设为主卡" [ref=e56]:
+          - generic [ref=e57]: 设为主卡
+          - img [ref=e58]
+        - button "设为主卡" [ref=e60]:
+          - generic [ref=e61]: 设为主卡
+          - img [ref=e62]
+    - button "AI 简历 Agent" [ref=e64]:
+      - generic [ref=e65]: AI
+      - generic [ref=e66]: 简历 Agent

@@ -1,18 +1,34 @@
 <script setup>
+import { useRoute, useRouter } from "vue-router";
 import { useLocale } from "../../composables/useLocale";
 import GeekCursor from "./GeekCursor.vue";
 
+const route = useRoute();
+const router = useRouter();
 const { t, currentLabel, nextLabel, toggleLocale } = useLocale();
+
+const navigateHomeTop = async () => {
+  if (route.path !== "/") {
+    await router.push("/");
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+};
 </script>
 
 <template>
   <div class="app-shell">
     <GeekCursor />
     <header class="site-header">
-      <a class="brand-mark" href="#hero" :aria-label="t.shell.brandAria">
+      <router-link
+        class="brand-mark"
+        to="/"
+        :aria-label="t.shell.brandAria"
+        @click.prevent="navigateHomeTop"
+      >
         <span class="brand-dot"></span>
         <span>weiqiang</span>
-      </a>
+      </router-link>
       <div class="header-actions">
         <nav class="site-nav" :aria-label="t.shell.navAria">
           <a

@@ -1,3 +1,11 @@
+import skyTakeoutAiRecommendationScreen from "../assets/projects/sky-takeout/ai-recommendation.jpg";
+import skyTakeoutMenuSelectionScreen from "../assets/projects/sky-takeout/menu-selection.jpg";
+import skyTakeoutCartConfirmationScreen from "../assets/projects/sky-takeout/cart-confirmation.jpg";
+import skyTakeoutCancelConfirmationScreen from "../assets/projects/sky-takeout/cancel-confirmation.jpg";
+import skyTakeoutCancelSuccessScreen from "../assets/projects/sky-takeout/cancel-success.jpg";
+import skyTakeoutUserMemoryScreen from "../assets/projects/sky-takeout/user-memory.jpg";
+
+
 export const supportedLocales = ["zh-CN", "en-US"];
 export const defaultLocale = "zh-CN";
 
@@ -164,13 +172,42 @@ const diagrams = {
   ],
   skyTakeoutDetail: [
     {
+      title: "整体架构分层图 / Layered Architecture",
+      code: `flowchart LR
+    U["Client<br><small>Web / WebSocket</small>"] --> WS["AgentChatWebSocket<br><small>实时入口</small>"]
+    WS --> ORCH["TaskOrchestratorService<br><small>预识别 / 任务规划 / 会话控制</small>"]
+    ORCH --> CHAT["AgentChatService<br><small>顾问链装配驱动</small>"]
+
+    subgraph ADVISORS["Advisor Chain"]
+      A1["IntentRecognitionAdvisor<br><small>意图识别 + 画像摘要</small>"]
+      A2["FaqSemanticCacheAdvisor<br><small>FAQ 语义缓存短路</small>"]
+      A3["UserContextAdvisor<br><small>两级工具授权 + 画像注入</small>"]
+      A4["MessageChatMemoryAdvisor<br><small>Redis 历史加载</small>"]
+      A5["RagAdvisor<br><small>条件式 RAG 检索</small>"]
+      A6["ToolFilterAdvisor<br><small>可用工具硬筛选</small>"]
+      A7["SafeToolCallAdvisor<br><small>死循环检测与 Fallback</small>"]
+      A1 --> A2 --> A3 --> A4 --> A5 --> A6 --> A7
+    end
+
+    CHAT --> A1
+    A7 --> LLM["ChatClient / LLM"]
+    LLM --> TOOLS["Order / Address / Menu Tools"]
+    TOOLS --> CORE["sky-server<br><small>订单状态机 / 业务服务</small>"]
+    LLM --> FRAME["WebSocket 控制帧<br><small>token / confirmation / step_done</small>"]
+    FRAME --> U
+
+    LLM --> MEMORY["MemoryWriterService<br><small>@Async 异步记忆写入</small>"]
+    MEMORY --> REDIS[("Redis<br><small>Session Memory · TTL 2h</small>")]
+    MEMORY --> PG[("PostgreSQL<br><small>user_memory_facts</small>")]`,
+    },
+    {
       title: "整体业务流程图 / Overall Flowchart",
       code: `graph TD
-    classDef startEnd fill:#ebf5fb,stroke:#2e86c1,stroke-width:2px;
-    classDef process fill:#f4f6f7,stroke:#7f8c8d,stroke-width:1px;
-    classDef decision fill:#fef9e7,stroke:#f1c40f,stroke-width:1px;
-    classDef storage fill:#eafaf1,stroke:#2ecc71,stroke-width:1px;
-    classDef alert fill:#fdedec,stroke:#e74c3c,stroke-width:1px;
+    classDef startEnd fill:#1d3557,stroke:#38bdf8,stroke-width:2px,color:#f8f8f2;
+    classDef process fill:#1e293b,stroke:#475569,stroke-width:1px,color:#f8f8f2;
+    classDef decision fill:#3f2e0f,stroke:#fbbf24,stroke-width:1px,color:#f8f8f2;
+    classDef storage fill:#064e3b,stroke:#10b981,stroke-width:1px,color:#f8f8f2;
+    classDef alert fill:#4c0519,stroke:#ef4444,stroke-width:1px,color:#f8f8f2;
 
     Start([用户通过 WebSocket 发送请求消息]) --> Orchestrator{是否为复杂多步任务?}
     class Start startEnd;
@@ -237,19 +274,19 @@ const diagrams = {
     SendResponse --> CheckStepDone{是否为多步任务且有后续步骤?}
     class CheckStepDone decision;
 
-    CheckStepDone -- 是 --> StepDoneFrame[推送 step_done 帧并更新级联插槽参数]
+    CheckStepDone -- 是 --> StepDoneFrame[推送 step_done 帧<br/>并更新级联插槽参数]
     StepDoneFrame --> StepLoop
     class StepDoneFrame process;
 
-    CheckStepDone -- 否 --> SendDoneFrame[推送 done 或 plan_complete 帧]
+    CheckStepDone -- 否 --> SendDoneFrame[推送 done 或<br/>plan_complete 帧]
     class SendDoneFrame process;
     
     SendDoneFrame --> AsyncMemory[触发 @Async 异步记忆写入服务]
     class AsyncMemory process;
     
     subgraph "异步记忆持久化 (MemoryWriterService)"
-        AsyncMemory --> ToolPersist[A. 本地工具响应强一致解析<br/>自动提取成功退款/取消订单事实]
-        AsyncMemory --> LLMPersist[B. LLM 语义事实提取<br/>分析 User 语句进行事实修正/遗忘]
+        AsyncMemory --> ToolPersist[A. 本地工具强一致解析<br/>自动提取退款/取消订单事实]
+        AsyncMemory --> LLMPersist[B. LLM 语义事实提取<br/>分析用户语句并修正/遗忘事实]
         AsyncMemory --> SaveHistory[C. 保存历史消息]
         
         ToolPersist --> PG[(PostgreSQL<br/>user_memory_facts 长期记忆)]
@@ -376,18 +413,57 @@ export const messages = {
           media: {
             type: "video",
             label: "Agent Demo / Interactive Flow",
-            eyebrow: "右侧建议放实际演示视频",
+            eyebrow: "首屏改为脚本化手机演示",
             headline: "从自然语言请求到确认执行的完整客服闭环",
-            description: "统一媒体模块保留视频位，但即使暂时未嵌入真实视频，也能通过脚本帧和要点卡片完整表达演示路径。",
+            description: "统一媒体模块继续保留视频位，但当前先用 6 步手机交互演示替代视频，让招聘方在首屏就能看清完整的 Agent 执行闭环。",
             badges: ["Video Ready", "Confirmation Loop", "Multi-step Agent"],
+            demoScreens: [
+              {
+                stepLabel: "推荐菜品",
+                title: "AI 推荐菜品与预算约束",
+                description: "用户用自然语言提出“减脂、清淡、预算 50 元”的复合诉求后，Agent 结合营业状态、菜品分类与价格约束给出结构化推荐。",
+                src: skyTakeoutAiRecommendationScreen,
+              },
+              {
+                stepLabel: "组合决策",
+                title: "推荐组合与用户选菜决策",
+                description: "Agent 不只罗列菜品，还给出 50 元内的搭配方案与总价，帮助用户从候选项快速过渡到明确下单选择。",
+                src: skyTakeoutMenuSelectionScreen,
+              },
+              {
+                stepLabel: "加入购物车",
+                title: "购物车写入与结果确认",
+                description: "在用户确认“大煮干丝 + 葱烧海参”后，Agent 查询菜品详情并写入购物车，再把金额、菜品名和剩余预算回传给前端。",
+                src: skyTakeoutCartConfirmationScreen,
+              },
+              {
+                stepLabel: "取消确认",
+                title: "高风险取消的二次确认",
+                description: "当用户提出取消请求时，Agent 会先区分“购物车移除”与“订单取消”，再对最新订单发起确认卡点，避免误操作。",
+                src: skyTakeoutCancelConfirmationScreen,
+              },
+              {
+                stepLabel: "取消完成",
+                title: "取消完成与退款说明",
+                description: "确认后，Agent 返回订单号、金额、状态与退款路径说明，完整体现查询、确认、执行、结果反馈的闭环。",
+                src: skyTakeoutCancelSuccessScreen,
+              },
+              {
+                stepLabel: "用户记忆",
+                title: "长期记忆沉淀与可编辑画像",
+                description: "执行完成后，Agent 把清淡口味、减脂偏好和服务摘要沉淀到用户记忆页，形成后续推荐和客服处理可复用的长期画像。",
+                src: skyTakeoutUserMemoryScreen,
+              },
+
+            ],
             frames: [
               { title: "用户输入", description: "用户以自然语言提出查询、取消或退款请求。" },
               { title: "Agent 规划", description: "意图识别、工具筛选、上下文装配与步骤规划依次展开。" },
               { title: "确认执行", description: "高风险操作进入人工确认卡点，确认后恢复执行。" },
             ],
             footer: {
-              label: "建议素材",
-              value: "订单取消 / 退款确认 / 多轮追问演示视频",
+              label: "演示脚本",
+              value: "推荐点餐 / 加购确认 / 订单取消 / 用户记忆沉淀",
             },
           },
           sections: {
@@ -403,8 +479,13 @@ export const messages = {
             },
             architecture: {
               title: "系统架构与核心工作流",
-              description: "系统围绕 Advisor Chain 管道拦截模式构建，并在编排中心（TaskOrchestratorService）的驱动下实现多步骤插槽绑定；针对资金安全设计了 Human-in-the-Loop 人工卡点机制，保障高风险交易的安全可控。下方为系统全景工作流图及检索驱动型订单取消时序图：",
+              description: "系统围绕 Advisor Chain 管道拦截模式构建，并在编排中心（TaskOrchestratorService）的驱动下实现多步骤插槽绑定；针对资金安全设计了 Human-in-the-Loop 人工卡点机制，保障高风险交易的安全可控。下方依次展示系统分层架构、全景工作流图与检索驱动型订单取消时序图：",
               diagrams: diagrams.skyTakeoutDetail
+            },
+            productProof: {
+              title: "产品界面与交互证明",
+              description: "这条演示链路已经前置到首屏 Hero 媒体区，避免在正文区重复堆叠同一批截图。",
+              screens: [],
             },
             ownership: {
               title: "我的职责",
@@ -652,6 +733,10 @@ export const messages = {
       demoPlaceholder: "[ 演示多媒体播放占位 ]",
       videoPlayTip: "交互式系统演示录像",
       viewCaseStudy: "查看项目详情",
+      focusProject: "设为主卡",
+      focusHint: "切换为主卡后查看完整项目说明与亮点。",
+      prevProject: "查看上一个项目",
+      nextProject: "查看下一个项目",
       challengeLabel: "挑战",
       solutionLabel: "解决方案"
     },
@@ -770,18 +855,57 @@ export const messages = {
           media: {
             type: "video",
             label: "Agent Demo / Interactive Flow",
-            eyebrow: "Best paired with a real demo video on the right",
+            eyebrow: "Scripted mobile walkthrough in the hero",
             headline: "A complete customer-service loop from natural language to confirmed execution",
-            description: "The shared media shell keeps the page complete even before a real video is embedded, while still reserving the right hierarchy for a future agent demo.",
+            description: "The shared media shell still behaves like a video slot, but the hero now uses a scripted 6-step mobile walkthrough so reviewers can understand the Agent loop on first sight.",
             badges: ["Video Ready", "Confirmation Loop", "Multi-step Agent"],
+            demoScreens: [
+              {
+                stepLabel: "Recommend",
+                title: "AI dish recommendation under constraints",
+                description: "The user asks for light, diet-friendly dishes within a 50 RMB budget, and the Agent turns that request into a structured recommendation list.",
+                src: skyTakeoutAiRecommendationScreen,
+              },
+              {
+                stepLabel: "Choose",
+                title: "Bundle suggestion and user selection",
+                description: "Instead of listing dishes only, the Agent proposes budget-safe combinations and total prices, helping the user move from exploration to a concrete order choice.",
+                src: skyTakeoutMenuSelectionScreen,
+              },
+              {
+                stepLabel: "Add to cart",
+                title: "Cart write-back and result confirmation",
+                description: "Once the user confirms the combo, the Agent resolves the dishes, adds them to the cart, and reports the itemized result plus remaining budget back to the UI.",
+                src: skyTakeoutCartConfirmationScreen,
+              },
+              {
+                stepLabel: "Confirm",
+                title: "Human confirmation before cancellation",
+                description: "When the user asks to cancel, the Agent first disambiguates the intent and then issues an explicit confirmation checkpoint before touching the latest order.",
+                src: skyTakeoutCancelConfirmationScreen,
+              },
+              {
+                stepLabel: "Done",
+                title: "Cancellation result and refund guidance",
+                description: "After confirmation, the Agent returns the order number, amount, status, and refund path, completing the full loop from lookup to execution and post-action feedback.",
+                src: skyTakeoutCancelSuccessScreen,
+              },
+              {
+                stepLabel: "Memory",
+                title: "Long-term memory capture and editable profile",
+                description: "Once the service flow finishes, the Agent writes flavor preference, diet goals, and the operational summary into the user-memory screen so future recommendations and support turns can reuse those facts.",
+                src: skyTakeoutUserMemoryScreen,
+              },
+
+            ],
             frames: [
               { title: "User Request", description: "The user asks for lookup, cancellation, refund, or another service action in natural language." },
               { title: "Agent Planning", description: "Intent recognition, tool filtering, context loading, and task planning are chained together." },
               { title: "Confirmed Execution", description: "High-risk actions pause for human confirmation before resuming execution." },
             ],
             footer: {
-              label: "Suggested asset",
-              value: "Order cancellation / refund confirmation / multi-turn demo video",
+              label: "Walkthrough focus",
+              value: "Recommendation / cart write-back / cancellation / memory capture",
             },
           },
           sections: {
@@ -797,8 +921,13 @@ export const messages = {
             },
             architecture: {
               title: "Architecture & Workflows",
-              description: "The system is built on a cascading Advisor Chain pipeline pattern and driven by a central coordinator (TaskOrchestratorService) to bind multi-step parameters. A Human-in-the-Loop mechanism is introduced for transaction safety. Below are the comprehensive workflow flowchart and the lookup-driven sequence diagram:",
+              description: "The system is built on a cascading Advisor Chain pipeline pattern and driven by a central coordinator (TaskOrchestratorService) to bind multi-step parameters. A Human-in-the-Loop mechanism is introduced for transaction safety. The diagrams below show the layered architecture, the end-to-end workflow, and the lookup-driven sequence diagram:",
               diagrams: diagrams.skyTakeoutDetail
+            },
+            productProof: {
+              title: "Product Screens & Interaction Proof",
+              description: "That visual proof chain has been promoted into the hero walkthrough so the same screenshots do not need to be repeated lower on the page.",
+              screens: [],
             },
             ownership: {
               title: "My Ownership",
@@ -1046,6 +1175,10 @@ export const messages = {
       demoPlaceholder: "[ Interactive Demo Media Placeholder ]",
       videoPlayTip: "Interactive System Demo Video",
       viewCaseStudy: "View Project Details",
+      focusProject: "Focus Card",
+      focusHint: "Bring this card into focus to view the full project summary and highlights.",
+      prevProject: "Previous project",
+      nextProject: "Next project",
       challengeLabel: "Challenge",
       solutionLabel: "Solution"
     },
@@ -1055,3 +1188,6 @@ export const messages = {
     },
   },
 };
+
+
+
