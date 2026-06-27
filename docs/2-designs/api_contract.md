@@ -17,7 +17,7 @@
 *   **响应体**：
     ```json
     {
-      "reply": "在黑马点评项目中，我利用 Redis 执行 Lua 脚本完成秒杀预扣减与一人一单原子化校验...",
+      "reply": "在高并发本地生活交易平台中，我利用 Redis 执行 Lua 脚本完成秒杀预扣减与一人一单原子化校验...",
       "sources": ["hm-dianping", "Redis Stream"]
     }
     ```

@@ -390,19 +390,19 @@ export const messages = {
     projects: [
       {
         id: "sky-takeout",
-        name: "苍穹外卖",
-        subtitle: "支持自然语言下单、多步任务编排与确认式执行的外卖智能客服 Agent",
+        name: "餐饮场景 AI 智能客服 Agent 平台",
+        subtitle: "面向订单咨询、取消确认与用户记忆沉淀的多轮对话任务执行系统",
         summary:
-          "将传统菜单操作升级为自然语言交互的 AI 外卖助手，能够处理订单查询、取消等复杂客户服务场景。",
+          "围绕餐饮外卖客户服务场景构建可解释的 AI Agent，将订单查询、取消、推荐与用户偏好沉淀整合进一条自然语言驱动的服务链路。",
         highlights: [
-          "**Advisor Chain 执行链路**：围绕多意图识别、工具筛选与安全兜底组织完整的 Agent 执行流程。",
-          "**多步任务编排**：支持“查询 → 插槽注入 → 确认 → 执行”的级联工作流，能处理取消订单等复杂场景。",
-          "**Hybrid Memory**：结合会话记忆、长期用户事实与异步写入，兼顾上下文连续性与关键事实一致性。",
+          "**Advisor Chain 执行链路**：围绕多意图识别、工具筛选、确认卡点与安全兜底，组织完整的 Spring AI Agent 执行流程。",
+          "**多步任务编排**：支持“查询 → 插槽注入 → 确认 → 执行”的级联工作流，能够稳定处理订单取消等高风险服务场景。",
+          "**Hybrid RAG + 三层记忆**：结合 Pgvector 混合检索、会话记忆、长期用户事实与异步写入，兼顾回答相关性与关键事实一致性。",
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
         detail: {
-          tagline: "基于 Spring AI 驱动的餐饮外卖智能客服 Agent，将客户订单及咨询交付全链路自动化",
+          tagline: "基于 Spring AI 构建的餐饮场景智能客服 Agent，将订单咨询、推荐、取消与记忆沉淀串成可解释的自动化服务闭环",
           outcomes: ["已部署可演示", "支持多轮对话", "支持多步任务执行", "具备人工确认闭环"],
           tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
           metrics: [
@@ -472,9 +472,9 @@ export const messages = {
               content: "在餐饮外卖服务中，退款、取消订单、修改地址等敏感交易操作占用了大量人工客服精力，且容易因为人工响应不及时导致客诉。本项目将智能客服 Agent 独立为 `sky-ai` 微服务（基于 Spring AI 驱动），引入多意图识别与级联任务编排，使用户能够通过自然语言交互轻松完成复杂查询及高风险操作。本页展示了其底层核心架构流程及在多步高风险事务中的具体执行路径。"
               ,
               proofPoints: [
-                { title: "价值定位", description: "把原有菜单式、流程式客服操作，升级为可解释的自然语言客服 Agent。" },
-                { title: "能力边界", description: "重点覆盖查询、取消、退款、FAQ 等多步骤客户服务场景，而非开放式聊天。" },
-                { title: "展示重点", description: "强调执行链路、人工确认、混合记忆与工程级安全兜底，而不是单纯展示模型接入。" },
+                { title: "价值定位", description: "把原有菜单式、流程式客服操作升级为可解释、可追踪的自然语言客服 Agent。" },
+                { title: "能力边界", description: "重点覆盖查询、取消、退款、推荐、FAQ 等任务型客户服务场景，而非开放式陪聊。" },
+                { title: "展示重点", description: "强调多步编排、人工确认、Hybrid RAG 与工程级安全兜底，而不是只展示模型接入。" },
               ]
             },
             architecture: {
@@ -519,20 +519,20 @@ export const messages = {
       },
       {
         id: "hm-dianping",
-        name: "黑马点评",
-        subtitle: "基于 Redis 的高并发本地生活服务平台",
+        name: "高并发本地生活交易平台",
+        subtitle: "围绕缓存治理、秒杀防超卖与异步下单设计的 Redis 高并发系统",
         summary:
-          "针对社交电商与本地生活场景进行高并发抗压实战，深度实践并封装 Redis 的多种应用模式，涵盖高并发秒杀优化、通用缓存策略与双通道身份校验机制。",
+          "面向本地生活交易链路的高并发后端实战项目，系统化落地 Redis 缓存治理、Lua 原子校验、异步削峰下单与分层鉴权机制。",
         highlights: [
-          "**防穿透与击穿 CacheClient 封装**：通用缓存工具类封装「缓存空值防穿透」与「逻辑过期 + 互斥锁双检防击穿」两套策略，通过泛型 + Function 回调函数解耦数据库访问；逻辑过期方案在异步重建期间返回旧数据，实测高并发吞吐量提升约 43%。",
-          "**原子化秒杀预扣减**：秒杀场景下利用 Redis 执行 Lua 脚本完成库存预扣减与用户一人一单原子化校验，通过 Redisson 分布式锁进行并发安全兜底，彻底杜绝集群环境下的超卖问题。",
-          "**Redis Stream 异步下单削峰**：主线程预扣减成功后直接返回 orderId，将订单消息写入 `stream.orders`；异步单线程 `VoucherOrderHandler` 消费队列数据进行落库，在抛出异常时自动进入 Pending List 重试以确保数据最终一致性并防止消息丢失。",
-          "**双拦截器 Token 认证链**：配置 `RefreshTokenInterceptor`（优先级0）拦截所有路径实现持有 Token 用户的自动 30 分钟保活续期；`LoginInterceptor`（优先级1）仅校验 UserHolder 登录上下文，职责清晰解耦，保障接口安全。",
+          "**防穿透与击穿 CacheClient 封装**：统一沉淀“缓存空值防穿透”与“逻辑过期 + 互斥锁双检防击穿”两套策略，通过泛型回调解耦 DB 访问；逻辑过期方案在异步重建期间直接返回旧值，实测高并发吞吐提升约 43%。",
+          "**原子化秒杀预扣减**：利用 Redis Lua 脚本完成库存预扣减与一人一单原子校验，再用 Redisson 分布式锁为集群并发兜底，避免超卖与重复下单。",
+          "**Redis Stream 异步削峰下单**：主线程只负责快速判定并返回 `orderId`，把落库压力转移到 `stream.orders` 消费线程；异常时自动转入 Pending List 重试，兼顾响应速度与最终一致性。",
+          "**双拦截器鉴权链**：将 Token 续期与登录保护拆成 `RefreshTokenInterceptor` 和 `LoginInterceptor` 两层链路，减少公开接口与登录校验的耦合。",
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
         detail: {
-          tagline: "围绕缓存、防超卖、异步下单与身份链路设计的高并发本地生活服务系统",
+          tagline: "围绕缓存治理、防超卖、异步下单与身份链路设计的高并发本地生活交易系统",
           outcomes: ["缓存策略可解释", "秒杀链路可复盘", "异步削峰闭环", "认证链分层清晰"],
           tags: ["Redis", "Lua", "Redisson", "Stream", "CacheClient"],
           metrics: [
@@ -562,9 +562,9 @@ export const messages = {
               title: "项目定位与业务背景",
               content: "本项目面向高并发本地生活服务场景，核心不是页面效果，而是如何在高流量下稳定处理热点缓存、秒杀库存和用户会话。作品集详情页重点展示 Redis 模式封装、异步订单削峰与接口鉴权链路，帮助面试官快速判断你对高并发系统的真实理解深度。",
               proofPoints: [
-                { title: "核心问题", description: "缓存穿透、缓存击穿、超卖、一人一单、会话续期这几类问题都直连高并发稳定性。" },
-                { title: "展示方式", description: "这里更适合用关键场景截图和时序图，而不是录制较长的交互视频。" },
-                { title: "面试价值", description: "可直接展开到缓存一致性、消息可靠性、锁粒度选择和接口幂等性等高频问题。" },
+                { title: "核心问题", description: "缓存穿透、缓存击穿、超卖、一人一单、会话续期这些问题都直接映射到高并发稳定性设计。" },
+                { title: "展示方式", description: "这里更适合用关键场景截图、链路图与压测结果，而不是录制较长的交互视频。" },
+                { title: "面试价值", description: "可直接展开到缓存一致性、消息可靠性、锁粒度选择、接口幂等性等高频后端问题。" },
               ],
             },
             architecture: {
@@ -707,7 +707,7 @@ export const messages = {
       closeAria: "关闭简历 Agent",
       welcome:
         "可以询问 Ethan 的 Java 后端经历、高并发项目，或 AI Agent / RAG 实践。",
-      placeholder: "询问苍穹外卖、黑马点评、RAG...",
+      placeholder: "询问 AI 智能客服 Agent、高并发交易平台、RAG...",
       send: "发送",
       sending: "...",
       roles: {
@@ -720,9 +720,9 @@ export const messages = {
         productDirection: "AGENTS.md 产品方向",
       },
       mockReplies: [
-        "我可以为你介绍我的后端与 AI 架构。对于「苍穹外卖」，我基于 Spring AI 级联 Advisor 链（防循环拦截）重构了智能 Agent，集成了 RuleBased 多步任务编排、Pgvector 混合 RAG 与混合长期记忆系统，欢迎针对 Advisor 链路或 Reranker 精排提问！",
-        "「黑马点评」项目核心在于 Redis 高并发实战：封装通用 CacheClient 锁双检逻辑过期防击穿，设计 Lua 脚本原子预扣减结合分布式锁防超卖，并通过 Redis Stream 与 Pending List 队列处理实现可靠异步下单。",
-        "「苍穹外卖」的 AI 模块采用三层记忆：基于 Map 的 Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL 长期事实表。除 @Async 驱动 LLM 自适应提取事实外，还结合本地成功工具响应解析器实现强一致性关键事实持久化。",
+        "我可以为你介绍我的后端与 AI 架构。对于「餐饮场景 AI 智能客服 Agent 平台」，我基于 Spring AI 级联 Advisor 链（含防循环拦截）重构智能 Agent，集成 RuleBased 多步任务编排、Pgvector 混合 RAG 与长期记忆系统，欢迎针对 Advisor 链路或 Reranker 精排提问。",
+        "「高并发本地生活交易平台」的核心在于 Redis 高并发实战：我封装了通用 CacheClient 锁双检逻辑过期防击穿方案，设计 Lua 脚本原子预扣减结合分布式锁防超卖，并通过 Redis Stream 与 Pending List 构建可靠异步下单链路。",
+        "「餐饮场景 AI 智能客服 Agent 平台」的 AI 模块采用三层记忆：基于 Map 的 Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL 长期事实表。除 `@Async` 驱动 LLM 自适应提取事实外，还结合本地成功工具响应解析器实现强一致性关键事实持久化。",
       ],
     },
     projectDetail: {
@@ -733,8 +733,10 @@ export const messages = {
       demoPlaceholder: "[ 演示多媒体播放占位 ]",
       videoPlayTip: "交互式系统演示录像",
       viewCaseStudy: "查看项目详情",
+      viewCaseStudyAction: "点击查看项目详情",
       focusProject: "设为主卡",
-      focusHint: "切换为主卡后查看完整项目说明与亮点。",
+      focusProjectAction: "点击切换为主卡",
+      focusHint: "点击卡片切换为主卡，再查看完整项目说明与亮点。",
       prevProject: "查看上一个项目",
       nextProject: "查看下一个项目",
       challengeLabel: "挑战",
@@ -832,19 +834,19 @@ export const messages = {
     projects: [
       {
         id: "sky-takeout",
-        name: "Sky Takeout",
-        subtitle: "Food delivery customer-service Agent with natural-language ordering, multi-step planning, and confirmation-based execution",
+        name: "AI Customer Service Agent Platform",
+        subtitle: "A multi-turn task-execution system for order inquiries, cancellation confirmation, and long-term user memory capture",
         summary:
-          "An AI delivery assistant that turns menu-style operations into natural-language interactions for order lookup, cancellation, and other customer-service workflows.",
+          "An explainable AI Agent for food-delivery customer service that unifies order lookup, cancellation, dish recommendation, and user-preference capture into one natural-language service loop.",
         highlights: [
-          "**Advisor Chain runtime**: Organizes multi-intent recognition, tool filtering, and safety guardrails into one coherent Agent pipeline.",
-          "**Multi-step orchestration**: Supports chained flows such as `lookup -> slot injection -> confirmation -> execution` for high-risk order actions.",
-          "**Hybrid memory**: Combines session memory, long-term user facts, and async persistence to balance continuity with reliability."
+          "**Advisor Chain runtime**: Organizes multi-intent recognition, tool filtering, confirmation checkpoints, and safety guardrails into one coherent Spring AI Agent pipeline.",
+          "**Multi-step orchestration**: Supports chained flows such as `lookup -> slot injection -> confirmation -> execution` for high-risk customer-service actions.",
+          "**Hybrid RAG plus three-layer memory**: Combines Pgvector retrieval, session memory, durable user facts, and async persistence to balance relevance with reliability."
         ],
         techStack: ["Spring Boot", "Spring AI", "Redis", "PostgreSQL", "MyBatis", "WebSocket", "MCP", "RAG"],
         diagrams: diagrams.skyTakeout,
         detail: {
-          tagline: "Intelligent customer service Agent driven by Spring AI, automating the entire food delivery order and inquiry lifecycle.",
+          tagline: "A Spring AI-powered customer-service Agent that turns order inquiries, recommendations, cancellations, and memory capture into one explainable service loop.",
           outcomes: ["Deployed and demo-ready", "Multi-turn dialogue", "Multi-step execution", "Human confirmation loop"],
           tags: ["Spring AI", "Advisor Chain", "Hybrid RAG", "WebSocket", "MCP"],
           metrics: [
@@ -914,9 +916,9 @@ export const messages = {
               content: "In food delivery services, transaction operations such as refunds, order cancellations, and address modifications consume massive customer service resources, often leading to customer complaints due to delayed manual responses. This project decouples customer service into an independent `sky-ai` microservice (driven by Spring AI), introducing multi-intent recognition and cascading task orchestration. It allows users to easily execute complex inquiries and high-risk operations via natural language. This page presents its core architectural workflows and execution paths."
               ,
               proofPoints: [
-                { title: "Value Proposition", description: "It turns rigid menu-style service operations into an explainable natural-language customer-service Agent." },
-                { title: "System Boundary", description: "The focus is bounded service workflows such as lookup, cancellation, refunds, and FAQ handling rather than open-ended chat." },
-                { title: "What This Page Proves", description: "The page emphasizes execution flow, human confirmation, hybrid memory, and safety engineering rather than just model integration." },
+                { title: "Value Proposition", description: "It upgrades rigid menu-style service operations into an explainable natural-language customer-service Agent." },
+                { title: "System Boundary", description: "The focus is task-oriented service flows such as lookup, cancellation, refunds, recommendations, and FAQ handling rather than open-ended chat." },
+                { title: "What This Page Proves", description: "The page emphasizes orchestration, human confirmation, hybrid RAG, and safety engineering rather than just model integration." },
               ]
             },
             architecture: {
@@ -961,20 +963,20 @@ export const messages = {
       },
       {
         id: "hm-dianping",
-        name: "HM Dianping",
-        subtitle: "High-Concurrency Local Life Service Platform powered by Redis",
+        name: "High-Concurrency Local Commerce Platform",
+        subtitle: "A Redis-centered backend system for cache governance, oversell prevention, and async ordering under burst traffic",
         summary:
-          "High-concurrency performance tuning in social commerce and local life scenarios. Deeply engineered various Redis patterns, covering seckill optimizations, generic cache management, and dual-channel authentication.",
+          "A high-concurrency backend project for local-commerce transactions, built around Redis cache governance, Lua-based atomic validation, async peak shaving, and layered authentication.",
         highlights: [
-          "**Generic CacheClient Utility**: Encapsulated 'null-value caching for penetration' and 'logical expiry + mutex lock for breakdown' with generics and `Function` callbacks decoupling database access. Stale data is returned instantly during async rebuilding, increasing concurrent throughput by 43%.",
-          "**Atomic Seckill Stock Deduction**: Accomplished atomic stock subtraction and one-order-per-user constraints in a single Lua script, backed up by `Redisson` distributed locks to prevent overselling and guarantee data safety in clustered environments.",
-          "**Async Ordering via Redis Stream**: Returned `orderId` immediately to the main thread upon successful Lua check and appended order tasks to `stream.orders`. Single-threaded `VoucherOrderHandler` asynchronously processes MySQL writes, utilizing the Pending List for retry upon exceptions to ensure eventual consistency.",
-          "**Dual-Interceptor Authentication Chain**: Configured `RefreshTokenInterceptor` (order=0) to intercept all paths and auto-renew the 30-minute Redis session token TTL, and `LoginInterceptor` (order=1) to secure protected endpoints, achieving clear separation of concerns."
+          "**Generic CacheClient Utility**: Encapsulates null-value caching for penetration and logical-expiry plus mutex double-checks for cache breakdown. Stale values are served immediately during async rebuilds, improving concurrent throughput by 43%.",
+          "**Atomic flash-sale validation**: Uses one Lua script to handle stock pre-deduction and one-user-one-order checks, with `Redisson` distributed locks as a clustered safety fallback against overselling.",
+          "**Async peak shaving via Redis Stream**: The request thread returns `orderId` quickly and shifts persistence pressure into `stream.orders`, while the Pending List handles retries for eventual consistency.",
+          "**Layered authentication chain**: Separates token renewal from protected-route enforcement with `RefreshTokenInterceptor` and `LoginInterceptor`, keeping the request path easier to reason about."
         ],
         techStack: ["Spring Boot", "Redis", "Lua", "MySQL", "Redisson", "MyBatis-Plus", "Hutool"],
         diagrams: diagrams.hmDianping,
         detail: {
-          tagline: "A high-concurrency local-life service system centered on caching, flash-sale safety, and async ordering reliability.",
+          tagline: "A high-concurrency local-commerce system centered on cache governance, flash-sale safety, async ordering, and layered authentication.",
           outcomes: ["Explainable cache strategy", "Replayable seckill flow", "Async peak shaving loop", "Layered auth chain"],
           tags: ["Redis", "Lua", "Redisson", "Stream", "CacheClient"],
           metrics: [
@@ -1004,8 +1006,8 @@ export const messages = {
               title: "Project Positioning & Business Context",
               content: "This project targets high-concurrency local-life service scenarios. The real value is not the UI surface but how the system survives cache pressure, flash-sale contention, and session traffic. The detail page focuses on Redis pattern design, async order peak shaving, and authentication flow clarity so interviewers can quickly judge backend depth.",
               proofPoints: [
-                { title: "Core Pressure", description: "Cache penetration, cache breakdown, overselling, one-user-one-order, and session renewal all map directly to stability under load." },
-                { title: "Presentation Style", description: "This case is better served by key snapshots and diagrams than by a long interaction video." },
+                { title: "Core Pressure", description: "Cache penetration, cache breakdown, overselling, one-user-one-order, and session renewal all map directly to stability under burst traffic." },
+                { title: "Presentation Style", description: "This case is better served by key snapshots, pressure-test evidence, and diagrams than by a long interaction video." },
                 { title: "Interview Value", description: "It naturally expands into consistency, reliability, lock granularity, idempotency, and queue tradeoff discussions." },
               ],
             },
@@ -1149,7 +1151,7 @@ export const messages = {
       closeAria: "Close resume agent",
       welcome:
         "Ask about Ethan's Java backend work, high-concurrency projects, or AI Agent/RAG practice.",
-      placeholder: "Ask about Sky Takeout, HM Dianping, RAG...",
+      placeholder: "Ask about the AI Agent platform, the commerce platform, or RAG...",
       send: "Send",
       sending: "...",
       roles: {
@@ -1162,9 +1164,9 @@ export const messages = {
         productDirection: "AGENTS.md product direction",
       },
       mockReplies: [
-        "I can walk you through my backend and AI architectures. For 'Sky Takeout', I refactored the intelligent Agent using a cascading Spring AI Advisor Chain with safety guards, integrating RuleBased multi-step task planning, Pgvector hybrid RAG, and a mixed long-term memory system. Feel free to ask about the Advisor pipeline or Reranker sorting!",
-        "For 'HM Dianping', the core highlights lie in high-concurrency Redis patterns: encapsulating a generic CacheClient with logical-expiry double-check locks, atomic seckill Lua scripts with Redisson lock fallback, and async ordering via Redis Stream with Pending List error handling.",
-        "In 'Sky Takeout', memory consists of 3 layers: Java map Working context, Redis Session (2h TTL), and PostgreSQL long-term facts. Factual updates combine @Async background LLM extraction with a physical local tool outcome parser (e.g., address updates and cancellations) to guarantee consistency.",
+        "I can walk you through my backend and AI architectures. For the 'AI Customer Service Agent Platform', I refactored the Agent around a cascading Spring AI Advisor Chain with loop-safety guards, RuleBased multi-step planning, Pgvector hybrid RAG, and a mixed long-term memory system. Feel free to ask about the Advisor pipeline or Reranker layer.",
+        "For the 'High-Concurrency Local Commerce Platform', the core strengths lie in Redis-heavy backend design: a reusable CacheClient with logical-expiry double-check locks, Lua-based atomic flash-sale validation with Redisson fallback, and async ordering via Redis Stream plus Pending List recovery.",
+        "In the 'AI Customer Service Agent Platform', memory is split into three layers: Java map working context, Redis session memory (2h TTL), and PostgreSQL long-term facts. Factual updates combine `@Async` LLM extraction with deterministic local tool-result parsing to guarantee consistency.",
       ],
     },
     projectDetail: {
@@ -1175,8 +1177,10 @@ export const messages = {
       demoPlaceholder: "[ Interactive Demo Media Placeholder ]",
       videoPlayTip: "Interactive System Demo Video",
       viewCaseStudy: "View Project Details",
+      viewCaseStudyAction: "Open project details",
       focusProject: "Focus Card",
-      focusHint: "Bring this card into focus to view the full project summary and highlights.",
+      focusProjectAction: "Click to focus this card",
+      focusHint: "Click the card to bring it into focus, then view the full project summary and highlights.",
       prevProject: "Previous project",
       nextProject: "Next project",
       challengeLabel: "Challenge",

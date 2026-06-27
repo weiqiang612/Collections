@@ -117,12 +117,6 @@ const handleChipMouseLeave = (e) => {
       <div class="hero-actions">
         <a class="button-primary" href="#projects">{{ t.hero.primaryAction }}</a>
         <a class="button-ghost" href="#resume-agent">{{ t.hero.secondaryAction }}</a>
-        <a
-          class="button-ghost"
-          href="https://note.weiqiang.me"
-          target="_blank"
-          rel="noopener noreferrer"
-        >{{ t.hero.tertiaryAction }} ↗</a>
       </div>
     </div>
 

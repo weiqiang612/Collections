@@ -76,7 +76,7 @@ onMounted(() => {
       cardContainer.value.querySelector(".project-content p"),
       ...highlightNodes,
       cardContainer.value.querySelector(".stack-list"),
-      cardContainer.value.querySelector(".project-detail-cta-btn"),
+      cardContainer.value.querySelector(".project-entry-badge"),
     ].filter(Boolean);
 
     gsap.from(
@@ -110,10 +110,12 @@ onUnmounted(() => {
   >
     <div
       class="project-content"
+      :class="{ clickable: !isMeasurement }"
       :role="isMeasurement ? undefined : 'button'"
       :tabindex="isMeasurement ? undefined : 0"
       @click="isMeasurement ? undefined : isFeature() ? navigateToDetail() : selectProject()"
       @keydown.enter="isMeasurement ? undefined : isFeature() ? navigateToDetail() : selectProject()"
+      @keydown.space.prevent="isMeasurement ? undefined : isFeature() ? navigateToDetail() : selectProject()"
     >
       <div class="project-card-meta">
         <span class="project-index-badge">{{ projectLabel }}</span>
@@ -124,19 +126,13 @@ onUnmounted(() => {
       <p class="project-kicker">{{ project.subtitle }}</p>
       <div class="project-title-row">
         <h3>{{ project.name }}</h3>
-
-        <button
-      class="project-detail-cta-btn"
-          type="button"
-          @click.stop="isFeature() ? navigateToDetail() : selectProject()"
-          :title="isFeature() ? t.projectDetail.viewCaseStudy : t.projectDetail.focusProject"
-        >
-          <span>{{ isFeature() ? t.projectDetail.viewCaseStudy : t.projectDetail.focusProject }}</span>
+        <span class="project-entry-badge">
+          <span class="project-entry-badge-text">{{ isFeature() ? t.projectDetail.viewCaseStudyAction : t.projectDetail.focusProjectAction }}</span>
           <svg class="cta-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
-        </button>
+        </span>
       </div>
       <p v-if="shouldShowSummary()">{{ project.summary }}</p>
       <p v-else class="project-shadow-hint">{{ t.projectDetail.focusHint }}</p>
