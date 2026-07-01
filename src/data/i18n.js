@@ -585,6 +585,7 @@ export const messages = {
           ],
           media: {
             type: "screens",
+            layout: "stacked",
             label: "Concurrency Highlights / Snapshot",
             eyebrow: "更适合放截图而不是强行录视频",
             headline: "用链路拆解和关键场景截图证明高并发设计",
@@ -671,6 +672,7 @@ export const messages = {
           ],
           media: {
             type: "static",
+            layout: "stacked",
             label: "System Proof / Product Screens",
             eyebrow: "更适合放产品截图与流程面板",
             headline: "用产品界面和流程节点证明系统治理能力",
@@ -1130,6 +1132,7 @@ export const messages = {
           ],
           media: {
             type: "screens",
+            layout: "stacked",
             label: "Concurrency Highlights / Snapshot",
             eyebrow: "This project fits screenshots better than forcing a video",
             headline: "Use key snapshots and flow breakdowns to prove concurrency design",
@@ -1216,6 +1219,7 @@ export const messages = {
           ],
           media: {
             type: "static",
+            layout: "stacked",
             label: "System Proof / Product Screens",
             eyebrow: "Better presented with product screenshots and workflow panels",
             headline: "Use product screens and stateful workflows to prove system maturity",

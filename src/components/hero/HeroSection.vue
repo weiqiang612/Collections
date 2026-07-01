@@ -104,7 +104,7 @@ const handleChipMouseLeave = (e) => {
         :status="statusLabel"
         :lines="heroLines"
       />
-      <p class="hero-lede">{{ profile.headline }}</p>
+      <p class="hero-lede">{{ t.profile.headline }}</p>
       <div class="hero-chip-row" aria-label="core focus areas">
         <span
           v-for="chip in focusChips"
