@@ -1,0 +1,106 @@
+- generic [active]:
+  - generic:
+    - generic:
+      - banner:
+        - link "返回首页":
+          - /url: /
+          - generic: weiqiang
+        - generic:
+          - navigation "主导航":
+            - link "首页":
+              - /url: "#hero"
+            - link "关于":
+              - /url: "#about"
+            - link "项目":
+              - /url: "#projects"
+            - link "Agent":
+              - /url: "#resume-agent"
+            - link "笔记":
+              - /url: https://note.weiqiang.me
+              - text: 笔记
+              - img
+          - button "切换语言":
+            - generic: 中文
+            - generic: /
+            - generic: EN
+      - main:
+        - generic:
+          - generic:
+            - paragraph: Ethan / weiqiang / 围墙
+            - heading "Ethan" [level=1]
+            - generic "core focus areas"
+        - generic:
+          - generic:
+            - paragraph: About
+            - heading "用可解释架构呈现后端深度" [level=2]
+            - paragraph: 围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。
+          - generic:
+            - generic:
+              - generic: Why -> What -> How -> Deep Dive
+              - generic:
+                - generic: Why
+                - generic:
+                  - heading "Why" [level=3]
+                  - paragraph: 从业务压力、流量模型、一致性要求和失败成本出发，明确问题为什么值得解决。
+            - generic:
+              - heading "技术重点" [level=3]
+              - generic:
+                - generic:
+                  - generic:
+                    - generic: Backend
+                    - generic: 4 items
+                  - generic:
+                    - generic: Java
+                    - generic: Spring Boot 3
+        - generic:
+          - generic:
+            - paragraph: Projects
+            - heading "值得在面试中展开讨论的系统" [level=2]
+            - paragraph: 每个项目都按系统视角呈现：负载路径、状态模型、缓存策略，以及 AI 如何改善工程工作流。
+          - generic:
+            - generic:
+              - generic: CASE STRIP
+              - generic: 01 / 03
+          - generic:
+            - button "查看上一个项目":
+              - img
+            - generic:
+              - article:
+                - button "01 FOCUS 面向订单咨询、取消确认与用户记忆沉淀的多轮对话任务执行系统 围绕餐饮外卖客户服务场景构建可解释的 AI Agent，将订单查询、取消、推荐与用户偏好沉淀整合进一条自然语言驱动的服务链路。 已部署可演示 支持多轮对话":
+                  - generic:
+                    - generic: "01"
+                    - generic: FOCUS
+                  - generic:
+                    - generic: 点击查看项目详情
+                    - img
+                  - paragraph: 面向订单咨询、取消确认与用户记忆沉淀的多轮对话任务执行系统
+                  - paragraph: 围绕餐饮外卖客户服务场景构建可解释的 AI Agent，将订单查询、取消、推荐与用户偏好沉淀整合进一条自然语言驱动的服务链路。
+                  - generic:
+                    - generic: 已部署可演示
+                    - generic: 支持多轮对话
+              - article:
+                - button "02 NEXT 围绕缓存治理、秒杀防超卖与异步下单设计的 Redis 高并发系统 面向本地生活交易链路的高并发后端实战项目，系统化落地 Redis 缓存治理、Lua 原子校验、异步削峰下单与分层鉴权机制。 缓存策略可解释":
+                  - generic:
+                    - generic: "02"
+                    - generic: NEXT
+                  - generic:
+                    - generic: 点击切换为主卡
+                    - img
+                  - paragraph: 围绕缓存治理、秒杀防超卖与异步下单设计的 Redis 高并发系统
+                  - paragraph: 面向本地生活交易链路的高并发后端实战项目，系统化落地 Redis 缓存治理、Lua 原子校验、异步削峰下单与分层鉴权机制。
+                  - generic:
+                    - generic: 缓存策略可解释
+              - article:
+                - button "03 SHADOW 基于 Spring Boot 与 Vue 的设备全生命周期管理与数据治理系统 点击卡片切换为主卡，再查看完整项目说明与亮点。":
+                  - generic:
+                    - generic: "03"
+                    - generic: SHADOW
+                  - generic:
+                    - generic: 点击切换为主卡
+                  - paragraph: 基于 Spring Boot 与 Vue 的设备全生命周期管理与数据治理系统
+                  - paragraph: 点击卡片切换为主卡，再查看完整项目说明与亮点。
+            - button "查看下一个项目":
+              - img
+        - button "AI 简历 Agent":
+          - generic: AI
+          - generic: 简历 Agent

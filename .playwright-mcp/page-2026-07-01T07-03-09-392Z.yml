@@ -1,0 +1,45 @@
+- generic [ref=f4e3]:
+  - banner [ref=f4e4]:
+    - link "返回首页" [ref=f4e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f4e7]: weiqiang
+    - generic [ref=f4e8]:
+      - navigation "主导航" [ref=f4e9]:
+        - link "首页" [ref=f4e10] [cursor=pointer]:
+          - /url: "#hero"
+        - link "关于" [ref=f4e11] [cursor=pointer]:
+          - /url: "#about"
+        - link "项目" [ref=f4e12] [cursor=pointer]:
+          - /url: "#projects"
+        - link "Agent" [ref=f4e13] [cursor=pointer]:
+          - /url: "#resume-agent"
+        - link "笔记" [ref=f4e14] [cursor=pointer]:
+          - /url: https://note.weiqiang.me
+          - text: 笔记
+          - img [ref=f4e15]
+      - button "切换语言" [ref=f4e17] [cursor=pointer]:
+        - generic [ref=f4e18]: 中文
+        - generic [ref=f4e19]: /
+        - generic [ref=f4e20]: EN
+  - main [ref=f4e21]:
+    - generic [ref=f4e23]:
+      - paragraph [ref=f4e24]: Ethan / weiqiang / 围墙
+      - generic "core focus areas" [ref=f4e25]
+    - generic [ref=f4e28]:
+      - generic [ref=f4e30]: Why -> What -> How -> Deep Dive
+      - heading "技术重点" [level=3] [ref=f4e32]
+    - generic [ref=f4e34]:
+      - generic [ref=f4e35]:
+        - paragraph [ref=f4e36]: Projects
+        - heading "值得在面试中展开讨论的系统" [level=2] [ref=f4e37]
+        - paragraph [ref=f4e38]: 每个项目都按系统视角呈现：负载路径、状态模型、缓存策略，以及 AI 如何改善工程工作流。
+      - generic [ref=f4e40]:
+        - generic [ref=f4e41]: CASE STRIP
+        - generic [ref=f4e42]: 01 / 04
+      - generic [ref=f4e43]:
+        - button "查看上一个项目" [ref=f4e44] [cursor=pointer]:
+          - img [ref=f4e45]
+        - button "查看下一个项目" [ref=f4e48] [cursor=pointer]:
+          - img [ref=f4e49]
+    - button "AI" [ref=f4e51] [cursor=pointer]:
+      - generic [ref=f4e52]: AI

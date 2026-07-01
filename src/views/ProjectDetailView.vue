@@ -15,6 +15,9 @@ const projectId = computed(() => route.params.projectId);
 const project = computed(() => {
   return t.value.projects.find((p) => p.id === projectId.value);
 });
+const isHeroStacked = computed(() => {
+  return project.value?.id === "sky-takeout" || project.value?.detail?.media?.layout === "stacked";
+});
 
 const goBack = () => {
   router.push("/").then(() => {
@@ -34,7 +37,7 @@ const goBack = () => {
         <span>{{ t.projectDetail.backBtn }}</span>
       </button>
 
-      <header :class="['detail-hero-grid', { 'detail-hero-grid-stacked': project.id === 'sky-takeout' }]">
+      <header :class="['detail-hero-grid', { 'detail-hero-grid-stacked': isHeroStacked }]">
         <div class="detail-hero-info">
           <p class="detail-kicker">{{ project.subtitle }}</p>
           <h1 class="detail-title">{{ project.name }}</h1>
@@ -52,6 +55,21 @@ const goBack = () => {
             </span>
           </div>
 
+          <a
+            v-if="project.detail.liveUrl"
+            class="detail-live-link"
+            :href="project.detail.liveUrl.href"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="detail-live-link-label">{{ project.detail.liveUrl.label }}</span>
+            <span class="detail-live-link-value">{{ project.detail.liveUrl.value }}</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 17L17 7"></path>
+              <path d="M8 7h9v9"></path>
+            </svg>
+          </a>
+
           <div class="detail-metrics-grid">
             <div class="detail-metric-card" v-for="m in project.detail.metrics" :key="m.label">
               <span class="detail-metric-val">{{ m.value }}</span>
@@ -60,12 +78,12 @@ const goBack = () => {
           </div>
         </div>
 
-        <div v-if="project.id !== 'sky-takeout'" class="detail-hero-media">
+        <div v-if="!isHeroStacked" class="detail-hero-media">
           <ProjectHeroMedia :media="project.detail.media" />
         </div>
       </header>
 
-      <section v-if="project.id === 'sky-takeout'" class="detail-hero-media detail-hero-media-expanded">
+      <section v-if="isHeroStacked" class="detail-hero-media detail-hero-media-expanded">
         <ProjectHeroMedia :media="project.detail.media" />
       </section>
 
@@ -131,6 +149,7 @@ const goBack = () => {
                 v-for="screen in project.detail.sections.productProof.screens"
                 :key="screen.title"
                 class="product-proof-card"
+                :class="{ 'product-proof-card-contain': screen.fit === 'contain' }"
               >
                 <div class="product-proof-image-shell">
                   <img

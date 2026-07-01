@@ -99,11 +99,13 @@ async function submitMessage() {
     // Generate local mock reply dynamically
     const normalized = content.toLowerCase();
     const mockReplies = t.value.agent.mockReplies;
-    const fallbackText = normalized.includes("点评") || normalized.includes("redis")
-      ? mockReplies[1]
-      : normalized.includes("api") || normalized.includes("rag")
-        ? mockReplies[2]
-        : mockReplies[0];
+    const fallbackText = normalized.includes("crm") || normalized.includes("联系人") || normalized.includes("contact")
+      ? mockReplies[3]
+      : normalized.includes("点评") || normalized.includes("redis")
+        ? mockReplies[1]
+        : normalized.includes("api") || normalized.includes("rag")
+          ? mockReplies[2]
+          : mockReplies[0];
 
     const tokens = locale.value === "zh-CN" ? Array.from(fallbackText) : fallbackText.split(" ");
     for (const token of tokens) {

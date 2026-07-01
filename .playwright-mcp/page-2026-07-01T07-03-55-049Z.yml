@@ -1,0 +1,214 @@
+- generic [ref=f4e3]:
+  - banner [ref=f4e4]:
+    - link "返回首页" [ref=f4e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f4e7]: weiqiang
+    - generic [ref=f4e8]:
+      - navigation "主导航" [ref=f4e9]:
+        - link "首页" [ref=f4e10] [cursor=pointer]:
+          - /url: "#hero"
+        - link "关于" [ref=f4e11] [cursor=pointer]:
+          - /url: "#about"
+        - link "项目" [ref=f4e12] [cursor=pointer]:
+          - /url: "#projects"
+        - link "Agent" [ref=f4e13] [cursor=pointer]:
+          - /url: "#resume-agent"
+        - link "笔记" [ref=f4e14] [cursor=pointer]:
+          - /url: https://note.weiqiang.me
+          - text: 笔记
+          - img [ref=f4e15]
+      - button "切换语言" [ref=f4e17] [cursor=pointer]:
+        - generic [ref=f4e18]: 中文
+        - generic [ref=f4e19]: /
+        - generic [ref=f4e20]: EN
+  - main [ref=f4e21]:
+    - generic [ref=f4e22]:
+      - generic [ref=f4e23]:
+        - paragraph [ref=f4e24]: Ethan / weiqiang / 围墙
+        - heading "Ethan" [level=1] [ref=f4e53]
+        - paragraph [ref=f4e54]: weiqiang / 围墙
+        - generic [ref=f4e55]:
+          - generic [ref=f4e56]:
+            - generic [ref=f4e57]: ethan@portfolio:~/system
+            - generic [ref=f4e58]: "source: static profile"
+          - generic [ref=f4e59]:
+            - generic [ref=f4e60]: $ echo
+            - generic [ref=f4e61]: Java Backend
+          - paragraph [ref=f4e63]: Java Backend
+        - paragraph [ref=f4e64]: Java Backend Engineer focused on high-concurrency systems and AI-enabled engineering.
+        - generic "core focus areas" [ref=f4e25]:
+          - generic [ref=f4e65]: Java Backend
+          - generic [ref=f4e66]: High-Concurrency
+          - generic [ref=f4e67]: AI Agent
+        - generic [ref=f4e26]:
+          - link "查看项目" [ref=f4e68] [cursor=pointer]:
+            - /url: "#projects"
+          - link "询问简历 Agent" [ref=f4e69] [cursor=pointer]:
+            - /url: "#resume-agent"
+      - generic [ref=f4e70]:
+        - generic [ref=f4e71]:
+          - generic [ref=f4e72]:
+            - generic [ref=f4e73]: ×
+            - generic [ref=f4e74]: –
+            - generic [ref=f4e75]: +
+          - generic [ref=f4e76]: profile://static
+        - generic [ref=f4e78]:
+          - generic [ref=f4e79]: $ whoami
+          - generic [ref=f4e80]:
+            - generic [ref=f4e81]: name
+            - text: Ethan
+          - generic [ref=f4e82]:
+            - generic [ref=f4e83]: brand
+            - text: weiqiang / 围墙
+          - generic [ref=f4e84]: 围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。
+          - generic [ref=f4e85]: "status: static profile"
+    - generic [ref=f4e27]:
+      - generic [ref=f4e86]:
+        - paragraph [ref=f4e87]: About
+        - heading "用可解释架构呈现后端深度" [level=2] [ref=f4e88]
+        - paragraph [ref=f4e89]: 围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。
+      - generic [ref=f4e28]:
+        - generic [ref=f4e29]:
+          - generic [ref=f4e30]: Why -> What -> How -> Deep Dive
+          - generic [ref=f4e90]:
+            - generic [ref=f4e91]: Why
+            - generic [ref=f4e92]:
+              - heading "Why" [level=3] [ref=f4e93]
+              - paragraph [ref=f4e94]: 从业务压力、流量模型、一致性要求和失败成本出发，明确问题为什么值得解决。
+          - generic [ref=f4e95]:
+            - generic [ref=f4e96]: What
+            - generic [ref=f4e97]:
+              - heading "What" [level=3] [ref=f4e98]
+              - paragraph [ref=f4e99]: 把问题抽象成状态模型、数据契约、缓存结构、队列边界和可观测接口。
+          - generic [ref=f4e100]:
+            - generic [ref=f4e101]: How
+            - generic [ref=f4e102]:
+              - heading "How" [level=3] [ref=f4e103]
+              - paragraph [ref=f4e104]: 使用 Spring Boot、MySQL、Redis、消息队列和 AI 编排，把方案落到可验证的工程路径。
+        - generic [ref=f4e31]:
+          - heading "技术重点" [level=3] [ref=f4e32]
+          - generic [ref=f4e33]:
+            - generic [ref=f4e105]:
+              - generic [ref=f4e106]:
+                - generic [ref=f4e107]: Backend
+                - generic [ref=f4e108]: 4 items
+              - generic [ref=f4e109]:
+                - generic [ref=f4e110]: Java
+                - generic [ref=f4e111]: Spring Boot 3
+                - generic [ref=f4e112]: MyBatis
+                - generic [ref=f4e113]: MySQL
+            - generic [ref=f4e114]:
+              - generic [ref=f4e115]:
+                - generic [ref=f4e116]: Concurrency
+                - generic [ref=f4e117]: 4 items
+              - generic [ref=f4e118]:
+                - generic [ref=f4e119]: Redis
+                - generic [ref=f4e120]: Lua
+                - generic [ref=f4e121]: State Machine
+                - generic [ref=f4e122]: Cache Consistency
+            - generic [ref=f4e123]:
+              - generic [ref=f4e124]:
+                - generic [ref=f4e125]: AI Engineering
+                - generic [ref=f4e126]: 4 items
+              - generic [ref=f4e127]:
+                - generic [ref=f4e128]: Spring AI
+                - generic [ref=f4e129]: Hybrid RAG
+                - generic [ref=f4e130]: Pgvector
+                - generic [ref=f4e131]: Prompt Orchestration
+            - generic [ref=f4e132]:
+              - generic [ref=f4e133]:
+                - generic [ref=f4e134]: Frontend
+                - generic [ref=f4e135]: 4 items
+              - generic [ref=f4e136]:
+                - generic [ref=f4e137]: Vue 3
+                - generic [ref=f4e138]: Vite
+                - generic [ref=f4e139]: Terminal UI
+                - generic [ref=f4e140]: Vibe Coding
+    - generic [ref=f4e34]:
+      - generic [ref=f4e35]:
+        - paragraph [ref=f4e36]: Projects
+        - heading "值得在面试中展开讨论的系统" [level=2] [ref=f4e37]
+        - paragraph [ref=f4e38]: 每个项目都按系统视角呈现：负载路径、状态模型、缓存策略，以及 AI 如何改善工程工作流。
+      - generic [ref=f4e40]:
+        - generic [ref=f4e41]: CASE STRIP
+        - generic [ref=f4e42]: 03 / 04
+      - generic [ref=f4e43]:
+        - button "查看上一个项目" [ref=f4e44] [cursor=pointer]:
+          - img [ref=f4e45]
+        - generic [ref=f4e47]:
+          - article [ref=f4e246]:
+            - button "03 FOCUS 企业设备资产管理系统 点击查看项目详情 严格遵循国家固定资产管理规范的系统。设计细粒度 4 级 RBAC 权责隔离与水平隔离，实现设备“入库-领用-维保-报废”闭环流转事务，并引入规则引擎驱动的多维数据治理看板与 AI 辅助分析报告生成。 Spring Boot Java 11 JdbcTemplate MySQL JWT AOP Vue 2 ECharts LLM API 生命周期闭环 RBAC 权责清晰" [ref=f4e247] [cursor=pointer]:
+              - generic [ref=f4e248]:
+                - generic [ref=f4e249]: "03"
+                - generic [ref=f4e250]: FOCUS
+              - generic [ref=f4e251]:
+                - heading "企业设备资产管理系统" [level=3] [ref=f4e252]
+                - generic [ref=f4e253]:
+                  - generic [ref=f4e254]: 点击查看项目详情
+                  - img [ref=f4e255]
+              - paragraph [ref=f4e257]: 严格遵循国家固定资产管理规范的系统。设计细粒度 4 级 RBAC 权责隔离与水平隔离，实现设备“入库-领用-维保-报废”闭环流转事务，并引入规则引擎驱动的多维数据治理看板与 AI 辅助分析报告生成。
+              - generic [ref=f4e258]:
+                - article [ref=f4e259]:
+                  - generic [ref=f4e261]:
+                    - strong [ref=f4e262]: 细粒度多级 RBAC 与数据隔离
+                    - text: ：实现操作员、工程师、管理员、超管四级角色。在拦截器与 Service 层强校验单位代码（
+                    - code [ref=f4e263]: unit_code
+                    - text: ），实现跨单位数据物理隔离，防止恶意水平越权。
+                - article [ref=f4e264]:
+                  - generic [ref=f4e266]:
+                    - strong [ref=f4e267]: 高可靠领用审批事务控制
+                    - text: ：利用数据库排他锁对设备状态实施强约束校验，使用
+                    - code [ref=f4e268]: "@Transactional"
+                    - text: 声明式事务控制，确保设备状态锁定、领用单生成及保管人交接满足原子性与并发一致性。
+              - generic [ref=f4e269]:
+                - generic [ref=f4e270]: Spring Boot
+                - generic [ref=f4e271]: Java 11
+                - generic [ref=f4e272]: JdbcTemplate
+                - generic [ref=f4e273]: MySQL
+                - generic [ref=f4e274]: JWT
+                - generic [ref=f4e275]: AOP
+                - generic [ref=f4e276]: Vue 2
+                - generic [ref=f4e277]: ECharts
+                - generic [ref=f4e278]: LLM API
+              - generic [ref=f4e279]:
+                - generic [ref=f4e280]: 生命周期闭环
+                - generic [ref=f4e281]: RBAC 权责清晰
+          - article [ref=f4e282]:
+            - button "04 NEXT Personal CRM 智能联系人管理平台 点击切换为主卡 将联系人、互动记录、提醒事项、移动端看板和智能助手整合为一个可部署的个人 CRM 产品，用真实业务闭环证明全栈交付能力。 Vue 3 Spring Boot MySQL Redis 已完成产品闭环" [ref=f4e283] [cursor=pointer]:
+              - generic [ref=f4e284]:
+                - generic [ref=f4e285]: "04"
+                - generic [ref=f4e286]: NEXT
+              - generic [ref=f4e287]:
+                - heading "Personal CRM 智能联系人管理平台" [level=3] [ref=f4e288]
+                - generic [ref=f4e289]:
+                  - generic [ref=f4e290]: 点击切换为主卡
+                  - img [ref=f4e291]
+              - paragraph [ref=f4e293]: 将联系人、互动记录、提醒事项、移动端看板和智能助手整合为一个可部署的个人 CRM 产品，用真实业务闭环证明全栈交付能力。
+              - article [ref=f4e295]:
+                - generic [ref=f4e297]:
+                  - strong [ref=f4e298]: 产品化业务闭环
+                  - text: ：覆盖注册登录、联系人管理、详情记录、事项提醒、黑名单与设置等完整 CRM 使用路径。
+              - generic [ref=f4e299]:
+                - generic [ref=f4e300]: Vue 3
+                - generic [ref=f4e301]: Spring Boot
+                - generic [ref=f4e302]: MySQL
+                - generic [ref=f4e303]: Redis
+              - generic [ref=f4e305]: 已完成产品闭环
+          - article [ref=f4e306]:
+            - button "01 SHADOW 餐饮场景 AI 智能客服 Agent 平台 点击切换为主卡 点击卡片切换为主卡，再查看完整项目说明与亮点。 Spring Boot Spring AI" [ref=f4e307] [cursor=pointer]:
+              - generic [ref=f4e308]:
+                - generic [ref=f4e309]: "01"
+                - generic [ref=f4e310]: SHADOW
+              - generic [ref=f4e311]:
+                - heading "餐饮场景 AI 智能客服 Agent 平台" [level=3] [ref=f4e312]
+                - generic [ref=f4e313]:
+                  - generic [ref=f4e314]: 点击切换为主卡
+                  - img [ref=f4e315]
+              - paragraph [ref=f4e317]: 点击卡片切换为主卡，再查看完整项目说明与亮点。
+              - generic [ref=f4e318]:
+                - generic [ref=f4e319]: Spring Boot
+                - generic [ref=f4e320]: Spring AI
+        - button "查看下一个项目" [ref=f4e48] [cursor=pointer]:
+          - img [ref=f4e49]
+    - button "AI" [ref=f4e51] [cursor=pointer]:
+      - generic [ref=f4e52]: AI

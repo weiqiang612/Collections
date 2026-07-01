@@ -6,7 +6,9 @@
 - **页面视图层 (`src/views/`)**：`HomeView.vue` 承载作品集主页内容；`ProjectDetailView.vue` 承载统一结构的动态项目详情视图（复用 `ProjectHeroMedia.vue` 与 `MermaidDiagram.vue`，并嵌套于 `AppShell.vue` 内）；`NotFoundView.vue` 作为路由未匹配时的回退容器。
 - **业务服务层 (`src/services/`)**：`chatClient.js` 封装了 API 对话通信，`profileClient.js` 统一封装个人画像信息的同步导出。
 - **组合式逻辑层 (`src/composables/`)**：封装多语言状态 `useLocale.js`、聊天流式模拟 `useChatMock.js` 和打字机渲染 `useTypewriter.js`。
-- **交互组件层 (`src/components/`)**：细分 `hero`、`about`、`projects`、`agent` 和 `common` 模块。`ProjectsSection` 负责渲染首页三项目轻量预览网格；`ProjectCard` 统一展示标题、摘要、精简亮点、技术标签与跳转 CTA；`ProjectHeroMedia` 负责详情页 Hero 区的统一媒体壳层，可按数据驱动呈现视频预留态、截图型展示或静态产品证明；`MermaidDiagram` 承担架构图渲染及拖拽交互。
+- **交互组件层 (`src/components/`)**：细分 `hero`、`about`、`projects`、`agent` 和 `common` 模块。`ProjectsSection` 负责渲染首页四项目轻量预览 Case Strip，并通过数组长度和取模逻辑自动显示 `01 / 04` 到 `04 / 04`；`ProjectCard` 统一展示标题、摘要、精简亮点、技术标签与跳转 CTA；`ProjectHeroMedia` 负责详情页 Hero 区的统一媒体壳层，可按数据驱动呈现视频预留态、截图型展示或静态产品证明；`MermaidDiagram` 承担架构图渲染及拖拽交互。
+
+Personal CRM 作为第 4 个项目继续进入 `src/data/i18n.js` 的 `messages[locale].projects` 数组。首页 `ProjectsSection.vue` 通过数组长度和取模逻辑自动纳入该项目；详情页 `ProjectDetailView.vue` 继续通过 `/projects/:projectId` 查找 `project.id === "personal-crm"` 的数据，不新增路由结构、远程内容系统或运行时配置。
 
 ## 2. 架构图 (Architecture Diagrams)
 ```mermaid
@@ -34,3 +36,5 @@ flowchart TD
     i18n[(i18n.js 数据源)] -.-> useLocale[useLocale.js]
     useLocale -.-> Components[所有视图组件与页面]
 ```
+
+
