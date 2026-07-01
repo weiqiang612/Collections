@@ -1,0 +1,203 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e3]:
+    - banner [ref=f3e4]:
+      - link "返回首页" [ref=f3e5]:
+        - /url: /
+        - generic [ref=f3e7]: weiqiang
+      - generic [ref=f3e8]:
+        - navigation "主导航" [ref=f3e9]:
+          - link "首页" [ref=f3e10]:
+            - /url: "#hero"
+          - link "关于" [ref=f3e11]:
+            - /url: "#about"
+          - link "项目" [ref=f3e12]:
+            - /url: "#projects"
+          - link "Agent" [ref=f3e13]:
+            - /url: "#resume-agent"
+          - link "笔记" [ref=f3e14]:
+            - /url: https://note.weiqiang.me
+            - text: 笔记
+            - img [ref=f3e15]
+        - button "切换语言" [ref=f3e17]:
+          - generic [ref=f3e18]: 中文
+          - generic [ref=f3e19]: /
+          - generic [ref=f3e20]: EN
+    - main [ref=f3e21]:
+      - generic [ref=f3e22]:
+        - button "返回首页" [ref=f3e23]:
+          - img [ref=f3e24]
+          - generic [ref=f3e26]: 返回首页
+        - generic [ref=f3e27]:
+          - generic [ref=f3e28]:
+            - paragraph [ref=f3e29]: 面向个人关系维护、事项提醒与受控 Contact Agent 的产品化全栈 CRM 系统
+            - heading "Personal CRM 智能联系人管理平台" [level=1] [ref=f3e30]
+            - paragraph [ref=f3e31]: 围绕关系维护、提醒闭环、移动端适配和受控智能助手构建的产品化全栈 CRM 平台
+            - generic [ref=f3e32]:
+              - generic [ref=f3e33]: 已完成产品闭环
+              - generic [ref=f3e34]: 支持移动端适配
+              - generic [ref=f3e35]: 具备 Agent 助手
+              - generic [ref=f3e36]: 具备部署交付证据
+            - generic [ref=f3e37]:
+              - generic [ref=f3e38]: Vue 3
+              - generic [ref=f3e39]: Spring Boot
+              - generic [ref=f3e40]: MySQL
+              - generic [ref=f3e41]: Redis
+              - generic [ref=f3e42]: Contact Agent
+            - generic [ref=f3e43]:
+              - generic [ref=f3e44]:
+                - generic [ref=f3e45]: 8+
+                - generic [ref=f3e46]: 核心模块
+              - generic [ref=f3e47]:
+                - generic [ref=f3e48]: Desktop + Mobile
+                - generic [ref=f3e49]: 跨端页面
+              - generic [ref=f3e50]:
+                - generic [ref=f3e51]: 确认后执行
+                - generic [ref=f3e52]: Agent 写入
+          - generic [ref=f3e55]:
+            - generic [ref=f3e61]: Personal CRM / Product Proof
+            - generic [ref=f3e62]:
+              - generic [ref=f3e63]:
+                - generic [ref=f3e64]:
+                  - generic [ref=f3e65]:
+                    - generic [ref=f3e66]: Real Screens
+                    - generic [ref=f3e67]: Full-stack Product
+                    - generic [ref=f3e68]: Mobile Ready
+                  - paragraph [ref=f3e69]: 真实产品截图证明
+                  - heading "从看板、联系人详情到智能助手的完整 CRM 使用链路" [level=2] [ref=f3e70]
+                  - paragraph [ref=f3e71]: 媒体区使用 Personal CRM 已交付页面截图，突出产品闭环、跨端体验和受控 Agent 能力。
+                - generic [ref=f3e73]:
+                  - article [ref=f3e74]:
+                    - img "看板总览" [ref=f3e75]
+                    - generic [ref=f3e76]:
+                      - paragraph [ref=f3e77]: 看板总览
+                      - paragraph [ref=f3e78]: 集中展示联系人、提醒和近期互动，帮助用户快速进入关系维护状态。
+                  - article [ref=f3e79]:
+                    - img "联系人详情" [ref=f3e80]
+                    - generic [ref=f3e81]:
+                      - paragraph [ref=f3e82]: 联系人详情
+                      - paragraph [ref=f3e83]: 承载联系人画像、互动记录和后续事项，是 CRM 业务闭环的核心页面。
+                  - article [ref=f3e84]:
+                    - img "智能助手" [ref=f3e85]
+                    - generic [ref=f3e86]:
+                      - paragraph [ref=f3e87]: 智能助手
+                      - paragraph [ref=f3e88]: 围绕联系人上下文生成建议，并通过确认流程控制写操作边界。
+              - generic [ref=f3e89]:
+                - generic [ref=f3e90]: Evidence
+                - generic [ref=f3e91]: Dashboard / Contact detail / Assistant / Mobile dashboard screenshots
+        - main [ref=f3e92]:
+          - generic [ref=f3e93]:
+            - heading "项目定位与业务场景" [level=2] [ref=f3e94]
+            - generic [ref=f3e95]:
+              - paragraph [ref=f3e96]: Personal CRM 面向个人关系维护场景，将联系人档案、互动记录、提醒事项、移动端看板和智能助手组织成一个可部署的全栈产品。作品集详情页重点展示它的产品完整度、账号安全、跨端体验和受控 Agent 写操作边界。
+              - generic [ref=f3e97]:
+                - article [ref=f3e98]:
+                  - paragraph [ref=f3e99]: 产品闭环
+                  - paragraph [ref=f3e100]: 从注册登录到联系人管理、事项提醒、黑名单和设置页面，覆盖真实 CRM 使用链路。
+                - article [ref=f3e101]:
+                  - paragraph [ref=f3e102]: Agent 边界
+                  - paragraph [ref=f3e103]: 智能助手用于生成草稿和解释上下文，真正写入必须经过用户确认和后端校验。
+                - article [ref=f3e104]:
+                  - paragraph [ref=f3e105]: 交付证据
+                  - paragraph [ref=f3e106]: 桌面与移动端截图证明系统已经具备产品化界面，而不是只有接口或概念图。
+          - generic [ref=f3e107]:
+            - heading "系统架构与 Agent 控制边界" [level=2] [ref=f3e108]
+            - generic [ref=f3e109]:
+              - paragraph [ref=f3e110]: 架构图展示 Vue 前端、Spring Boot API、MySQL、Redis、邮件、天气服务和部署边界；时序图说明 Contact Agent 如何通过确认预览完成受控写操作。
+              - generic [ref=f3e111]:
+                - generic [ref=f3e112]:
+                  - heading "01. Personal CRM 产品架构 / Product Architecture" [level=3] [ref=f3e113]
+                  - generic [ref=f3e117]: rendering
+                - generic [ref=f3e119]:
+                  - heading "02. 受控 Contact Agent 写操作 / Controlled Agent Write Flow" [level=3] [ref=f3e120]
+                  - generic [ref=f3e124]: rendering
+          - generic [ref=f3e126]:
+            - heading "产品截图与交付证明" [level=2] [ref=f3e127]
+            - generic [ref=f3e128]:
+              - paragraph [ref=f3e129]: 以下截图来自 Personal CRM 已有 artifacts，覆盖桌面看板、联系人详情、智能助手和移动端看板。
+              - generic [ref=f3e130]:
+                - article [ref=f3e131]:
+                  - img "Personal CRM 看板页" [ref=f3e133]
+                  - generic [ref=f3e134]:
+                    - paragraph [ref=f3e135]: Personal CRM 看板页
+                    - paragraph [ref=f3e136]: 总览联系人、提醒和近期互动状态。
+                - article [ref=f3e137]:
+                  - img "联系人详情页" [ref=f3e139]
+                  - generic [ref=f3e140]:
+                    - paragraph [ref=f3e141]: 联系人详情页
+                    - paragraph [ref=f3e142]: 呈现联系人资料、互动记录和关系维护上下文。
+                - article [ref=f3e143]:
+                  - img "智能助手页" [ref=f3e145]
+                  - generic [ref=f3e146]:
+                    - paragraph [ref=f3e147]: 智能助手页
+                    - paragraph [ref=f3e148]: 围绕联系人上下文提供建议和可确认的操作草稿。
+                - article [ref=f3e149]:
+                  - img "移动端看板首页" [ref=f3e151]
+                  - generic [ref=f3e152]:
+                    - paragraph [ref=f3e153]: 移动端看板首页
+                    - paragraph [ref=f3e154]: 验证核心 CRM 能力在移动端仍可访问和阅读。
+          - generic [ref=f3e155]:
+            - heading "技术亮点" [level=2] [ref=f3e156]
+            - list [ref=f3e158]:
+              - listitem [ref=f3e159]:
+                - text: •
+                - strong [ref=f3e160]: 产品化业务闭环
+                - text: ：覆盖注册登录、联系人管理、详情记录、事项提醒、黑名单与设置等完整 CRM 使用路径。
+              - listitem [ref=f3e161]:
+                - text: •
+                - strong [ref=f3e162]: 受控 Contact Agent
+                - text: ：将智能助手限制在草稿生成、上下文解释和确认后写入流程中，避免模型直接越权修改核心数据。
+              - listitem [ref=f3e163]:
+                - text: •
+                - strong [ref=f3e164]: 跨端体验与交付
+                - text: ：同时整理桌面看板、移动端看板和助手页面，证明系统不是停留在后端接口层。
+          - generic [ref=f3e165]:
+            - generic [ref=f3e166]:
+              - heading "我的职责" [level=2] [ref=f3e167]
+              - list [ref=f3e169]:
+                - listitem [ref=f3e170]:
+                  - text: ">"
+                  - generic [ref=f3e171]:
+                    - strong [ref=f3e172]: 搭建全栈产品闭环
+                    - text: ：围绕联系人、提醒、黑名单、设置和账号体系完成端到端功能组织。
+                - listitem [ref=f3e173]:
+                  - text: ">"
+                  - generic [ref=f3e174]:
+                    - strong [ref=f3e175]: 设计受控 Agent 写入边界
+                    - text: ：将 AI 输出限制为可确认草稿，关键写操作交由后端鉴权和校验执行。
+                - listitem [ref=f3e176]:
+                  - text: ">"
+                  - generic [ref=f3e177]:
+                    - strong [ref=f3e178]: 完成跨端体验整理
+                    - text: ：让桌面看板、详情页和移动端页面保持一致的信息层级与可用性。
+                - listitem [ref=f3e179]:
+                  - text: ">"
+                  - generic [ref=f3e180]:
+                    - strong [ref=f3e181]: 沉淀作品集展示证据
+                    - text: ：将真实截图、架构图和职责复盘整理为可面试展开的项目案例。
+            - generic [ref=f3e182]:
+              - heading "技术复盘" [level=2] [ref=f3e183]
+              - generic [ref=f3e185]:
+                - generic [ref=f3e186]:
+                  - generic [ref=f3e187]:
+                    - generic [ref=f3e188]: 挑战
+                    - generic [ref=f3e189]:
+                      - strong [ref=f3e190]: 个人 CRM 容易退化成普通 CRUD。
+                      - text: 如果只展示联系人列表，无法证明产品价值。
+                  - generic [ref=f3e191]:
+                    - generic [ref=f3e192]: 解决方案
+                    - text: 我围绕关系维护闭环组织页面和数据，将提醒、互动记录、黑名单和助手能力串成完整使用场景。
+                - generic [ref=f3e193]:
+                  - generic [ref=f3e194]:
+                    - generic [ref=f3e195]: 挑战
+                    - strong [ref=f3e197]: 让 Agent 直接修改联系人数据存在越权和误写风险。
+                  - generic [ref=f3e198]:
+                    - generic [ref=f3e199]: 解决方案
+                    - text: 我把 Agent 放在草稿和建议层，用户确认后才通过后端 API 执行写入，并保留鉴权与参数校验。
+                - generic [ref=f3e200]:
+                  - generic [ref=f3e201]:
+                    - generic [ref=f3e202]: 挑战
+                    - strong [ref=f3e204]: 全栈项目如果缺少真实界面证据，很难让访客判断完成度。
+                  - generic [ref=f3e205]:
+                    - generic [ref=f3e206]: 解决方案
+                    - text: 我将桌面和移动端关键截图纳入详情页，使系统能力能够被直接检查。
+  - img [ref=f3e208]

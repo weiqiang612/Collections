@@ -4,6 +4,10 @@ import skyTakeoutCartConfirmationScreen from "../assets/projects/sky-takeout/car
 import skyTakeoutCancelConfirmationScreen from "../assets/projects/sky-takeout/cancel-confirmation.webp";
 import skyTakeoutCancelSuccessScreen from "../assets/projects/sky-takeout/cancel-success.webp";
 import skyTakeoutUserMemoryScreen from "../assets/projects/sky-takeout/user-memory.webp";
+import personalCrmDashboardScreen from "../assets/projects/personal-crm/dashboard.webp";
+import personalCrmContactDetailScreen from "../assets/projects/personal-crm/contact-detail.webp";
+import personalCrmAssistantScreen from "../assets/projects/personal-crm/assistant.webp";
+import personalCrmMobileDashboardScreen from "../assets/projects/personal-crm/mobile-dashboard.webp";
 
 
 export const supportedLocales = ["zh-CN", "en-US"];
@@ -167,6 +171,45 @@ const diagrams = {
         A->>DB: 审批通过 (设备状态: 维修->在用, 保管人恢复)
     else 复核结果：损坏严重
         A->>DB: 审批报废 (设备状态: 维修->报废, 保管人清空, 自动生成报废卡)
+    end`,
+    },
+  ],
+  personalCrm: [
+    {
+      title: "Personal CRM 产品架构 / Product Architecture",
+      code: `flowchart LR
+    U["Web / Mobile User"] --> FE["Vue 3 + Vite<br><small>Dashboard / Contacts / Agent UI</small>"]
+    FE --> API["Spring Boot API<br><small>Auth / Contacts / Reminders</small>"]
+    API --> MYSQL[("MySQL<br><small>Contacts / Notes / Tasks</small>")]
+    API --> REDIS[("Redis<br><small>Session / Rate Limit / Cache</small>")]
+    FE --> AGENT["Contact Agent Panel<br><small>Controlled write assistant</small>"]
+    AGENT --> GUARD["Confirmation Guard<br><small>Preview before mutation</small>"]
+    GUARD --> API
+    API --> MAIL["Email Service<br><small>Reset / reminder delivery</small>"]
+    API --> WEATHER["Weather API<br><small>Context enrichment</small>"]
+    API --> DEPLOY["Deployment Boundary<br><small>Static frontend + backend service</small>"]`,
+    },
+    {
+      title: "受控 Contact Agent 写操作 / Controlled Agent Write Flow",
+      code: `sequenceDiagram
+    participant User as User
+    participant UI as Vue Agent Panel
+    participant Agent as Contact Agent
+    participant API as Spring Boot API
+    participant DB as MySQL
+
+    User->>UI: Ask to create or update contact task
+    UI->>Agent: Send intent and current contact context
+    Agent-->>UI: Return structured draft operation
+    UI-->>User: Show confirmation preview
+    alt User confirms
+        UI->>API: Submit validated write request
+        API->>API: Auth and input validation
+        API->>DB: Persist contact / reminder change
+        DB-->>API: Success
+        API-->>UI: Updated entity snapshot
+    else User cancels
+        UI-->>Agent: Abort without mutation
     end`,
     },
   ],
@@ -687,6 +730,106 @@ export const messages = {
           },
         },
       },
+      {
+        id: "personal-crm",
+        name: "Personal CRM 智能联系人管理平台",
+        subtitle: "面向个人关系维护、事项提醒与受控 Contact Agent 的产品化全栈 CRM 系统",
+        summary:
+          "将联系人、互动记录、提醒事项、移动端看板和智能助手整合为一个可部署的个人 CRM 产品，用真实业务闭环证明全栈交付能力。",
+        highlights: [
+          "**产品化业务闭环**：覆盖注册登录、联系人管理、详情记录、事项提醒、黑名单与设置等完整 CRM 使用路径。",
+          "**受控 Contact Agent**：将智能助手限制在草稿生成、上下文解释和确认后写入流程中，避免模型直接越权修改核心数据。",
+          "**跨端体验与交付**：同时整理桌面看板、移动端看板和助手页面，证明系统不是停留在后端接口层。",
+        ],
+        techStack: ["Vue 3", "Spring Boot", "MySQL", "Redis", "JWT", "Agent", "Email", "Responsive UI"],
+        diagrams: diagrams.personalCrm,
+        detail: {
+          tagline: "围绕关系维护、提醒闭环、移动端适配和受控智能助手构建的产品化全栈 CRM 平台",
+          outcomes: ["已完成产品闭环", "支持移动端适配", "具备 Agent 助手", "具备部署交付证据"],
+          tags: ["Vue 3", "Spring Boot", "MySQL", "Redis", "Contact Agent"],
+          liveUrl: { label: "项目上线地址", value: "crm.weiqiang.me", href: "https://crm.weiqiang.me" },
+          metrics: [
+            { label: "核心模块", value: "8+" },
+            { label: "跨端页面", value: "Desktop + Mobile" },
+            { label: "Agent 写入", value: "确认后执行" },
+          ],
+          media: {
+            type: "screens",
+            layout: "stacked",
+            label: "Personal CRM / Product Proof",
+            eyebrow: "真实产品截图证明",
+            headline: "从看板、联系人详情到智能助手的完整 CRM 使用链路",
+            description: "媒体区使用 Personal CRM 已交付页面截图，突出产品闭环、跨端体验和受控 Agent 能力。",
+            badges: ["Real Screens", "Full-stack Product", "Mobile Ready"],
+            screens: [
+              { title: "看板总览", description: "集中展示联系人、提醒和近期互动，帮助用户快速进入关系维护状态。", src: personalCrmDashboardScreen },
+              { title: "联系人详情", description: "承载联系人画像、互动记录和后续事项，是 CRM 业务闭环的核心页面。", src: personalCrmContactDetailScreen },
+              { title: "智能助手", description: "围绕联系人上下文生成建议，并通过确认流程控制写操作边界。", src: personalCrmAssistantScreen },
+            ],
+            frames: [
+              { title: "看板总览", description: "集中展示联系人、提醒和近期互动，帮助用户快速进入关系维护状态。" },
+              { title: "联系人详情", description: "承载联系人画像、互动记录和后续事项，是 CRM 业务闭环的核心页面。" },
+              { title: "智能助手", description: "围绕联系人上下文生成建议，并通过确认流程控制写操作边界。" },
+            ],
+            footer: {
+              label: "Evidence",
+              value: "Dashboard / Contact detail / Assistant / Mobile dashboard screenshots",
+            },
+          },
+          sections: {
+            overview: {
+              title: "项目定位与业务场景",
+              content: "Personal CRM 面向个人关系维护场景，将联系人档案、互动记录、提醒事项、移动端看板和智能助手组织成一个可部署的全栈产品。作品集详情页重点展示它的产品完整度、账号安全、跨端体验和受控 Agent 写操作边界。",
+              proofPoints: [
+                { title: "产品闭环", description: "从注册登录到联系人管理、事项提醒、黑名单和设置页面，覆盖真实 CRM 使用链路。" },
+                { title: "Agent 边界", description: "智能助手用于生成草稿和解释上下文，真正写入必须经过用户确认和后端校验。" },
+                { title: "交付证据", description: "桌面与移动端截图证明系统已经具备产品化界面，而不是只有接口或概念图。" },
+              ],
+            },
+            architecture: {
+              title: "系统架构与 Agent 控制边界",
+              description: "架构图展示 Vue 前端、Spring Boot API、MySQL、Redis、邮件、天气服务和部署边界；时序图说明 Contact Agent 如何通过确认预览完成受控写操作。",
+              diagrams: diagrams.personalCrm,
+            },
+            productProof: {
+              title: "产品截图与交付证明",
+              description: "以下截图来自 Personal CRM 已有 artifacts，覆盖桌面看板、联系人详情、智能助手和移动端看板。",
+              screens: [
+                { title: "Personal CRM 看板页", description: "总览联系人、提醒和近期互动状态。", src: personalCrmDashboardScreen },
+                { title: "联系人详情页", description: "呈现联系人资料、互动记录和关系维护上下文。", src: personalCrmContactDetailScreen },
+                { title: "智能助手页", description: "围绕联系人上下文提供建议和可确认的操作草稿。", src: personalCrmAssistantScreen },
+                { title: "移动端看板首页", description: "验证核心 CRM 能力在移动端仍可访问和阅读。", src: personalCrmMobileDashboardScreen, fit: "contain" },
+              ],
+            },
+            ownership: {
+              title: "我的职责",
+              items: [
+                "**搭建全栈产品闭环**：围绕联系人、提醒、黑名单、设置和账号体系完成端到端功能组织。",
+                "**设计受控 Agent 写入边界**：将 AI 输出限制为可确认草稿，关键写操作交由后端鉴权和校验执行。",
+                "**完成跨端体验整理**：让桌面看板、详情页和移动端页面保持一致的信息层级与可用性。",
+                "**沉淀作品集展示证据**：将真实截图、架构图和职责复盘整理为可面试展开的项目案例。",
+              ],
+            },
+            retrospective: {
+              title: "技术复盘",
+              challenges: [
+                {
+                  problem: "**个人 CRM 容易退化成普通 CRUD。** 如果只展示联系人列表，无法证明产品价值。",
+                  solution: "我围绕关系维护闭环组织页面和数据，将提醒、互动记录、黑名单和助手能力串成完整使用场景。",
+                },
+                {
+                  problem: "**让 Agent 直接修改联系人数据存在越权和误写风险。**",
+                  solution: "我把 Agent 放在草稿和建议层，用户确认后才通过后端 API 执行写入，并保留鉴权与参数校验。",
+                },
+                {
+                  problem: "**全栈项目如果缺少真实界面证据，很难让访客判断完成度。**",
+                  solution: "我将桌面和移动端关键截图纳入详情页，使系统能力能够被直接检查。",
+                },
+              ],
+            },
+          },
+        },
+      },
     ],
     projectCard: {
       diagramLabel: "Mermaid 预留区域",
@@ -723,6 +866,7 @@ export const messages = {
         "我可以为你介绍我的后端与 AI 架构。对于「餐饮场景 AI 智能客服 Agent 平台」，我基于 Spring AI 级联 Advisor 链（含防循环拦截）重构智能 Agent，集成 RuleBased 多步任务编排、Pgvector 混合 RAG 与长期记忆系统，欢迎针对 Advisor 链路或 Reranker 精排提问。",
         "「高并发本地生活交易平台」的核心在于 Redis 高并发实战：我封装了通用 CacheClient 锁双检逻辑过期防击穿方案，设计 Lua 脚本原子预扣减结合分布式锁防超卖，并通过 Redis Stream 与 Pending List 构建可靠异步下单链路。",
         "「餐饮场景 AI 智能客服 Agent 平台」的 AI 模块采用三层记忆：基于 Map 的 Working 内存、Redis 会话记忆（2h TTL）与 PostgreSQL 长期事实表。除 `@Async` 驱动 LLM 自适应提取事实外，还结合本地成功工具响应解析器实现强一致性关键事实持久化。",
+        "「Personal CRM 智能联系人管理平台」展示的是产品化全栈交付能力：我把联系人管理、互动记录、事项提醒、账号安全、移动端适配和受控 Contact Agent 组织成完整业务闭环。Agent 只生成可确认的操作草稿，真正写入仍经过用户确认和后端校验。",
       ],
     },
     projectDetail: {
@@ -1131,6 +1275,106 @@ export const messages = {
           },
         },
       },
+      {
+        id: "personal-crm",
+        name: "Personal CRM Intelligent Contact Management Platform",
+        subtitle: "A production-grade full-stack CRM for relationship maintenance, reminders, and a controlled Contact Agent",
+        summary:
+          "A deployable personal CRM product that connects contacts, interaction history, reminders, mobile dashboards, and an intelligent assistant into one practical workflow.",
+        highlights: [
+          "**Productized business loop**: Covers sign-up, login, contact management, detail records, reminders, blacklist handling, and settings as one complete CRM path.",
+          "**Controlled Contact Agent**: Keeps the assistant in draft generation, context explanation, and confirmation-before-write flows instead of letting the model mutate core data directly.",
+          "**Cross-device delivery proof**: Uses desktop dashboard, mobile dashboard, contact detail, and assistant screens to prove the project goes beyond backend APIs.",
+        ],
+        techStack: ["Vue 3", "Spring Boot", "MySQL", "Redis", "JWT", "Agent", "Email", "Responsive UI"],
+        diagrams: diagrams.personalCrm,
+        detail: {
+          tagline: "A production-grade full-stack CRM built around relationship maintenance, reminder loops, mobile adaptation, and a controlled intelligent assistant.",
+          outcomes: ["Complete product loop", "Mobile-ready", "Agent assistant", "Deployment evidence"],
+          tags: ["Vue 3", "Spring Boot", "MySQL", "Redis", "Contact Agent"],
+          liveUrl: { label: "Live URL", value: "crm.weiqiang.me", href: "https://crm.weiqiang.me" },
+          metrics: [
+            { label: "Core Modules", value: "8+" },
+            { label: "Device Coverage", value: "Desktop + Mobile" },
+            { label: "Agent Writes", value: "Confirm First" },
+          ],
+          media: {
+            type: "screens",
+            layout: "stacked",
+            label: "Personal CRM / Product Proof",
+            eyebrow: "Real product screenshots",
+            headline: "A complete CRM path from dashboard and contact detail to assistant support",
+            description: "The media area uses delivered Personal CRM screens to show the product loop, cross-device experience, and controlled Agent capability.",
+            badges: ["Real Screens", "Full-stack Product", "Mobile Ready"],
+            screens: [
+              { title: "Dashboard Overview", description: "Summarizes contacts, reminders, and recent interactions so users can quickly resume relationship work.", src: personalCrmDashboardScreen },
+              { title: "Contact Detail", description: "Carries the contact profile, interaction history, and follow-up context at the center of the CRM loop.", src: personalCrmContactDetailScreen },
+              { title: "Assistant", description: "Generates contact-aware suggestions while keeping write actions behind a confirmation step.", src: personalCrmAssistantScreen },
+            ],
+            frames: [
+              { title: "Dashboard Overview", description: "Summarizes contacts, reminders, and recent interactions so users can quickly resume relationship work." },
+              { title: "Contact Detail", description: "Carries the contact profile, interaction history, and follow-up context at the center of the CRM loop." },
+              { title: "Assistant", description: "Generates contact-aware suggestions while keeping write actions behind a confirmation step." },
+            ],
+            footer: {
+              label: "Evidence",
+              value: "Dashboard / Contact detail / Assistant / Mobile dashboard screenshots",
+            },
+          },
+          sections: {
+            overview: {
+              title: "Project Positioning & Business Context",
+              content: "Personal CRM targets relationship-maintenance workflows and packages contact profiles, interaction history, reminders, mobile dashboards, and an intelligent assistant into one deployable full-stack product. The portfolio page emphasizes product completeness, account safety, cross-device usability, and the controlled boundary around Agent writes.",
+              proofPoints: [
+                { title: "Product Loop", description: "From sign-up and login to contacts, reminders, blacklist handling, and settings, the system covers a real CRM usage path." },
+                { title: "Agent Boundary", description: "The assistant drafts suggestions and explains context; actual writes still require user confirmation and backend validation." },
+                { title: "Delivery Evidence", description: "Desktop and mobile screenshots show a productized interface rather than only APIs or concept diagrams." },
+              ],
+            },
+            architecture: {
+              title: "System Architecture & Agent Control Boundary",
+              description: "The diagrams show the Vue frontend, Spring Boot API, MySQL, Redis, email, weather service, and deployment boundary, plus the sequence for confirmation-based Contact Agent writes.",
+              diagrams: diagrams.personalCrm,
+            },
+            productProof: {
+              title: "Product Screens & Delivery Proof",
+              description: "These screenshots come from the existing Personal CRM artifacts and cover the desktop dashboard, contact detail, assistant, and mobile dashboard.",
+              screens: [
+                { title: "Personal CRM Dashboard", description: "Summarizes contacts, reminders, and recent relationship-maintenance state.", src: personalCrmDashboardScreen },
+                { title: "Contact Detail", description: "Shows contact data, interaction records, and relationship context.", src: personalCrmContactDetailScreen },
+                { title: "Assistant", description: "Provides context-aware suggestions and confirmable operation drafts.", src: personalCrmAssistantScreen },
+                { title: "Mobile Dashboard", description: "Verifies that core CRM capabilities remain usable on mobile screens.", src: personalCrmMobileDashboardScreen, fit: "contain" },
+              ],
+            },
+            ownership: {
+              title: "My Ownership",
+              items: [
+                "**Built the full-stack product loop**: Organized contacts, reminders, blacklist handling, settings, and account flows into an end-to-end CRM experience.",
+                "**Designed the controlled Agent write boundary**: Kept AI output as confirmable drafts while backend auth and validation execute the final write.",
+                "**Polished cross-device presentation**: Kept the desktop dashboard, detail pages, and mobile screens aligned around the same information hierarchy.",
+                "**Turned product evidence into a portfolio case**: Prepared real screens, architecture diagrams, and retrospectives for interview discussion.",
+              ],
+            },
+            retrospective: {
+              title: "Project Retrospective",
+              challenges: [
+                {
+                  problem: "**A personal CRM can easily look like ordinary CRUD.** A contact list alone does not prove product value.",
+                  solution: "I organized the experience around a relationship-maintenance loop, connecting reminders, interaction records, blacklist handling, and assistant support into one workflow.",
+                },
+                {
+                  problem: "**Letting an Agent directly mutate contact data creates overreach and wrong-write risk.**",
+                  solution: "I kept the Agent in the draft and suggestion layer. Confirmed operations go through backend APIs with auth and parameter validation.",
+                },
+                {
+                  problem: "**A full-stack project without real UI evidence is hard to evaluate.**",
+                  solution: "I brought desktop and mobile screenshots into the detail page so the system can be inspected directly.",
+                },
+              ],
+            },
+          },
+        },
+      },
     ],
     projectCard: {
       diagramLabel: "Mermaid reserved",
@@ -1167,6 +1411,7 @@ export const messages = {
         "I can walk you through my backend and AI architectures. For the 'AI Customer Service Agent Platform', I refactored the Agent around a cascading Spring AI Advisor Chain with loop-safety guards, RuleBased multi-step planning, Pgvector hybrid RAG, and a mixed long-term memory system. Feel free to ask about the Advisor pipeline or Reranker layer.",
         "For the 'High-Concurrency Local Commerce Platform', the core strengths lie in Redis-heavy backend design: a reusable CacheClient with logical-expiry double-check locks, Lua-based atomic flash-sale validation with Redisson fallback, and async ordering via Redis Stream plus Pending List recovery.",
         "In the 'AI Customer Service Agent Platform', memory is split into three layers: Java map working context, Redis session memory (2h TTL), and PostgreSQL long-term facts. Factual updates combine `@Async` LLM extraction with deterministic local tool-result parsing to guarantee consistency.",
+        "The Personal CRM project demonstrates full-stack product delivery: contact management, interaction history, reminders, account safety, mobile adaptation, and a controlled Contact Agent are organized into one usable workflow. The Agent only drafts confirmable operations; actual writes still go through user confirmation and backend validation.",
       ],
     },
     projectDetail: {

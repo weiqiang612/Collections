@@ -3,11 +3,13 @@ import { messages } from "../data/i18n";
 async function sendMockMessage(message, sessionId, locale, onDelta) {
   const agentCopy = messages[locale]?.agent ?? messages["zh-CN"].agent;
   const normalized = message.toLowerCase();
-  const reply = normalized.includes("点评") || normalized.includes("redis")
-    ? agentCopy.mockReplies[1]
-    : normalized.includes("api") || normalized.includes("rag")
-      ? agentCopy.mockReplies[2]
-      : agentCopy.mockReplies[0];
+  const reply = normalized.includes("crm") || normalized.includes("联系人") || normalized.includes("contact")
+    ? agentCopy.mockReplies[3]
+    : normalized.includes("点评") || normalized.includes("redis")
+      ? agentCopy.mockReplies[1]
+      : normalized.includes("api") || normalized.includes("rag")
+        ? agentCopy.mockReplies[2]
+        : agentCopy.mockReplies[0];
 
   const tokens = locale === "zh-CN" ? Array.from(reply) : reply.split(" ");
 

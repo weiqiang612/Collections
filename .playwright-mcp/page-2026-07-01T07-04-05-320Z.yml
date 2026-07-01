@@ -1,0 +1,209 @@
+- generic [ref=f4e3]:
+  - banner [ref=f4e4]:
+    - link "返回首页" [ref=f4e5] [cursor=pointer]:
+      - /url: /
+      - generic [ref=f4e7]: weiqiang
+    - generic [ref=f4e8]:
+      - navigation "主导航" [ref=f4e9]:
+        - link "首页" [ref=f4e10] [cursor=pointer]:
+          - /url: "#hero"
+        - link "关于" [ref=f4e11] [cursor=pointer]:
+          - /url: "#about"
+        - link "项目" [ref=f4e12] [cursor=pointer]:
+          - /url: "#projects"
+        - link "Agent" [ref=f4e13] [cursor=pointer]:
+          - /url: "#resume-agent"
+        - link "笔记" [ref=f4e14] [cursor=pointer]:
+          - /url: https://note.weiqiang.me
+          - text: 笔记
+          - img [ref=f4e15]
+      - button "切换语言" [ref=f4e17] [cursor=pointer]:
+        - generic [ref=f4e18]: 中文
+        - generic [ref=f4e19]: /
+        - generic [ref=f4e20]: EN
+  - main [ref=f4e21]:
+    - generic [ref=f4e22]:
+      - generic [ref=f4e23]:
+        - paragraph [ref=f4e24]: Ethan / weiqiang / 围墙
+        - heading "Ethan" [level=1] [ref=f4e53]
+        - paragraph [ref=f4e54]: weiqiang / 围墙
+        - generic [ref=f4e55]:
+          - generic [ref=f4e56]:
+            - generic [ref=f4e57]: ethan@portfolio:~/system
+            - generic [ref=f4e58]: "source: static profile"
+          - generic [ref=f4e59]:
+            - generic [ref=f4e60]: $ echo
+            - generic [ref=f4e61]: High-Concurrency
+          - paragraph [ref=f4e63]: High-Concurrency
+        - paragraph [ref=f4e64]: Java Backend Engineer focused on high-concurrency systems and AI-enabled engineering.
+        - generic "core focus areas" [ref=f4e25]:
+          - generic [ref=f4e65]: Java Backend
+          - generic [ref=f4e66]: High-Concurrency
+          - generic [ref=f4e67]: AI Agent
+        - generic [ref=f4e26]:
+          - link "查看项目" [ref=f4e68] [cursor=pointer]:
+            - /url: "#projects"
+          - link "询问简历 Agent" [ref=f4e69] [cursor=pointer]:
+            - /url: "#resume-agent"
+      - generic [ref=f4e70]:
+        - generic [ref=f4e71]:
+          - generic [ref=f4e72]:
+            - generic [ref=f4e73]: ×
+            - generic [ref=f4e74]: –
+            - generic [ref=f4e75]: +
+          - generic [ref=f4e76]: profile://static
+        - generic [ref=f4e78]:
+          - generic [ref=f4e79]: $ whoami
+          - generic [ref=f4e80]:
+            - generic [ref=f4e81]: name
+            - text: Ethan
+          - generic [ref=f4e82]:
+            - generic [ref=f4e83]: brand
+            - text: weiqiang / 围墙
+          - generic [ref=f4e84]: 围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。
+          - generic [ref=f4e85]: "status: static profile"
+    - generic [ref=f4e27]:
+      - generic [ref=f4e86]:
+        - paragraph [ref=f4e87]: About
+        - heading "用可解释架构呈现后端深度" [level=2] [ref=f4e88]
+        - paragraph [ref=f4e89]: 围绕 Java 后端、高并发系统设计和 AI Agent / RAG 工程实践，展示 Ethan 如何打破技术壁垒并清楚解释复杂系统。
+      - generic [ref=f4e28]:
+        - generic [ref=f4e29]:
+          - generic [ref=f4e30]: Why -> What -> How -> Deep Dive
+          - generic [ref=f4e90]:
+            - generic [ref=f4e91]: Why
+            - generic [ref=f4e92]:
+              - heading "Why" [level=3] [ref=f4e93]
+              - paragraph [ref=f4e94]: 从业务压力、流量模型、一致性要求和失败成本出发，明确问题为什么值得解决。
+          - generic [ref=f4e95]:
+            - generic [ref=f4e96]: What
+            - generic [ref=f4e97]:
+              - heading "What" [level=3] [ref=f4e98]
+              - paragraph [ref=f4e99]: 把问题抽象成状态模型、数据契约、缓存结构、队列边界和可观测接口。
+          - generic [ref=f4e100]:
+            - generic [ref=f4e101]: How
+            - generic [ref=f4e102]:
+              - heading "How" [level=3] [ref=f4e103]
+              - paragraph [ref=f4e104]: 使用 Spring Boot、MySQL、Redis、消息队列和 AI 编排，把方案落到可验证的工程路径。
+        - generic [ref=f4e31]:
+          - heading "技术重点" [level=3] [ref=f4e32]
+          - generic [ref=f4e33]:
+            - generic [ref=f4e105]:
+              - generic [ref=f4e106]:
+                - generic [ref=f4e107]: Backend
+                - generic [ref=f4e108]: 4 items
+              - generic [ref=f4e109]:
+                - generic [ref=f4e110]: Java
+                - generic [ref=f4e111]: Spring Boot 3
+                - generic [ref=f4e112]: MyBatis
+                - generic [ref=f4e113]: MySQL
+            - generic [ref=f4e114]:
+              - generic [ref=f4e115]:
+                - generic [ref=f4e116]: Concurrency
+                - generic [ref=f4e117]: 4 items
+              - generic [ref=f4e118]:
+                - generic [ref=f4e119]: Redis
+                - generic [ref=f4e120]: Lua
+                - generic [ref=f4e121]: State Machine
+                - generic [ref=f4e122]: Cache Consistency
+            - generic [ref=f4e123]:
+              - generic [ref=f4e124]:
+                - generic [ref=f4e125]: AI Engineering
+                - generic [ref=f4e126]: 4 items
+              - generic [ref=f4e127]:
+                - generic [ref=f4e128]: Spring AI
+                - generic [ref=f4e129]: Hybrid RAG
+                - generic [ref=f4e130]: Pgvector
+                - generic [ref=f4e131]: Prompt Orchestration
+            - generic [ref=f4e132]:
+              - generic [ref=f4e133]:
+                - generic [ref=f4e134]: Frontend
+                - generic [ref=f4e135]: 4 items
+              - generic [ref=f4e136]:
+                - generic [ref=f4e137]: Vue 3
+                - generic [ref=f4e138]: Vite
+                - generic [ref=f4e139]: Terminal UI
+                - generic [ref=f4e140]: Vibe Coding
+    - generic [ref=f4e34]:
+      - generic [ref=f4e35]:
+        - paragraph [ref=f4e36]: Projects
+        - heading "值得在面试中展开讨论的系统" [level=2] [ref=f4e37]
+        - paragraph [ref=f4e38]: 每个项目都按系统视角呈现：负载路径、状态模型、缓存策略，以及 AI 如何改善工程工作流。
+      - generic [ref=f4e40]:
+        - generic [ref=f4e41]: CASE STRIP
+        - generic [ref=f4e42]: 04 / 04
+      - generic [ref=f4e43]:
+        - button "查看上一个项目" [ref=f4e44] [cursor=pointer]:
+          - img [ref=f4e45]
+        - generic [ref=f4e47]:
+          - article [ref=f4e321]:
+            - button "04 FOCUS Personal CRM 智能联系人管理平台 点击查看项目详情 将联系人、互动记录、提醒事项、移动端看板和智能助手整合为一个可部署的个人 CRM 产品，用真实业务闭环证明全栈交付能力。 Vue 3 Spring Boot MySQL Redis JWT Agent Email Responsive UI 已完成产品闭环 支持移动端适配" [ref=f4e322] [cursor=pointer]:
+              - generic [ref=f4e323]:
+                - generic [ref=f4e324]: "04"
+                - generic [ref=f4e325]: FOCUS
+              - generic [ref=f4e326]:
+                - heading "Personal CRM 智能联系人管理平台" [level=3] [ref=f4e327]
+                - generic [ref=f4e328]:
+                  - generic [ref=f4e329]: 点击查看项目详情
+                  - img [ref=f4e330]
+              - paragraph [ref=f4e332]: 将联系人、互动记录、提醒事项、移动端看板和智能助手整合为一个可部署的个人 CRM 产品，用真实业务闭环证明全栈交付能力。
+              - generic [ref=f4e333]:
+                - article [ref=f4e334]:
+                  - generic [ref=f4e336]:
+                    - strong [ref=f4e337]: 产品化业务闭环
+                    - text: ：覆盖注册登录、联系人管理、详情记录、事项提醒、黑名单与设置等完整 CRM 使用路径。
+                - article [ref=f4e338]:
+                  - generic [ref=f4e340]:
+                    - strong [ref=f4e341]: 受控 Contact Agent
+                    - text: ：将智能助手限制在草稿生成、上下文解释和确认后写入流程中，避免模型直接越权修改核心数据。
+              - generic [ref=f4e342]:
+                - generic [ref=f4e343]: Vue 3
+                - generic [ref=f4e344]: Spring Boot
+                - generic [ref=f4e345]: MySQL
+                - generic [ref=f4e346]: Redis
+                - generic [ref=f4e347]: JWT
+                - generic [ref=f4e348]: Agent
+                - generic [ref=f4e349]: Email
+                - generic [ref=f4e350]: Responsive UI
+              - generic [ref=f4e351]:
+                - generic [ref=f4e352]: 已完成产品闭环
+                - generic [ref=f4e353]: 支持移动端适配
+          - article [ref=f4e354]:
+            - button "01 NEXT 餐饮场景 AI 智能客服 Agent 平台 点击切换为主卡 围绕餐饮外卖客户服务场景构建可解释的 AI Agent，将订单查询、取消、推荐与用户偏好沉淀整合进一条自然语言驱动的服务链路。 Spring Boot Spring AI Redis PostgreSQL 已部署可演示" [ref=f4e355] [cursor=pointer]:
+              - generic [ref=f4e356]:
+                - generic [ref=f4e357]: "01"
+                - generic [ref=f4e358]: NEXT
+              - generic [ref=f4e359]:
+                - heading "餐饮场景 AI 智能客服 Agent 平台" [level=3] [ref=f4e360]
+                - generic [ref=f4e361]:
+                  - generic [ref=f4e362]: 点击切换为主卡
+                  - img [ref=f4e363]
+              - paragraph [ref=f4e365]: 围绕餐饮外卖客户服务场景构建可解释的 AI Agent，将订单查询、取消、推荐与用户偏好沉淀整合进一条自然语言驱动的服务链路。
+              - article [ref=f4e367]:
+                - generic [ref=f4e369]:
+                  - strong [ref=f4e370]: Advisor Chain 执行链路
+                  - text: ：围绕多意图识别、工具筛选、确认卡点与安全兜底，组织完整的 Spring AI Agent 执行流程。
+              - generic [ref=f4e371]:
+                - generic [ref=f4e372]: Spring Boot
+                - generic [ref=f4e373]: Spring AI
+                - generic [ref=f4e374]: Redis
+                - generic [ref=f4e375]: PostgreSQL
+              - generic [ref=f4e377]: 已部署可演示
+          - article [ref=f4e378]:
+            - button "02 SHADOW 高并发本地生活交易平台 点击切换为主卡 点击卡片切换为主卡，再查看完整项目说明与亮点。 Spring Boot Redis" [ref=f4e379] [cursor=pointer]:
+              - generic [ref=f4e380]:
+                - generic [ref=f4e381]: "02"
+                - generic [ref=f4e382]: SHADOW
+              - generic [ref=f4e383]:
+                - heading "高并发本地生活交易平台" [level=3] [ref=f4e384]
+                - generic [ref=f4e385]:
+                  - generic [ref=f4e386]: 点击切换为主卡
+                  - img [ref=f4e387]
+              - paragraph [ref=f4e389]: 点击卡片切换为主卡，再查看完整项目说明与亮点。
+              - generic [ref=f4e390]:
+                - generic [ref=f4e391]: Spring Boot
+                - generic [ref=f4e392]: Redis
+        - button "查看下一个项目" [ref=f4e48] [cursor=pointer]:
+          - img [ref=f4e49]
+    - button "AI" [ref=f4e51] [cursor=pointer]:
+      - generic [ref=f4e52]: AI

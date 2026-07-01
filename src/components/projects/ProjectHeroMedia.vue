@@ -12,6 +12,9 @@ const isVideoMode = computed(() => props.media.type === "video");
 const hasDemoScreens = computed(() => {
   return isVideoMode.value && Array.isArray(props.media.demoScreens) && props.media.demoScreens.length > 0;
 });
+const hasMediaScreens = computed(() => {
+  return Array.isArray(props.media.screens) && props.media.screens.length > 0;
+});
 const activeDemoIndex = ref(0);
 const prefersReducedMotion = ref(false);
 const isPaused = ref(false);
@@ -220,7 +223,26 @@ onUnmounted(() => {
           </div>
 
           <div class="project-media-surface">
-            <div class="project-media-grid">
+            <div v-if="hasMediaScreens" class="project-media-screens-grid">
+              <article
+                v-for="screen in media.screens"
+                :key="screen.title"
+                class="project-media-screen-card"
+              >
+                <img
+                  class="project-media-screen-image"
+                  :src="screen.src"
+                  :alt="screen.title"
+                  loading="lazy"
+                />
+                <div class="project-media-screen-copy">
+                  <p class="project-media-frame-title">{{ screen.title }}</p>
+                  <p class="project-media-frame-text">{{ screen.description }}</p>
+                </div>
+              </article>
+            </div>
+
+            <div v-else class="project-media-grid">
               <article
                 v-for="frame in media.frames"
                 :key="frame.title"

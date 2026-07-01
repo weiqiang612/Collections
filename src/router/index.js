@@ -10,7 +10,7 @@ const routes = [
     name: "ProjectDetail",
     component: ProjectDetailView,
     beforeEnter: (to) => {
-      const allowedProjects = ["sky-takeout", "hm-dianping", "equipment-management"];
+      const allowedProjects = ["sky-takeout", "hm-dianping", "equipment-management", "personal-crm"];
       if (allowedProjects.includes(to.params.projectId)) {
         return true;
       }
@@ -38,3 +38,4 @@ const router = createRouter({
 });
 
 export default router;
+
