@@ -2853,7 +2853,13 @@ body.is-scrolling * {
     margin-bottom: 32px;
   }
 }
+.detail-hero-media-expanded .project-media-grid {
+  display: grid;
+  gap: 16px;
+}
 
-
-
-
+@media (min-width: 768px) {
+  .detail-hero-media-expanded .project-media-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
