@@ -3,6 +3,7 @@ import { nextTick, ref, watch, onMounted, onUnmounted } from "vue";
 import ChatMessage from "./ChatMessage.vue";
 import { useChatMock } from "../../composables/useChatMock";
 import { useLocale } from "../../composables/useLocale";
+import { useStreamSmoother } from "../../composables/useStreamSmoother";
 import { isApiConfigured } from "../../services/chatClient";
 import { gsap } from "gsap";
 
@@ -61,11 +62,16 @@ function scrollToBottom() {
   });
 }
 
+let currentSmoother = null;
+
 async function submitMessage() {
   const content = input.value.trim();
   if (!content || isStreaming.value) {
     return;
   }
+
+  // 终止并清理上一条可能残留的动画帧与缓冲
+  currentSmoother?.abort();
 
   const userMessage = { id: crypto.randomUUID(), role: "user", content };
   const assistantMessage = { id: crypto.randomUUID(), role: "assistant", content: "", sources: [] };
@@ -83,14 +89,35 @@ async function submitMessage() {
     .filter(msg => msg.id !== "welcome" && msg.content && (msg.role === "user" || msg.role === "assistant"))
     .map(msg => ({ role: msg.role, content: msg.content }));
 
+  // 初始化平滑器，并通过 Promise 同步排空收尾时机
+  let smootherFinishResolve;
+  const smootherFinishPromise = new Promise((resolve) => {
+    smootherFinishResolve = resolve;
+  });
+
+  currentSmoother = useStreamSmoother({
+    onUpdate: (text) => {
+      targetMessage.content = text;
+      scrollToBottom();
+    },
+    onFinish: () => {
+      scrollToBottom();
+      smootherFinishResolve();
+    }
+  });
+
   let result;
   try {
     result = await sendMessage(content, sessionId, locale.value, (delta) => {
-      targetMessage.content += delta;
-      scrollToBottom();
+      currentSmoother?.push(delta);
     }, history);
+
+    // 后端传输完成，通知平滑器加速排空剩余积压字符
+    currentSmoother?.finish();
+    await smootherFinishPromise;
   } catch (err) {
     console.error("API call failed, running graceful geek fallback:", err);
+    currentSmoother?.abort();
     
     // Inject geek-style failure log
     targetMessage.content = `[SYSTEM ERROR] Connection failed: ${err.message || 'API Timeout'}\n[SYSTEM] Automatically falling back to local simulation mode...\n\n`;
@@ -107,12 +134,26 @@ async function submitMessage() {
           ? mockReplies[2]
           : mockReplies[0];
 
-    const tokens = locale.value === "zh-CN" ? Array.from(fallbackText) : fallbackText.split(" ");
-    for (const token of tokens) {
-      await new Promise((resolve) => window.setTimeout(resolve, 24));
-      targetMessage.content += locale.value === "zh-CN" ? token : `${token} `;
-      scrollToBottom();
-    }
+    const fallbackPrefix = targetMessage.content;
+    let fallbackResolve;
+    const fallbackPromise = new Promise((resolve) => {
+      fallbackResolve = resolve;
+    });
+
+    currentSmoother = useStreamSmoother({
+      onUpdate: (text) => {
+        targetMessage.content = fallbackPrefix + text;
+        scrollToBottom();
+      },
+      onFinish: () => {
+        scrollToBottom();
+        fallbackResolve();
+      }
+    });
+
+    currentSmoother.push(fallbackText);
+    currentSmoother.finish();
+    await fallbackPromise;
 
     result = {
       sources: [
@@ -147,10 +188,12 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
+  currentSmoother?.abort();
   ctx?.revert();
 });
 
 const handleClose = () => {
+  currentSmoother?.abort();
   const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (prefersReducedMotion) {
     emit("close");

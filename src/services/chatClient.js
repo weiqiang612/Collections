@@ -11,11 +11,31 @@ async function sendMockMessage(message, sessionId, locale, onDelta) {
         ? agentCopy.mockReplies[2]
         : agentCopy.mockReplies[0];
 
-  const tokens = locale === "zh-CN" ? Array.from(reply) : reply.split(" ");
+  // 模拟真实大模型 SSE 流输出特征：首包小字、突发大 Chunk (50~80字)、偶发网络抖动停顿
+  let index = 0;
+  const totalLength = reply.length;
+  
+  // 第一阶段：首包轻量响应（约 6-10 字）
+  const firstChunkSize = Math.min(8, totalLength);
+  onDelta(reply.slice(0, firstChunkSize));
+  index += firstChunkSize;
+  await new Promise((resolve) => window.setTimeout(resolve, 80));
 
-  for (const token of tokens) {
-    await new Promise((resolve) => window.setTimeout(resolve, 36));
-    onDelta(locale === "zh-CN" ? token : `${token} `);
+  // 第二阶段：突发大 Chunk（模拟 LLM 推理吞吐高潮，一次性输出 50~90 字的大包）
+  if (index < totalLength) {
+    const burstSize = Math.min(70, totalLength - index);
+    onDelta(reply.slice(index, index + burstSize));
+    index += burstSize;
+    // 模拟网络传输与模型生成微停顿
+    await new Promise((resolve) => window.setTimeout(resolve, 160));
+  }
+
+  // 第三阶段：余下内容分段吐出（每块 15~30 字）
+  while (index < totalLength) {
+    const nextSize = Math.min(25, totalLength - index);
+    onDelta(reply.slice(index, index + nextSize));
+    index += nextSize;
+    await new Promise((resolve) => window.setTimeout(resolve, 100));
   }
 
   return {
